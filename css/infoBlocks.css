@@ -1,0 +1,278 @@
+.infoBlocks_container {
+   display: grid;
+   /*  grid-template-columns: repeat(auto-fit, 300px); */
+   grid-template-columns: repeat(auto-fit, 12.31rem );
+   justify-content: center;  
+}
+
+.infoBlock {
+   position: relative;
+   /* Text go to new line if word very long */
+   word-wrap: break-word;
+   /* Hide long text in block */
+   overflow: hidden;
+   display: inline-block;
+   vertical-align: top;
+   /*width: 280px;*/
+   width: 11.11rem;
+   margin: 10px;
+   cursor: pointer;
+   /* outline: 1px solid #303030; */
+   border-radius: 12px;
+   background-color: #1c1c1e;
+   /* Set shadows */
+   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+ 
+   /* Speed of animation on mouse hover and over of element */
+   transition: 0.6s linear;
+   
+   /* Speed of animation just on mouse over
+   transition: transform 0.5s;
+   -webkit-transition: transform 0.5s;
+   -moz-transition: transform 0.5s;
+   -o-transition: transform 0.5s;
+   *//**/
+}
+
+.infoBlock img {
+   width:100%; 
+   /*height:250px;*/
+   height: 11.11rem;
+   /* padding: 3px; */
+   border-radius: 10px;
+   /* Image cut */
+   -o-object-fit:cover;
+      object-fit:cover;
+   /**/
+   box-shadow: 2px 2px 50px rgba(0, 0, 0, 0.2);
+}
+
+.infoBlock:hover {
+   /* Set outline light around block with image */
+   /*
+   box-shadow: 0px 0px 5px 2px #000000; 
+   -webkit-box-shadow: 0px 0px 5px 5px #000000;
+   -moz-box-shadow: 0px 0px 5px 5px #000000;
+   */
+   box-shadow: 10px 20px 30px lightblue;
+   -webkit-box-shadow: 10px 20px 30px lightblue;
+   -moz-box-shadow: 10px 20px 30px lightblue;
+} 
+
+.infoBlock:active {
+   /* Set outline light around block with image */
+   box-shadow: 0px 0px 1px 1px #4285f4; 
+   -webkit-box-shadow: 0px 0px 5px 2px #4285f4;
+   -moz-box-shadow: 0px 0px 5px 2px #4285f4;
+   /**/
+   transition: 0s linear;
+}
+
+.infoBlocks_container .title {
+   width: 100%;
+   font-size: 16px;
+
+   display: inline-block;
+   padding: 15px 15px;
+   /* new line for long text */
+   word-wrap: break-word;
+}
+
+
+.infoBlock .block_resizer {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   overflow: hidden;
+   width: 100%;
+   height: 100%;
+   -webkit-transform: scale(0);
+   -ms-transform: scale(0);
+   transform: scale(0);
+   -webkit-transition: .3s ease;
+   transition: .3s ease;
+   -webkit-transform: scale(1);
+   -ms-transform: scale(1);
+   transform: scale(1);
+}
+
+.infoBlock .settings {
+   position: absolute;
+   top: 0;
+   right: 0;
+   overflow: hidden;
+   width: 30px;
+   height: 30px;
+   -webkit-transform: scale(0);
+   -ms-transform: scale(0);
+   transform: scale(0);
+   -webkit-transition: .3s ease;
+   transition: .3s ease;
+   -webkit-transform: scale(1);
+   -ms-transform: scale(1);
+   transform: scale(1);
+   background-color: #4286f417;
+   border-radius: 8px;
+   margin: 3px;
+}
+
+.infoBlock .settings:hover {
+   /* Set outline light around block with image */
+   box-shadow: 0px 0px 1px 1px #4285f4; 
+   -webkit-box-shadow: 0px 0px 5px 2px #4285f4;
+   -moz-box-shadow: 0px 0px 5px 2px #4285f4;
+   /**/
+   transition: 0s linear;
+}
+
+.infoBlock .settings .icon {
+   content:url('../icons/settings-white.png');
+   color: white;
+   font-size: 100px;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   height: 20px;
+   width: 20px;
+   transform: translate(-50%, -50%);
+   -ms-transform: translate(-50%, -50%);
+   text-align: center;
+}
+
+
+.folder {
+   position: absolute;
+   bottom: 0;
+   right: 0;
+   background-color: #008CBA;
+   overflow: hidden;
+   width: 50%;
+   height: 4px;
+   -webkit-transform: scale(0);
+   -ms-transform: scale(0);
+   transform: scale(0);
+   -webkit-transition: .3s ease;
+   transition: .3s ease;
+   -webkit-transform: scale(1);
+   -ms-transform: scale(1);
+   transform: scale(1);
+}
+
+
+.perspective_img_effect_container {
+   /* 3D effect for img. Less value is more offset img from cursor */
+   perspective: 15px;  
+}
+
+
+/* Next & previous buttons */
+.prev, .next {
+   cursor: pointer;
+   top: 50%;
+   width: auto;
+   padding: 16px;
+   margin-top: -22px;
+   color: white;
+   font-weight: bold;
+   font-size: 18px;
+   transition: 0.6s ease;
+   border-radius: 0 3px 3px 0;
+   user-select: none;
+}
+/* Position the "next button" to the right */
+.next {
+   right: 0;
+   border-radius: 3px 0 0 3px;
+}
+
+
+/* On hover, add a black background color with a little bit see-through */
+/*
+.prev:hover, .next:hover {
+   background-color: rgba(0,0,0,0.8);
+}
+*/
+.arrows {
+   padding: 10px;
+}
+
+.dots {
+   padding: 20px;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+   display: inline-block;
+   cursor: pointer;
+   height: 25px;
+   width: 25px;
+   margin: 2px 2px;
+   background-color: #bbb;
+   border-radius: 50%;
+   transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+   background-color: #717171;
+}
+
+.count_pages_infoBlocks {
+   display: inline-block; 
+   margin: 18px;
+   top: 0;
+   font-size: 12px;
+   color: #f2f2f2;
+}
+
+
+/*
+@media (max-width: 900px) {
+   .infoBlocks_container {
+      grid-template-columns: repeat(auto-fit, 100px);
+   }
+   .infoBlock {
+      width: 100px;
+      margin: 0px;
+      (comment) Speed of animation 
+      transition: 0.1s linear;
+   }
+   .infoBlock img {
+      width:100%;
+      height:100px;
+   }
+   .title {
+      font-size: 11px;
+      display: inline-block;
+      padding: 15px 10px;
+   }
+}
+*/
+
+@media (max-width: 1300px) {
+   .infoBlocks_container {
+      grid-template-columns: repeat(auto-fit, 8rem );
+      padding-left: 0px;
+      padding-right: 0px;
+   }
+   .infoBlock img {
+      height: 6rem;
+   }
+   .infoBlock {
+      width: 7rem;
+      margin: 5px;
+      padding: 1px;
+      background-color: #1c1c1e;
+   }
+
+   .infoBlocks_container .title {
+      font-size: 11px;
+      display: inline-block;
+      padding: 15px 10px;
+   }
+}
+
+@media (max-width: 600px) {
+  
+}

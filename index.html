@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+	<title>Search By Command</title>
+	<!-- Favicon -->
+	<link rel="icon" type="image/x-icon" href="./images/icons/favicon.ico"/>
+	<meta name="viewport"
+		content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+	<!-- .START - Load styles. -->
+
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/main.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/buttons.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/autocomplete.css">
+	
+	<!-- Google fonts
+	<link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
+ 	-->
+
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/voiceRecognition.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/infoBlocks.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/dataManager.css">
+
+	<!-- .END - Load styles. -->
+
+</head>
+
+<body>
+	<div class = "content">
+		<!-- .START (Autocomplete) -->
+		<br>
+		<div class="container">
+			<!--Make sure the form has the autocomplete function switched off:-->
+			<!--<form autocomplete="off" action="/action_page.php">	</form>-->
+			<br>
+		
+			<div id="search_area">
+				<div id="autocomplete">
+					<div id="autocomplete_container">
+						<div id="input_field_command_container">
+							<input id="input_field_command" title="input field" type="text" autocomplete="on" placeholder="Write request here.." autofocus>
+							<label id="label_help"></label>
+						</div>
+
+						<div id="btn_clear_input_field_command" title="Clear text in input field">
+							<!-- Get X button from site-->
+							<div id="img_clear_input_field_command" focusable="false">
+							</div>
+						</div>	
+						
+						<div id="btn_accept_command" title="Search info">
+							<!-- Get search button from site-->
+							<div id="img_accept_command" focusable="false">
+								<!--
+								<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+								-->
+							</div>
+						</div>
+
+					</div>	
+					
+					<div id="btn_voice_recognition" title="Tell command with voice" onclick="startButton(event)">
+						<img id="img_voice_recognition" src="./icons/mic.gif" alt="Start">
+					</div>
+				</div>
+
+				
+				<!--
+				<br>
+					<div title="To tell command inside web page tell first this keyword and then command">
+						Website keyword for command : <input value = "command">
+					</div>
+				<br>
+				-->
+				
+
+
+				<!--<script src = "./autocomplete/js/autocomplete.js"></script>-->
+				<!--
+					<div class="autoComplete_wrapper">
+						<input id="autoComplete" type="text" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off"
+							autocapitalize="off" maxlength="2048" tabindex="1">
+					</div>
+				
+					<div class="selection"></div>
+				-->
+				<!--
+					<div class="body" align="center">
+						<div class="autoComplete_wrapper">
+							<input id="autoComplete" type="text" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off"
+								autocapitalize="off" maxlength="2048" tabindex="1">
+						</div>
+					
+						<div class="selection"></div>
+					</div>
+				</div>
+				-->
+				<!-- .END (Autocomplete) -->
+
+				<!-- <script src="./autocomplete/js/autoComplete.js"></script> -->
+				<!--<script src="./autocomplete/js/index.js"></script>-->
+				
+
+				<br>
+				
+
+				<!-- 
+					<h1 class="title_text areaText" id="sidebyside" title = "Select an image that include necessary info">IMAGE SELECTOR *</h1>
+				-->
+
+				<!-- Arrows -->
+				<div class="page_control_elements">
+					<a class="prev">&#10094;</a>
+					<!-- Text number page -->
+					<div class="count_pages_infoBlocks"></div>
+					<a class="next">&#10095;</a>
+				</div>
+				
+				<!-- Dots -->
+				<div class="dots"></div>
+		
+				<br><br>
+				<div class="infoBlocks_container"></div>
+				<br><br>
+			
+			</div>
+
+			<div id="info_page_from_executed_action-block_container" style="display: none;">
+				<button class="btn_speak_info btn" type="button">Speak</button>
+				<button class="btn_back btn" type="button">Back</button>
+				<br><br>
+				<div id="content_executed_from_infoBlock">
+					<b></b><div class="title center" style="font-size:30px"></div></b>
+					<div class="info"></div>
+				</div>
+			</div>
+
+			<div id="elements_to_create_action-block" class="elements_for_executed_infoBlock" class="center" disabled>
+	
+				<!--
+				<button class="home">
+					<div class="icon_tag"></div>
+					 <span>HOME</span>
+				</button>
+				-->
+
+				<div class="center" style="font-size:30px"><b><div class="title"><b> Create Info-Block </b></div></b></div>
+				<br><br>
+
+				<div>
+					<button id="btn_create_infoBlock" class="btn btn_save" type="button">Save</button>
+					<button class="btn_back btn" type="button">Back</button></div>
+				</div>
+				<br><br><br>
+				
+				<br><br>
+			</div>
+
+			<div id="elements_to_update_infoBlock" class="elements_for_executed_infoBlock" class="center" disabled>
+				<div style="font-size:30px"><b> Update Info-Block </b></div>
+				<br>
+				<div class="title_infoBlock" style="font-size:30px"></div>
+				<br><br>
+				<!--
+				<div class="text_title_for_input_field" title="Title of command to update">Title Original</div> 
+				<div><textarea class="input_field_original_title interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea> </div>
+				<div align="left" class="text_example">Example: My targets</div>
+				<br>
+				-->
+				<!--
+				<h2> Visual style </h2>
+
+				<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title</div> 
+				<div><textarea class="input_field_title interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px" required></textarea> </div>
+				<div align="left" class="text_example">Example: Show my tasks</div>
+				<br>
+
+				<div class="text_title_for_input_field" title="Words to find an information. In wirting command if tags are simmilar to the commnad, the information will be added to the list of passiility search info">Tags</div>
+				<select name="topic" id="dropdown_select_language" style="width:227px">
+				</select>
+				<div><textarea class="input_field_tags input_field_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+				<div align="left" class="text_example">Example: targets, target, task, to do, plan</div>
+				<br>
+				
+				<div class="text_title_for_input_field" title="Path to the image">Image Path</div> 
+				<div><textarea class="input_field_image_path interactive_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+				<div align="left" class="text_example">Example: https://path/imageTitle.jpg</div>
+				<br><br>
+
+
+				<h2> Action on click Action-Block </h2>
+
+				<div class="text_title_for_input_field" title="Action on click">Action on click Info-Block</div>
+				<select name="topic" class="dropdown_select_action interactive_field" style="cursor:pointer">
+				<option selected disabled>Choose an action</option>
+				</select>
+				<div id="info_container" class="info_container"></div>
+				<br><br>
+
+
+
+
+				<h2> Preview </h2>
+				<div class="infoBlocks_container">
+					<div class="infoBlock_preview_container"></div>
+				</div>
+				<div align="left" id="text_info_obj_update" class="text_example"></div>
+				-->
+				<br><br>
+				<div>
+					<button id="btn_update_infoBlock" class="btn btn_save" type="button">Save</button>
+					<button id="btn_delete_infoBlock" class="btn" type="button">Delete</button>
+					<button class="btn_back btn" type="button">Back</button>
+				</div>
+				<br>
+
+
+				<br>
+				<div></div>
+				<br><br><br>
+				<!-- <div><button id="btn_delete_all_infoBlocks" class="btn" type="button"> Delete all Info-Blocks (Except default) </button></div> -->
+				<div></div>
+				<br><br>
+
+
+			</div>
+
+			<div id="settings_action_block_container" class="elements_for_executed_infoBlock" class="center" disabled>
+				<div style="outline: 1px solid gray; padding:10px;">
+					<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title / Command</div> 
+					<div><textarea class="input_field_title interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px" required></textarea> </div>
+					<div align="left" class="text_example">Example: Show my tasks</div>
+					<br>
+
+				
+					<div class="text_title_for_input_field" title="Action when a command is triggered">Action</div>
+					<select name="topic" class="dropdown_select_action interactive_field" style="cursor:pointer">
+					</select>
+					<div class="info_container"></div>
+				</div>
+				<br><br>
+			
+			
+				<div class="additional_options_for_action-block" style="outline: 1px solid gray; padding:10px;">	
+					<h2>Additional</h2>
+					<br>
+					<div class="flex_container">
+						<img src="./icons/tag.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">
+						<div class="text_title_for_input_field" title="Words to find an information from the search field.">Tags</div>
+					</div>
+					<!--<select name="topic" id="dropdown_select_language" style="width:227px">
+					</select>-->
+					<div><textarea class="input_field_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+					<div align="left" class="text_example">Example: targets, target, task, to do, plan</div>
+					<br>
+					
+					<div class="flex_container">
+						<img src="./icons/picture.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">
+						<div class="text_title_for_input_field" title="Path to the image">Image URL</div> 
+					</div>
+					<div><textarea class="input_field_image_path interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+					<div align="left" class="text_example">Example: https://imageTitle.jpg</div>
+				</div>
+				<br>
+
+				
+				<br>
+
+
+				<h2>Preview</h2>
+				<div class="infoBlocks_container">
+					<div class="infoBlock_preview_container"></div>
+				</div>
+
+				<div align="left" id="text_info_obj_create" class="text_example"></div>
+				<br><br>
+			</div>
+
+			
+
+			<!--
+			<div id="elements_for_delete_infoBlock" class="elements_for_executed_infoBlock" class="center">
+				<div style="font-size:30px"><b> Delete Info-Block </b></div>
+				<br>
+				<div class="title_infoBlock" style="font-size:30px"></div>
+				<br><br>
+				<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title:</div> 
+				<div><textarea class="input_field_title interactive_field" placeholder="..." rows="1" cols="50" max-width="20px" disabled></textarea> </div>
+				<br>
+				<br>
+
+			</div>
+			-->
+
+			<div id="elements_for_file_manager" class="elements_for_executed_infoBlock" class="center" disabled>
+				<div class="center" style="font-size:30px"><b><div class="title"><b> File manager </b></div></b></div>
+				<br><br>
+
+				<div class="outline">
+					<p>Save Info-Blocks to the file</p>
+					<button id="download_commands" class="btn" title="Save your data in the file">Download file</button>
+					<br><br>
+				</div>
+				<br>
+				<div class="outline">
+					<p>Upload file with Info-Blocks</p>
+					<div class="upload_commands_container">
+						<input id="btn_upload_commands" type="file" name="file" title=" " />
+					</div>
+				</div>
+				<br>
+			</div>
+	
+			<div id="elements_for_data_storage" class="elements_for_executed_infoBlock" class="panel" disabled>
+				<div class="center">
+					<div style="font-size:30px"><b><div class="title"><b> Data storage </b></div></b></div>
+					<br><br>
+					<div class="data_storage_container">
+						<div class="forms">
+							<div id="autorization_log"></div>
+							<br>
+
+							<span class = "rb_container" id = "rb_storage_localStorage_container">
+								<label for="rb_storage_localStorage" title = "Save and load data from the current browser">
+									<input type="radio" id="rb_storage_localStorage" name="radio" checked>
+									<span class="rdo"></span>
+									<span class="text">LocalStorage</span>
+								</label>
+							</span>
+			
+							<span class = "rb_container" id="rb_storage_db_conainer">
+								<label for="rb_storage_db" title = "Save and load data from any browser and device">
+									<input type="radio" id="rb_storage_db" name="radio">
+									<span class="rdo"></span>
+									<span class="text">Database</span>
+								</label>
+							</span>
+	
+								
+							<br><br>
+							<div id="authorization_form" class="outline">	
+								<b>Authorization form</b><br><br>
+								<div class="text_title_for_input_field">Username</div>
+								<div><input type="text" id="input_field_nickname" name="username" size="4"><br><br></div>
+								<div class="text_title_for_input_field">Password</div>
+								<div><input type="text" id="input_field_password" name="password"><br><br></div>
+								<button id="btn_authorization" class="btn" type="button">Authorization</button>
+							</div>
+
+							<br>
+							<div class="info_data_storage outline">
+								<b>Info</b>
+								<br><br>
+								* LocalStorage - save data just in browser storage. When site will be open from another device or browser then data will be another.
+								<br><br>
+								* DB - all saved commands will be available from different devices and browsers.
+								<br><br>
+								Attention! <br>
+								All data is stored as a text. The authorization form has been created only for the purpose of gaining access to information and has no security levels.
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div id="elements_for_voice_recognition_settings" class="elements_for_executed_infoBlock" disabled>
+				<div class="center">
+					<div class="center" style="font-size:30px"><b><div class="title"><b> Voice Recognition </b></div></b></div>
+					<br><br>
+					<div class="outline">
+						<p>Language for speech recognition</p>
+						<div id="language_selector_container">
+							<select id="dropdown_select_language"></select>
+							<br>
+							<select id="select_dialect"></select>
+						</div>
+					</div>
+					<br>
+
+				</div>
+			</div>	
+
+			<div id="elements_for_logs" class="elements_for_executed_infoBlock" disabled>
+				<div class="center">
+					<!-- Logs -->
+					<!-- * Logs to see errors and warnings. Also a possibilities how to resolve -->
+					<div class="center" style="font-size:30px"><b><div class="title"><b> Logs </b></div></b></div>
+					<br><br>
+
+					<div class="outline">
+					
+						<!-- Speech API logs -->
+						<div id="info">
+							<p id="info_speak_now">Speak now.</p>
+							<p id="info_no_speech">Voice Recognition error! No speech was detected. You may need to adjust your
+								<a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+								microphone settings</a>.</p>
+							<p id="info_no_microphone" style="display:none">
+								Voice Recognition error! No microphone was found. Ensure that a microphone is installed and that
+								<a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+								microphone settings</a> are configured correctly.</p>
+							<p id="info_allow">Voice Recognition error! Click the "Allow" button above to enable your microphone.</p>
+							<p id="info_denied">Voice Recognition error! Permission to use microphone was denied.</p>
+							<p id="info_blocked">Voice Recognition error! Permission to use microphone is blocked. To change,
+								go to chrome://settings/contentExceptions#media-stream</p>
+							<p id="info_upgrade"> Voice Recognition error! Web Speech API is not supported by this browser.
+								Upgrade to <a href="//www.google.com/chrome">Chrome</a>
+								version 25 or later.</p>
+						</div>
+						<!-- .END (Speech API logs) -->
+				
+				
+						<!-- Web speech-->
+						<br>
+						<div id="results">
+							<span id="final_span" class="final"></span>
+							<span id="interim_span" class="interim"></span>
+						</div>
+						<!-- .END (Web speech)-->
+					</div>
+				
+					<br>
+					<div class="outline">
+						<h1 class="title_text">Logs, Warnings, Errors</h1>
+						<div class="logs_text"></div>
+					</div>
+					<br><br>
+				</div>
+			</div>
+	</div>
+	
+	
+	<div class="fixed_elements">
+		<button id="fixed_btn_plus">
+			+
+		</button>
+
+		<button id="btn_scroll_up">
+			^
+		</button>
+	</div>
+
+	<dialog id="dialog_upload_InfoBloks_from_file">
+		<form method="dialog">
+			<!-- Title text -->
+			<div class="center"><b><div class="title"></div></b></div>
+			<!-- Info text -->
+			<div class="text_info">Add: Add InfoBlocks to current data and skip all InfoBlocks with the same titles from the loading source.
+									<br>Rewrite: DELETE current InfoBlocks and use InfoBlocks from the loading source.
+			</div>
+			<br>
+			<div class="center">
+				<button class="btn_add_infoBlocks" value="default">Add</button>
+				<button class="btn_rewrite_infoBlocks" value="default">Rewrite</button>
+				<button class="btn_cancel" value="cancel">Cancel</button>
+			</div>
+			</menu>
+		</form>
+	</dialog>
+
+	<dialog id="dialog_database_manager">
+		<form method="dialog">
+			<!-- Title text -->
+			<div class="center"><b><div class="title">Database manager</div></b></div>
+			<!-- Info text -->
+			<div class="text_info">InfoBlocks in the database not the same with the current InfoBlocks.
+									<br>Add: Add InfoBlocks from the loading source to current and skip all InfoBlocks with the same titles.
+									<br>Rewrite: DELETE current InfoBlocks and add new InfoBlocks from the loading source.
+									<br>Upload: DELETE InfoBlocks from the database and upload a current InfoBlocks.
+									<br>Cancel: Switch to local storage type mode.
+			</div>
+			<br>
+			<div class="center">
+				<button class="btn_add_infoBlocks" value="default">Add</button>
+				<button class="btn_rewrite_infoBlocks" value="default">Rewrite</button>
+				<button class="btn_upload_infoBlocks" value="default">Upload</button>
+				<button class="btn_cancel" value="cancel">Cancel</button>
+			</div>
+			</menu>
+		</form>
+	</dialog>
+	
+
+	<dialog id="dialog_show_info">
+		<div class = "dialog_content">
+			<form method="dialog">
+				<!-- Title text -->
+				<div class="center"><b><div class="title">User title</div></b></div><br>
+				<!-- Info text -->
+				<div class="text_info">User text with info</div>
+				</menu>
+			</form>
+		</div>
+	</dialog>
+
+	
+	<div id="fixed_elements_on_show_info" class="fixed_elements">
+	<!--	
+		<button class="btn_back" value="close"><b>Back</b></button>
+		-->
+		<!--<button class="btn_speak_info" value="speak"><b>Speak</b></button>-->
+	</div>
+
+	<div id="welcome_page">
+		<p>
+			Click on the button "+" in the lower right corner to add your Info-Block.
+		</p>
+	</div>
+
+	<!-- When active hide all content, but not info alert -->
+	<div class="black_background"></div>
+
+	<!-- .START (Load scripts) -->
+	<script src="./js/opensource/jquery-3.6.0.min.js"></script>
+
+	<script src="./js/date.js"></script>
+	<script src="./js/keyName.js"></script>
+	<script src="./js/textareaResizer.js"></script>
+	<script src="./js/textAlgorithms.js"></script>
+	<script src="./js/search.js"></script>
+	<script src="./js/sort.js"></script>
+	<script src="./js/logsManager.js"></script>
+	<script src="./js/voiceRecognition.js"></script>
+	<script src="./js/infoBlock.js"></script>
+	<script src="./js/dataManagers/dbManager.js"></script>
+	<script src="./js/dataManagers/fileManager.js"></script>
+	<script src="./js/storage.js"></script>
+	<script src="./js/actionName.js"></script>
+	<script src="./js/actionContext.js"></script>
+	<script src="./js/actionTargets.js"></script>
+	<script src="./js/inputField.js"></script>
+	<script src="./js/dialogWindow.js"></script>
+	<script src="./js/dropdown.js"></script>
+	<script src="./js/radiobutton.js"></script>
+	<script src="./js/infoBlockSearcher.js"></script>
+	
+	<script src="./js/models/authorizationDataModel.js"></script>
+	<script src="./js/models/siteSettingsModel.js"></script>
+	<script src="./js/models/infoBlockModel.js"></script>
+	<script src="./js/models/speakerModel.js"></script>
+	
+	<script src="./js/views/scrollView.js"></script>
+	<script src="./js/views/dialogUploadCommands.js"></script>
+	<script src="./js/views/dialogDatabaseView.js"></script>
+	<script src="./js/views/blackBackgroundView.js"></script>
+	<script src="./js/views/speakerView.js"></script>
+	<script src="./js/views/infoBlockView.js"></script>
+	<script src="./js/views/infoPageView.js"></script>
+
+	<script src="./js/controllers/infoSpeakerController.js"></script>
+	<script src="./js/controllers/fileManagerController.js"></script>
+	<script src="./js/controllers/infoBlockSettingsController.js"></script>
+	<script src="./js/controllers/scrollController.js"></script>
+	<script src="./js/controllers/searchController.js"></script>
+	<script src="./js/controllers/dataStorageController.js"></script>
+	<script src="./js/controllers/infoBlockController.js"></script>
+	<script src="./js/controllers/pagesWithInfoBlocksController.js"></script>
+	<script src="./js/controllers/startSiteController.js"></script>
+	<script src="./js/controllers/infoPageController.js"></script>
+	<script src="./js/controllers/dialogWindows/databaseDialogController.js"></script>
+	<script src="./js/controllers/dialogWindows/infoBlocksUploadDialogController.js"></script>
+	<script src="./js/main.js"></script>
+	
+	
+	
+	<script src="./js/cacheRegistrator.js"></script>
+	<!-- .END (Load scripts) -->
+
+	<!-- Autors of used resources. -->
+	<!-- <div>Автор иконок: <a href="https://www.flaticon.com/ru/authors/didin-jpr" title="Didin jpr">Didin jpr</a> from <a href="https://www.flaticon.com/ru/" title="Flaticon">www.flaticon.com</a></div> -->
+</body>
+
+</html>
