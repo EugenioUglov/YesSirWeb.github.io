@@ -184,14 +184,14 @@ if (!('webkitSpeechRecognition' in window)) {
 	};
 
 	recognition.onresult = function(event) {
-		let input_field_command = document.getElementById("input_field_command");
+		let input_field_request = document.getElementById("input_field_request");
 		let interim_transcript = '';
 		for (let i = event.resultIndex; i < event.results.length; ++i) {
 			if (event.results[i].isFinal) {
 				final_transcript += event.results[i][0].transcript;
 				onSpeechResult(final_transcript);
 			} else {
-				//input_field_command.value += event.results[i][0].transcript;
+				//input_field_request.value += event.results[i][0].transcript;
 				interim_transcript += event.results[i][0].transcript;
 				onContinousResult(interim_transcript);
 			}
@@ -207,22 +207,22 @@ if (!('webkitSpeechRecognition' in window)) {
 		final_speech_text = final_transcript;
 
 		// Set text final
-		input_field_command.value = final_speech_text;
+		input_field_request.value = final_speech_text;
 
 
 		// if coninous speech
 		if (interim_transcript) {
 			console.log("interim_transcript:", interim_transcript);
 			// Set text continous
-			input_field_command.value = continuos_speech_text;
+			input_field_request.value = continuos_speech_text;
 			// Set color for text
-			input_field_command.style.color = "gray";
+			input_field_request.style.color = "gray";
 			
 			if(interim_transcript.includes("ok") || interim_transcript.includes("okay") || interim_transcript.includes("enter") || interim_transcript.includes("accept") || interim_transcript.includes("finish") || interim_transcript.includes("stop") || interim_transcript.includes("принять") || interim_transcript.includes("finito")) {
 				recognition.stop();
 			}
 
-			//$("#input_field_command").focus();
+			//$("#input_field_request").focus();
 			//let input = document.querySelector("input");
 		}
 		// if finish speech
@@ -230,8 +230,8 @@ if (!('webkitSpeechRecognition' in window)) {
 			console.log(final_transcript);
 		//	autocomplete.set_focus_last_symbol();
 			console.log("finish speech");
-			input_field_command.style.color = "black";
-			infoBlockSearcher.searchByCommand(input_field_command.value);
+			input_field_request.style.color = "black";
+			infoBlockSearcher.searchByCommand(input_field_request.value);
 		}
 	};
 }

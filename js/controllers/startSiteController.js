@@ -20,9 +20,9 @@ function onStart() {
     }
     
     // Set text gray in input field command.
-    $("#input_field_command")[0].style.color = "gray";
+    $("#input_field_request")[0].style.color = "gray";
     // Focus on input field command.
-    $("#input_field_command")[0].focus();
+    $("#input_field_request")[0].focus();
 
     // Hide elements.
     blackBackgroundView.disable();
@@ -202,7 +202,10 @@ function onStart() {
                     infoBlockView.updateDefaultInfoBlocks();
             
                     localStorage["siteVersion"] = last_site_version;
+                    
                 }
+                
+                applyTagsAutocomplete();
             }
             else {
                 $("#search_area").hide();
@@ -214,6 +217,11 @@ function onStart() {
             $("#welcome_page").show();
         }
     }
+
+    $('#btn_search_by_tags').click(function(){
+        console.log("search by tags");
+    });
+
 }
 
 
@@ -230,3 +238,94 @@ function resizeContentDialogInfo() {
 }
 
 
+function applyTagsAutocomplete() {
+    const indexes_infoObjects_by_tag = JSON.parse(localStorage["indexes_infoObjects_by_tag"]);
+    const tags = Object.keys(indexes_infoObjects_by_tag);
+
+    const input_field_request = $("#input_field_request");
+    const input_field_tags = $(".input_field_tags");
+
+    input_fields_request = [input_field_request, input_field_tags];
+
+    function split( val ) {
+        return val.split( /,\s*/ );
+    }
+    function extractLast( term ) {
+        return split( term ).pop();
+    }
+
+
+    // Autocomplete for input field with tags
+    input_field_tags
+    // don't navigate away from the field on tab when selecting an item
+    .on("keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+        $( this ).autocomplete( "instance" ).menu.active ) {
+            event.preventDefault();
+        }
+    })
+    .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+            request.term = textAlgorithms.getLastWord(request.term);
+            // delegate back to autocomplete, but extract the last term
+            response( $.ui.autocomplete.filter(
+                tags, extractLast( request.term ) ) );
+        },
+        focus: function() {
+        // prevent value inserted on focus
+        return false;
+        },
+        select: function( event, ui ) {
+        terms = split( this.value );
+        var terms = this.value.split(',');
+        // remove the current input
+        terms.pop();
+        // add the selected item
+        terms.push( " " + ui.item.value );
+        // add placeholder to get the comma-and-space at the end
+        //terms.push( "" );
+        this.value = terms.join( "," );
+        return false;
+        }
+    });
+
+      
+    // Autocomplete with request.
+    input_field_request
+    // don't navigate away from the field on tab when selecting an item
+    .on("keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+        $( this ).autocomplete( "instance" ).menu.active ) {
+            event.preventDefault();
+        }
+    })
+    .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+            request.term = textAlgorithms.getLastWord(request.term);
+            // delegate back to autocomplete, but extract the last term
+            response( $.ui.autocomplete.filter(
+                tags, extractLast( request.term ) ) );
+        },
+        focus: function() {
+        // prevent value inserted on focus
+        return false;
+        },
+        select: function( event, ui ) {
+        terms = split( this.value );
+        var terms = this.value.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } );
+        // remove the current input
+        terms.pop();
+        // add the selected item
+        terms.push( ui.item.value );
+        // add placeholder to get the comma-and-space at the end
+        //terms.push( "" );
+        this.value = terms.join( " " );
+        return false;
+        }
+    });
+    
+
+    
+}

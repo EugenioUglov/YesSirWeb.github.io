@@ -26,8 +26,11 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/voiceRecognition.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/infoBlocks.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/dataManager.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css//jquery-ui.css">
 
 	<!-- .END - Load styles. -->
+
+
 
 </head>
 
@@ -43,8 +46,8 @@
 			<div id="search_area">
 				<div id="autocomplete">
 					<div id="autocomplete_container">
-						<div id="input_field_command_container">
-							<input id="input_field_command" title="input field" type="text" autocomplete="on" placeholder="Write request here.." autofocus>
+						<div id="input_field_request_container">
+							<input id="input_field_request" title="input field" type="text" autocomplete="on" placeholder="Write request here.." autofocus>
 							<label id="label_help"></label>
 						</div>
 
@@ -56,7 +59,7 @@
 						
 						<div id="btn_accept_command" title="Search info">
 							<!-- Get search button from site-->
-							<div id="img_accept_command" focusable="false">
+							<div id="img_accept_command">
 								<!--
 								<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
 								-->
@@ -129,6 +132,36 @@
 				<div class="infoBlocks_container"></div>
 				<br><br>
 			
+			</div>
+			<br><br>
+
+			<div id="search_by_tags_container" style="outline:1px solid black; padding: 10px;">
+				<h2>Search by tags</h2>
+
+				<div class="flex_container">
+					<!--<img src="./icons/tag.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">-->
+					<div class="text_title_for_input_field" title="Tags to find an information.">Search Action-Blocks with tags</div>
+				</div>
+				<div><textarea class="input_field_plus_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+				<div align="left" class="text_example">Example: targets, target, task, to do, plan</div>
+				<br><br>
+		
+				<div class="flex_container">
+					<!--<img src="./icons/tag.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">-->
+					<div class="text_title_for_input_field" title="Minus tags.">Don't search Action-Blocks with tags</div>
+				</div>
+				<div><textarea class="input_field_minus_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+				<div align="left" class="text_example">Example: hobby, skill up</div>
+				<br>
+
+				<div id="btn_search_by_tags" title="Search" style="cursor:pointer; outline:1px solid red; float:right; border-radius: 10px;" >
+					<!-- Get search button from site-->
+					<div id="img_accept_command" class="image" style="border-radius: 10px">
+						<!--
+						<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+						-->
+					</div>
+				</div>
 			</div>
 
 			<div id="info_page_from_executed_action-block_container" style="display: none;">
@@ -518,6 +551,8 @@
 		</p>
 	</div>
 
+
+
 	<!-- When active hide all content, but not info alert -->
 	<div class="black_background"></div>
 
@@ -571,7 +606,8 @@
 	<script src="./js/controllers/dialogWindows/databaseDialogController.js"></script>
 	<script src="./js/controllers/dialogWindows/infoBlocksUploadDialogController.js"></script>
 	<script src="./js/main.js"></script>
-	
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
 	
 	
 	<script src="./js/cacheRegistrator.js"></script>

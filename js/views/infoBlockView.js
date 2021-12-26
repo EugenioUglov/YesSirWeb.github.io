@@ -202,7 +202,7 @@ infoBlockView.update = function(infoObj) {
 }
 
 infoBlockView.onUpdate = function() {
-    $("#input_field_command")[0].value = "";
+    $("#input_field_request")[0].value = "";
     const infoObjects_from_localStorage = infoBlockModel.getAll();
     infoBlockModel.saveInStorage(infoObjects_from_localStorage);
     // Refresh data list.
@@ -311,7 +311,7 @@ function openFolder(folderObj, tags) {
     }
   
     infoBlockView.clearInfoBlocksArea();
-    $("#input_field_command")[0].value = "";
+    $("#input_field_request")[0].value = "";
     // Get command text from input field and find possible search data.
     data_to_show = infoBlockModel.getByPhrase(tags);
     console.log("search tags", tags);
@@ -332,7 +332,7 @@ function openFolder(folderObj, tags) {
     
 
     // Paste tags to input field.
-    $("#input_field_command")[0].value = tags;
+    $("#input_field_request")[0].value = tags;
 
     focusInputField();
 
@@ -427,9 +427,9 @@ function showAlert(info, title) {
 
 
 function focusInputField() {		
-    $("#input_field_command")[0].focus();
-    $("#input_field_command")[0].select();
-    $("#input_field_command")[0].selectionStart = $("#input_field_command")[0].value.length;
+    $("#input_field_request")[0].focus();
+    $("#input_field_request")[0].select();
+    $("#input_field_request")[0].selectionStart = $("#input_field_request")[0].value.length;
 }
 
 function clearPageNumberText() {

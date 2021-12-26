@@ -14,9 +14,9 @@ infoBlockModel.getAll = function () {
 }
 
 infoBlockModel.getByPhrase = function(user_phrase, language) {
-    // Delete characters "," from phrase
+    // Delete characters "," from phrase.
     user_phrase = user_phrase.replaceAll(',', '');
-    // If phrase doesn't exist
+    // If phrase doesn't exist.
     if ( ! user_phrase) {
         console.log("Info doesn't exist with tags: " + user_phrase);
         return;
@@ -91,6 +91,54 @@ infoBlockModel.getByPhrase = function(user_phrase, language) {
 
                 indexes_infoObjects_to_show.push(i_infoObj_to_show);
             }
+        }
+
+        return indexes_infoObjects_to_show;
+    }
+
+    function getIndexesInfoObjectsToShowByTags(tags) {
+        let indexes_infoObjects_to_show = [];
+        let indexes_infoObjects_with_tags = [];
+
+        // Push index of infoObj by user phrase if it doesn't exist yet in array. 
+        for (let i_tag in tags) {
+            // One user word of phrase.
+            let tag = tags[i_tag];
+            // Indexes of current tag.
+            indexes_infoObjects_with_tags = indexes_infoObjects_with_tags.concat(indexes_infoObjects_by_tag[tag]);
+        }
+
+        // For each index of infoObject for current tag.
+        for (i_index_infoObj_to_show in indexes_infoObjects_with_tags) {
+            let i_infoObj_to_show = indexes_infoObjects_with_tags[i_index_infoObj_to_show];
+
+            let index_exist_in_indexes_infoObjects = isValueExistInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
+
+
+            if (index_exist_in_indexes_infoObjects) {
+                indexes_infoObjects_to_show.push(i_infoObj_to_show);
+                continue;
+            }
+            else {
+                if (tags.length == 1) {
+                    indexes_infoObjects_to_show.push(i_infoObj_to_show);
+                }
+            }
+
+            
+        }
+
+        for (i_index_infoObj_to_show in indexes_infoObjects_with_tags) {
+            let i_infoObj_to_show = indexes_infoObjects_with_tags[i_index_infoObj_to_show];
+
+            let index_exist_in_indexes_infoObjects = isValueExistInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
+
+
+            if (index_exist_in_indexes_infoObjects) {
+                continue;
+            }
+           
+            indexes_infoObjects_to_show.push(i_infoObj_to_show);
         }
 
         return indexes_infoObjects_to_show;

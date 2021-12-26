@@ -46,3 +46,11 @@ textAlgorithms.replaceSymbols = function(text, find, replace) {
     let escapedFind = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     return text.replace(new RegExp(escapedFind, 'g'), replace);
 }
+
+textAlgorithms.getLastWord = function(text) {
+    console.log(text);
+    // Delete spaces from the sides of text.
+    text = text.trim();
+    var n = text.split(" ");
+    return n[n.length - 1];
+}

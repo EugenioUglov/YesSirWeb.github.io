@@ -97,7 +97,7 @@ infoBlocks_area.addInfoObjects = function() {
     }
 
 
-    $("#input_field_command")[0].value = "";
+    $("#input_field_request")[0].value = "";
     const infoObjects_from_localStorage = infoBlockModel.getAll();
 
     infoBlockModel.saveInStorage(infoObjects_from_localStorage);
@@ -126,7 +126,7 @@ infoBlocks_area.rewriteInfoObjects = function() {
         }
 
        
-        $("#input_field_command")[0].value = "";
+        $("#input_field_request")[0].value = "";
         const infoObjects_from_localStorage = infoBlockModel.getAll();
         infoBlockModel.saveInStorage(infoObjects_from_localStorage);
 
