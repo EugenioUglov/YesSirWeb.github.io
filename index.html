@@ -16,6 +16,7 @@
 
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/main.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/buttons.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/textfields.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/autocomplete.css">
 	
 	<!-- Google fonts
@@ -199,7 +200,7 @@
 				<select name="topic" class="dropdown_select_action interactive_field" style="cursor:pointer">
 				<option selected disabled>Choose an action</option>
 				</select>
-				<div id="info_container" class="info_container"></div>
+				<div id="action_description_container" class="action_description_container"></div>
 				<br><br>
 
 
@@ -241,7 +242,11 @@
 					<div class="text_title_for_input_field" title="Action when a command is triggered">Action</div>
 					<select name="topic" class="dropdown_select_action interactive_field" style="cursor:pointer">
 					</select>
-					<div class="info_container"></div>
+					<br><br>
+					<div class="action_description_container">
+						<div id="title_action_descritption" class="text_title_for_input_field"></div>
+						<textarea class="input_field_action_description interactive_field resize_field" rows=4 value="..."></textarea>
+					</div>
 				</div>
 				<br><br>
 			

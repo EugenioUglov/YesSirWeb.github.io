@@ -181,7 +181,7 @@ function onStart() {
     dropdown.setOptions(dropdown_select_action_for_update, ACTION_CONTEXT);
     let first_dropdown_item_text_for_update = dropdown_select_action_for_update[0][0].value;
     let text_info_container_for_update = ACTION_TARGETS[first_dropdown_item_text_for_update];
-    let info_container_update = $("#settings_action_block_container").find(".info_container")[0];
+    let info_container_update = $("#settings_action_block_container").find(".action_description_container")[0];
     inputField.add(info_container_update, text_info_container_for_update);
     // .END (Create "Update command accordion container")
     */

@@ -440,16 +440,16 @@ function clearPageNumberText() {
 function createInfoFieldInUpdateContainer() {
     let selected_item = $("#settings_action_block_container").find(".dropdown_select_action").find(":selected")[0];
     // Get container to add input field.
-    let info_container = $("#settings_action_block_container").find(".info_container")[0];
-    let title_for_container = info_container.value;
+    let action_description_container = $("#settings_action_block_container").find(".action_description_container")[0];
+    let title_for_container = action_description_container.value;
   
-    clearContentInContainer(info_container);
+    clearContentInContainer(action_description_container);
     if ( ! selected_item) selected_item.value 
   
     if ( ! title_for_container) title_for_container = ACTION_TARGETS[selected_item.value];
     
   
-    inputField.add(info_container, title_for_container);
+    inputField.add(action_description_container, title_for_container);
 }
 
 function clearContentInContainer(container) {
@@ -478,7 +478,7 @@ infoBlockView.showElementsToUpdateInfoBlock = function(infoObj) {
 
     // Set value title.
     $('#settings_action_block_container').find('.input_field_title')[0].value = infoObj.title;
-
+    
     let tags = '';
 
     // Set value tags
@@ -492,9 +492,10 @@ infoBlockView.showElementsToUpdateInfoBlock = function(infoObj) {
     $('#settings_action_block_container').find('.input_field_tags')[0].value = tags;
     // Set value dropdown.
     $('#settings_action_block_container').find('.dropdown_select_action').val(action_name);
-    createInfoFieldInUpdateContainer();
+    
     // Set value info.
-    $('#settings_action_block_container').find('.input_field_info')[0].value = infoObj.info;
+    $('#settings_action_block_container').find('.input_field_action_description')[0].value = infoObj.info;
+    
     // Set value image path.
     $('#settings_action_block_container').find('.input_field_image_path')[0].value = infoObj.imagePath;
 

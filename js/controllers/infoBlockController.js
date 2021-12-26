@@ -83,7 +83,7 @@ infoBlockController.setListener = function(infoObj, infoBlock_container) {
         }
     
         // Get info of action.
-        const input_field_info_container = settings_action_block_container.find(".input_field_info");
+        const input_field_info_container = settings_action_block_container.find(".input_field_action_description");
         let info = input_field_info_container.val();
         if ( ! info) {
             action_user_choose = ACTION_NAME.showInfo;
@@ -99,7 +99,7 @@ infoBlockController.setListener = function(infoObj, infoBlock_container) {
         let input_field_image_path_container = settings_action_block_container.find(".input_field_image_path");
         let image_path = input_field_image_path_container.val();
 
-        //console.log(input_field_info.val())
+        //console.log(action_description_container.val())
 
         /*
         clearContentInContainer($("#text_info_obj_create")[0]);
@@ -199,7 +199,7 @@ btn_update_infoBlock.addEventListener("click", function () {
     }
   
     // Get info
-    const input_field_info_container = $("#settings_action_block_container").find(".input_field_info");
+    const input_field_info_container = $("#settings_action_block_container").find(".input_field_action_description");
     const info = input_field_info_container.val();
     if ( ! info) {
         alert("Impossible to create command. Action input field is empty");
@@ -357,7 +357,7 @@ function setDefaultValuesForCreateInfoBlockContainer() {
     input_field_title.val("");
     let input_field_tags = $("#settings_action_block_container").find(".input_field_tags")[0];
     input_field_tags.value = "";
-    let input_field_info_container = $("#settings_action_block_container").find(".input_field_info");
+    let input_field_info_container = $("#settings_action_block_container").find(".input_field_action_description");
     input_field_info_container.val("");
     let input_field_image_path_container = $("#settings_action_block_container").find(".input_field_image_path");
     input_field_image_path_container.val("");
@@ -370,7 +370,7 @@ function setDefaultValuesForUpdateInfoBlockContainer() {
     input_field_title.val("");
     let input_field_tags = $("#settings_action_block_container").find(".input_field_tags")[0];
     input_field_tags.value = "";
-    let input_field_info_container = $("#settings_action_block_container").find(".input_field_info");
+    let input_field_info_container = $("#settings_action_block_container").find(".input_field_action_description");
     input_field_info_container.val("");
     let input_field_image_path_container = $("#settings_action_block_container").find(".input_field_image_path");
     input_field_image_path_container.val("");
