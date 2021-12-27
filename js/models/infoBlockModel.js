@@ -95,8 +95,73 @@ infoBlockModel.getByPhrase = function(user_phrase, language) {
 
         return indexes_infoObjects_to_show;
     }
+}
+
+infoBlockModel.getByTags = function(user_phrase, minus_tags) {
+    // Delete characters "," from phrase.
+    user_phrase = user_phrase.replaceAll(',', ' ');
+    minus_tags = minus_tags.replaceAll(',', ' ');
+    console.log("plus_tags", user_phrase)
+    // If phrase doesn't exist.
+    if ( ! user_phrase) {
+        console.log("Info doesn't exist with tags: " + user_phrase);
+        return;
+    }
+
+    if (user_phrase === undefined || user_phrase === null) {
+        let error_text = "user_phrase not defined during information searching";
+        console.log(error_text);
+    }
+
+    // Here all objects from a storage which info can to be looking by user.
+    let searched_infoObjects = [];
+    // All infoObjects.
+    let infoObjects = infoBlockModel.getAll();
+    
+    user_phrase = user_phrase.toLowerCase();
+    minus_tags = minus_tags.toLowerCase();
+
+    let user_words = textAlgorithms.splitText(user_phrase, ' ');
+    minus_tags = textAlgorithms.splitText(minus_tags, ' ');
+    console.log("minus_tags", minus_tags);
+    
+    let indexes_infoObjects_by_tag = infoBlockModel.getIndexes();
+    console.log(indexes_infoObjects_by_tag);
+
+
+    let indexes_infoObjects_to_show = getIndexesInfoObjectsToShowByTags(user_words); 
+
+
+
+    console.log("indexes");
+    console.log(indexes_infoObjects_to_show);
+
+    // Create an array with infoObjects and priority value to show.
+    for (let i_obj of indexes_infoObjects_to_show) {
+        let infoObj_curr = infoObjects[i_obj];
+
+        let priority_infoObj_curr = getPrioriptyObjByTags(infoObj_curr, user_phrase);
+        infoObj_curr.priority = priority_infoObj_curr;
+        console.log(infoObj_curr, priority_infoObj_curr);
+
+        if (priority_infoObj_curr > 0) {
+            // Push current obj
+            searched_infoObjects.push(infoObj_curr);
+        }
+    }
+
+    let property_in_infoObj_for_sort = "priority";
+    let is_sort_from_A_to_Z = false;
+
+    // Sort by priority.
+    searched_infoObjects = sort.getSortedInfoObjectsByProperty(searched_infoObjects, property_in_infoObj_for_sort, is_sort_from_A_to_Z);
+
+    return searched_infoObjects;
+
 
     function getIndexesInfoObjectsToShowByTags(tags) {
+        console.log("privet");
+        let indexes_infoObjects_for_all_tags = [];
         let indexes_infoObjects_to_show = [];
         let indexes_infoObjects_with_tags = [];
 
@@ -105,41 +170,50 @@ infoBlockModel.getByPhrase = function(user_phrase, language) {
             // One user word of phrase.
             let tag = tags[i_tag];
             // Indexes of current tag.
-            indexes_infoObjects_with_tags = indexes_infoObjects_with_tags.concat(indexes_infoObjects_by_tag[tag]);
-        }
-
-        // For each index of infoObject for current tag.
-        for (i_index_infoObj_to_show in indexes_infoObjects_with_tags) {
-            let i_infoObj_to_show = indexes_infoObjects_with_tags[i_index_infoObj_to_show];
-
-            let index_exist_in_indexes_infoObjects = isValueExistInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
-
-
-            if (index_exist_in_indexes_infoObjects) {
-                indexes_infoObjects_to_show.push(i_infoObj_to_show);
-                continue;
+            if (indexes_infoObjects_to_show.length < 1) {
+                indexes_infoObjects_to_show = indexes_infoObjects_to_show.concat(indexes_infoObjects_by_tag[tag]);
+                console.log("indexes_infoObjects_to_show.length < 1 then", indexes_infoObjects_by_tag[tag]);
             }
             else {
-                if (tags.length == 1) {
-                    indexes_infoObjects_to_show.push(i_infoObj_to_show);
+                if (indexes_infoObjects_by_tag[tag]) {
+                     indexes_infoObjects_to_show = getSameElementsFromArrays(indexes_infoObjects_to_show, indexes_infoObjects_by_tag[tag]);
+                }
+                else {
+                    indexes_infoObjects_to_show = [];
                 }
             }
-
-            
+            //indexes_infoObjects_with_tags = indexes_infoObjects_with_tags.concat(indexes_infoObjects_by_tag[tag]);
+            console.log("indexes_infoObjects_with_tags", indexes_infoObjects_with_tags);
         }
 
-        for (i_index_infoObj_to_show in indexes_infoObjects_with_tags) {
-            let i_infoObj_to_show = indexes_infoObjects_with_tags[i_index_infoObj_to_show];
+        // Left item if a word from minus tags array.
+        let indexes_infoObjects_with_minus_tags = [];
 
-            let index_exist_in_indexes_infoObjects = isValueExistInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
-
-
-            if (index_exist_in_indexes_infoObjects) {
-                continue;
+        for (const minus_tag of minus_tags) {
+            for (const i_index_infoObj_to_show in indexes_infoObjects_to_show) {
+                const i_infoObj_to_show = indexes_infoObjects_to_show[i_index_infoObj_to_show];
+                console.log("i_infoObj_to_show", i_infoObj_to_show)
+                for (const tag_infoObj of infoObjects[i_infoObj_to_show].tags) {
+                    console.log("obj tags", infoObjects[i_infoObj_to_show].tags);
+                    console.log("minus_tag", minus_tag);
+                    if (tag_infoObj === minus_tag) {
+                        console.log("tag_infoObj", tag_infoObj);
+                        console.log("minus_tag", minus_tag);
+                        
+                        console.log("before remove " + minus_tag, indexes_infoObjects_to_show);
+                        //indexes_infoObjects_with_minus_tags.push(i_index_infoObj_to_show);
+                        indexes_infoObjects_to_show[i_index_infoObj_to_show] = undefined;
+                        console.log("after remove index" , i_infoObj_to_show);
+                        break;
+                    }
+                }
             }
-           
-            indexes_infoObjects_to_show.push(i_infoObj_to_show);
         }
+
+        // array without undefined.
+        indexes_infoObjects_to_show = indexes_infoObjects_to_show.filter(function(x) {
+            return x !== undefined;
+        });
 
         return indexes_infoObjects_to_show;
     }
@@ -458,4 +532,8 @@ function isValueExistInArray(arr, value) {
     }
 
     return false;
+}
+
+function getSameElementsFromArrays(array1, array2) {
+    return array1.filter(element => array2.includes(element));
 }

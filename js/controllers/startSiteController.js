@@ -218,8 +218,47 @@ function onStart() {
         }
     }
 
-    $('#btn_search_by_tags').click(function(){
+    $('#btn_search_by_tags').click(function() {
         console.log("search by tags");
+
+        const input_field_plus_tags = $("#search_by_tags_container").find(".input_field_plus_tags");
+        const user_plus_tags = input_field_plus_tags.val();
+
+        const input_field_minus_tags = $("#search_by_tags_container").find(".input_field_minus_tags");
+        const user_minus_tags = input_field_minus_tags.val();
+
+        if ( ! user_plus_tags) return;
+
+        // Show Action-Blocks by tags.
+
+        // Get command text from input field and find possible search data.
+        infoObjects_to_show = infoBlockModel.getByTags(user_plus_tags, user_minus_tags);
+    
+        console.log("infoObjects_to_show", infoObjects_to_show);
+
+    
+        if ( ! infoObjects_to_show) {
+            infoObjects_to_show = [];
+        }
+
+        // Show infoBlocks separated by pages.
+        infoBlockModel.infoBlocks_on_page = infoBlockView.showInfoBlocksOnPages(infoObjects_to_show);
+        
+        infoBlockModel.showed_infoObjects = infoObjects_to_show;
+    
+        const isExecuteInfoBlockByTitle = false;
+
+        if (isExecuteInfoBlockByTitle) {
+            // IF infoObject has been found with the same title THEN execute action.
+            for (infoObj of infoObjects_to_show) {
+                if (textAlgorithms.isSame(infoObj.title, command)) {
+                    infoBlockView.executeActionByObj(infoObj);
+                    
+                    break;
+                }
+            }
+        }
+    
     });
 
 }
@@ -243,9 +282,13 @@ function applyTagsAutocomplete() {
     const tags = Object.keys(indexes_infoObjects_by_tag);
 
     const input_field_request = $("#input_field_request");
-    const input_field_tags = $(".input_field_tags");
+    const input_field_tags_on_setting_actionBlock = $(".input_field_tags");
+    const input_field_plus_tags = $('#search_by_tags_container').find('.input_field_plus_tags');
+    const input_field_minus_tags = $('#search_by_tags_container').find('.input_field_minus_tags');
+    
 
-    input_fields_request = [input_field_request, input_field_tags];
+    input_fields_request = [input_field_request];
+    input_fields_tags = [input_field_tags_on_setting_actionBlock, input_field_plus_tags, input_field_minus_tags];
 
     function split( val ) {
         return val.split( /,\s*/ );
@@ -254,42 +297,42 @@ function applyTagsAutocomplete() {
         return split( term ).pop();
     }
 
-
-    // Autocomplete for input field with tags
-    input_field_tags
-    // don't navigate away from the field on tab when selecting an item
-    .on("keydown", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-        $( this ).autocomplete( "instance" ).menu.active ) {
-            event.preventDefault();
-        }
-    })
-    .autocomplete({
-        minLength: 0,
-        source: function( request, response ) {
-            request.term = textAlgorithms.getLastWord(request.term);
-            // delegate back to autocomplete, but extract the last term
-            response( $.ui.autocomplete.filter(
-                tags, extractLast( request.term ) ) );
-        },
-        focus: function() {
-        // prevent value inserted on focus
-        return false;
-        },
-        select: function( event, ui ) {
-        terms = split( this.value );
-        var terms = this.value.split(',');
-        // remove the current input
-        terms.pop();
-        // add the selected item
-        terms.push( " " + ui.item.value );
-        // add placeholder to get the comma-and-space at the end
-        //terms.push( "" );
-        this.value = terms.join( "," );
-        return false;
-        }
-    });
-
+    for (const input_field_tags of input_fields_tags) {
+        // Autocomplete for input field with tags
+        input_field_tags
+        // don't navigate away from the field on tab when selecting an item
+        .on("keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+                event.preventDefault();
+            }
+        })
+        .autocomplete({
+            minLength: 0,
+            source: function( request, response ) {
+                request.term = textAlgorithms.getLastWord(request.term);
+                // delegate back to autocomplete, but extract the last term
+                response( $.ui.autocomplete.filter(
+                    tags, extractLast( request.term ) ) );
+            },
+            focus: function() {
+            // prevent value inserted on focus
+            return false;
+            },
+            select: function( event, ui ) {
+            terms = split( this.value );
+            var terms = this.value.split(',');
+            // remove the current input
+            terms.pop();
+            // add the selected item
+            terms.push( " " + ui.item.value );
+            // add placeholder to get the comma-and-space at the end
+            //terms.push( "" );
+            this.value = terms.join( "," );
+            return false;
+            }
+        });
+    }
       
     // Autocomplete with request.
     input_field_request
