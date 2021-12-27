@@ -83,7 +83,7 @@ infoBlockView.executeActionByName = function(obj, action_name, action_info) {
         const isHTML = false;
         showInfo(action_info, obj.title, isHTML);
         
-        speakerModel.text_to_speak = action_info;
+        speakerController.setTextForSpeech(action_info);
         $(".btn_speak_info").show();
         $("#info_page_from_executed_action-block_container").show();
     }

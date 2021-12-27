@@ -3,7 +3,8 @@ const infoPageView = {};
 infoPageView.close = function() {
     console.log("infoPageView.close");
     blackBackgroundView.disable();
-    speakerView.stop();
+    speakerController.stopSpeak();
+    speakerController.setTextForSpeech("");
 
     const elements_for_executed_infoBlock_array = document.getElementsByClassName("elements_for_executed_infoBlock");
 
