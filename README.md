@@ -21,7 +21,7 @@ OLD: Comparison is done by binary search, so information retrieval is relatively
 </ul>
 <h2><b>Action-Blocks</b></h2>
 The information that the user enters is contained in the Action-Block.
-Action-Block Pattern:
+Action-Block object:
 {title:…, action:…., info: ...., tags: ..., imagePath: ...}
 
 
