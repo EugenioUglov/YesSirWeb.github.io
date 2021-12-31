@@ -8,16 +8,17 @@ the algorithm takes as input each set of characters (word) of the user and displ
 OLD: Comparison is done by binary search, so information retrieval is relatively fast (O (log (n))).
 
 <b>For instance:</b>
-User input:
+<ul>
+<li>User input:</li>
   "Watch cartoon about animals".
-Search:
+  <li>Search:</li>
   Indexes_by_tag [‘watch’] = [3, 1]
   Indexes_by_tag [‘cartoon’] = [3, 8]
   Indexes_by_tag [‘about’] = undefined
   Indexes_by_tag [‘animals’] = [1, 3, 259]
 Result:
   Displaying Action-Blocks with the highest number of identical tags in priority. Displaying Action-Blocks with indexes in priority order: 3, 1, 8, 259.
-
+</ul>
 <h2><b>Action-Blocks</b></h2>
 The information that the user enters is contained in the Action-Block.
 Action-Block Pattern:
