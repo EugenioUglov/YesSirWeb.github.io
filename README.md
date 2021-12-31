@@ -12,11 +12,11 @@ OLD: Comparison is done by binary search, so information retrieval is relatively
 <li>User input:</li>
   "Watch cartoon about animals".
   <li>Search:</li>
-  Indexes_by_tag [‘watch’] = [3, 1]
-  Indexes_by_tag [‘cartoon’] = [3, 8]
-  Indexes_by_tag [‘about’] = undefined
-  Indexes_by_tag [‘animals’] = [1, 3, 259]
-Result:
+  Indexes_by_tag [‘watch’] = [3, 1] <br>
+  Indexes_by_tag [‘cartoon’] = [3, 8] <br>
+  Indexes_by_tag [‘about’] = undefined <br>
+  Indexes_by_tag [‘animals’] = [1, 3, 259] <br>
+  <li>Result:</li>
   Displaying Action-Blocks with the highest number of identical tags in priority. Displaying Action-Blocks with indexes in priority order: 3, 1, 8, 259.
 </ul>
 <h2><b>Action-Blocks</b></h2>
