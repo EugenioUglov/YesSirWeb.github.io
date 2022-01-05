@@ -31,8 +31,9 @@ button.accordion.active:after {
 }
 .center {
   margin: auto;
+  padding: 50px;
+  
   width: 100%;
-  padding: 32px;
 }
 
 

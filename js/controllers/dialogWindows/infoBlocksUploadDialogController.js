@@ -4,12 +4,13 @@ dialog_upload_InfoBloks_from_file.btn_add = dialog_upload_InfoBloks_from_file.el
 dialog_upload_InfoBloks_from_file.btn_rewrite = dialog_upload_InfoBloks_from_file.elem.find(".btn_rewrite_infoBlocks")[0];
 dialog_upload_InfoBloks_from_file.btn_cancel = dialog_upload_InfoBloks_from_file.elem.find(".btn_cancel")[0];
 
+
 dialog_upload_InfoBloks_from_file.onClickBtnCancel = function() {
     blackBackgroundView.disable();
     scrollView.scrollToTop();
 
     // Also close info alert (by standart logic of API)
-}
+};
 
 
 dialog_upload_InfoBloks_from_file.btn_add.addEventListener('click', function() {

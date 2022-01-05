@@ -1,0 +1,280 @@
+button {
+    cursor: pointer;
+}
+
+.btn {
+    width: 120px;
+    padding: 10px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 5px;
+    /* color: #274f99; */
+    background-color: transparent;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    overflow: hidden;
+    outline: 1px solid #ffffffc2;
+    color: #d1c4ac;
+}
+
+.btn:hover {
+    outline: 1px solid blueviolet;
+}
+
+.btn_right {
+    float: right;
+    margin-left: 10px;
+}
+
+.btn_save {
+    background-color: slateblue;
+    color: ghostwhite;
+}
+
+.fixed_elements .btn_speak {
+    position: fixed;
+    border-radius: 40px;
+    width: 60px;
+    height: 60px;
+    border: 1px solid black;
+}
+
+.fixed_elements .btn_back {
+    position: fixed;
+    border-radius: 40px;
+    width: 60px;
+    height: 60px;
+    border: 1px solid black;
+    bottom: 120px;
+}
+
+
+
+.fixed_elements #fixed_btn_plus {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    border-radius: 40px;
+    width: 60px;
+    height: 60px;
+    background-color: #ffb100;
+    font-size: 30px;
+    cursor: pointer;
+}
+  
+  
+  
+.fixed_elements #btn_scroll_up {
+    position: fixed;
+    border-radius: 40px;
+    width: 60px;
+    height: 60px;
+    border: 1px solid black;
+    bottom: 120px;
+    font-size: 20px;
+}
+  
+
+/*
+.fixed_elements #fixed_btn_plus:focus, #btn_scroll_up:focus, .btn_speak:focus, .btn_back:focus {
+    outline: 0 none;
+}
+
+
+
+.fixed_elements #fixed_btn_plus:active, #btn_scroll_up:active, .btn_speak:active, .btn_back:active {
+    background-color: rgba(39, 184, 224, 0.904); 
+}
+*/
+.fixed_elements #fixed_btn_plus:hover, #btn_scroll_up:hover, .btn_back, .btn_speak {
+    /*
+    border-color: black;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.085) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0 none;
+    background-color: rgba(204, 242, 252, 0.904); 
+    */
+}
+
+
+#btn_upload_commands {
+    padding: 0;
+    margin: 0;
+    width: 135px;
+    cursor: pointer;
+}
+
+#btn_delete_infoBlock {
+    color: #8f3f3f;
+    background-color: #321212;
+}
+
+.icon_tag {
+    background: url("../icons/tag.png") no-repeat scroll center center / 100% auto rgba(0, 0, 0, 0); 
+    content: "";
+    display: inline-block;
+    color: #fff;
+    height: 30px;
+    position: relative;
+    vertical-align: middle;
+    width: 30px;
+}
+
+li{position:relative;}
+li:not(.sidebar-brand):before{position:absolute; left:-20px;font-family: FontAwesome;color:red;width: 30px;}
+
+div#btn_clear_input_field_request {
+    /* margin-top: 2px; */
+    background-color: #9e9a9a2b;
+    border-radius: 50px;
+    width: 45px;
+    height: 40px;
+    /* align-items: center; */
+    /* align-content: center; */
+    /* text-align: center; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#btn_accept_command {
+    /* margin-right: 10px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 45px;
+    height: 40px;
+    margin-right: 10px;
+
+    /* background-color: #aca5a578; */
+    background-color: #9e9a9a2b;
+    border-radius: 50px;
+
+    cursor: pointer;
+}
+
+div#btn_search_by_tags {
+    /* margin-right: 10px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 8px;
+    
+    width: 45px;
+    height: 40px;
+
+    background-color: #e6e2e2fa;
+    border-radius: 50px;
+}
+
+#btn_close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: relative;
+    position: relative;
+    float: right;
+    /* position: absolute; */
+    /* right: 8px; */
+    /* margin-right: 20px; */
+
+
+    width: 45px;
+    height: 45px;
+
+    background-color: #e6e2e2a3;
+    border-radius: 50px;
+}
+
+#btn_advanced_settings_for_search {
+    background-image: url(https://yastatic.net/s3/web4static/_/v2/cRpWOVFEazl8wyn9pSRVJiwY4Jg.svg);
+    background-position: center;
+    width: 50px;
+    margin-left: 5px;
+    border-radius: 50px;
+}
+
+#btn_voice_recognition {
+    border: 0;
+    background-color:transparent;
+    padding: 0;
+    margin-left: 20px;
+}
+
+#btn_download_actionBlocks, #btn_download_logs {
+    width: 200px;
+}
+
+
+
+/* Style the "Add" button */
+.addBtn {
+  padding: 10px;
+  width: 25%;
+  background: #d9d9d9;
+  color: #555;
+  float: left;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 0;
+}
+
+
+
+#btn_clear_input_field_request, #btn_voice_recognition {
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  fill:currentColor;
+  background-color: transparent;
+  border: none;
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  
+
+  align-items: center;
+  text-align: center;
+}
+
+
+#btn_clear_input_field_request:active #img_clear_input_field_request,
+#btn_voice_recognition:active #img_voice_recognition,
+#btn_accept_command:active #icon_accept_command {
+    /* Set outline light around block with image */
+    box-shadow: 0px 0px 1px 1px #4285f4; 
+    -webkit-box-shadow: 0px 0px 5px 2px #4285f4;
+    -moz-box-shadow: 0px 0px 5px 2px #4285f4;
+    /**/
+}
+
+
+
+
+
+#btn_clear_input_field_request:focus, #btn_accept_command:focus {
+  border: none;
+  outline: none; 
+}
+
+#btn_clear_input_field_request:hover, #btn_accept_command:hover {
+  /* Set outline light around block with image 
+  box-shadow: 0px 0px 5px 1px DodgerBlue; 
+  -webkit-box-shadow: 0px 0px 5px 1px DodgerBlue;
+  -moz-box-shadow: 0px 0px 5px 1px DodgerBlue;
+  */
+}
+
+
+.addBtn:hover {
+  background-color: #bbb;
+}
+
+.btn_in_dialog_container {
+    margin-left: 10px;
+    padding: 10px;
+}

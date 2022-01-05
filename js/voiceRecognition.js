@@ -40,22 +40,6 @@ const langs =
 ];
 
 
-const colors_ru = {
-	белый: 'white',
-	черный: 'black',
-	красный: 'red',
-	оранжевый: 'orange',
-	желтый: 'yellow',
-	зеленый: 'green',
-	голубой: 'blue',
-	синий: 'darkblue',
-	фиолетовый: 'violet'
-};
-
-// colors in rus language
-const colors_keyList_ru = Object.keys(colors_ru);
-const colors_list_en = ['white', 'black', 'red', 'orange', 'yellow', 'green', 'blue', 'darkblue', 'violet'];
-
 let is_continuous_speech_on = false;
 let dropdown_select_language = document.getElementById("dropdown_select_language");
 
@@ -218,7 +202,13 @@ if (!('webkitSpeechRecognition' in window)) {
 			// Set color for text
 			input_field_request.style.color = "gray";
 			
-			if(interim_transcript.includes("ok") || interim_transcript.includes("okay") || interim_transcript.includes("enter") || interim_transcript.includes("accept") || interim_transcript.includes("finish") || interim_transcript.includes("stop") || interim_transcript.includes("принять") || interim_transcript.includes("finito")) {
+			if 
+			(
+				interim_transcript.includes("ok") || interim_transcript.includes("okay") || 
+				interim_transcript.includes("enter") || interim_transcript.includes("accept") || 
+				interim_transcript.includes("finish") || interim_transcript.includes("stop") || interim_transcript.includes("принять") || 
+				interim_transcript.includes("finito")
+			) {
 				recognition.stop();
 			}
 
@@ -226,12 +216,18 @@ if (!('webkitSpeechRecognition' in window)) {
 			//let input = document.querySelector("input");
 		}
 		// if finish speech
-		else if(final_transcript) {
+		else if (final_transcript) {
 			console.log(final_transcript);
 		//	autocomplete.set_focus_last_symbol();
 			console.log("finish speech");
-			input_field_request.style.color = "black";
-			infoBlockSearcher.searchByCommand(input_field_request.value);
+			input_field_request.style.color = 'black';
+			let text_result = input_field_request.value;
+			const last_character_in_request_input_field = text_result[text_result.length - 1]
+			if (last_character_in_request_input_field === '.') {
+				input_field_request.value = input_field_request.value.substr(0, input_field_request.value.length - 1);
+			}
+
+			searchController.searchByCommand(input_field_request.value);
 		}
 	};
 }
@@ -249,10 +245,11 @@ updateDialect();
 
 function doWithSpeechMainFunc(speech_text) {
 	
-
+	
 	let language = "en";
 
-	console.log("user phrase: ", speech_text)
+	console.log("user phrase: ", speech_text);
+	
 	//document.body.innerHTML += "finish";
 	let selected_language_user = dropdown_select_language.options[dropdown_select_language.selectedIndex].text;
 	

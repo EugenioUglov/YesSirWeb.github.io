@@ -1,57 +1,64 @@
 class SpeakerController {
-    constructor(view, model) {
-        this.view = view;
-        this.model = model;
-        this.btn_speaker = undefined;
+    constructor(observable) {
+        this.speakerView = new SpeakerView(this);
+        this.speakerModel =  new SpeakerModel();
+        this.observable = observable;
+
+        this.setListeners();
     }
-
-    init() {
-        const btn_speaker = $(".btn_speak_info")[0];
-        this.btn_speaker = btn_speaker;
-
-        btn_speaker.addEventListener('click', () => {
-            this.onClickBtnSpeak(btn_speaker, event);
-        });
-    }
-
-    speak() {
-        const speak_bot = this.view.speak(this.model.text_to_speak);
-        this.view.changeSpeakButtonText(this.btn_speaker, "Stop speak");
-
-        speak_bot.onend = () => {
-            this.view.changeSpeakButtonText(this.btn_speaker, "Speak");
-            this.model.is_speaking_now = false;
-        }
-
-        this.model.is_speaking_now = true;
-    }
-
-    stopSpeak() {
-        this.view.stop();
-        this.view.changeSpeakButtonText(this.btn_speaker, "Speak");
-        this.model.is_speaking_now = false;
-    }
-
-    onClickBtnSpeak(btn_speaker, event) {
-        // Don't close panel after click speak button.
-        event.preventDefault();
-
-        if (this.model.is_speaking_now) {
+    
+    speakHandler() {
+        if (this.speakerModel.is_speaking_now) {
             this.stopSpeak();
         }
         else {
-            this.speak();
+            this.speak(this.speakerModel.text_to_speak);
         }
     }
 
+    speak(text_to_speak) {
+        this.speakerModel.is_speaking_now = true;
+        this.speakerModel.text_to_speak = text_to_speak;
 
+        const speak_bot = this.speakerView.speak(text_to_speak);
+
+        speak_bot.onend = () => {
+            this.speakerView.changeTextForSpeakButton('Speak');
+            this.speakerModel.is_speaking_now = false;
+        }
+    }
+
+    stopSpeak() {
+        this.speakerView.stop();
+        this.speakerModel.is_speaking_now = false;
+    }
+
+    onClickBtnSpeak(event) {
+        // Don't close panel after click speak button.
+        event.preventDefault();
+
+        this.speakHandler();
+    }
 
     setTextForSpeech(text) {
-        console.log(this.model);
-        this.model.text_to_speak = text;
-        
+        this.speakerModel.text_to_speak = text;
     }
+
+    setListeners() {
+        const that = this;
+
+        this.observable.listen('executeActionBlock', function(observable, eventType, data) {
+            that.speak(data);
+        });
+
+        this.observable.listen('closeContentContainer', function(observable, eventType, data) {
+            that.stopSpeak();
+        });
+    }
+
+    
 }
+
 
 
 

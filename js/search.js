@@ -7,9 +7,9 @@ search.binarySearchInArrayOfObjectsByTitle = function(arr, title) {
     let found;
     while (left < right) {
         let middle = (left + right) >> 1;
-        //console.log(arr[middle]["title"]);
+        //console.log(arr[middle]['title']);
 
-        let compareResult = title.toLowerCase() > arr[middle]["title"].toLowerCase() ? 1 : title.toLowerCase() < arr[middle]["title"].toLowerCase() ? -1 : 0;
+        let compareResult = title.toLowerCase() > arr[middle]['title'].toLowerCase() ? 1 : title.toLowerCase() < arr[middle]['title'].toLowerCase() ? -1 : 0;
 
         //console.log(compareResult);
         if (compareResult > 0) {
@@ -27,7 +27,7 @@ search.binarySearchInArrayOfObjectsByTitle = function(arr, title) {
 
 /// Bubble search infoObj.
 search.getIndexInfoObjByTitle = function(arr, title) {
-    for (i in arr) {
+    for (const i in arr) {
         let elem_curr = arr[i];
         let title_elem_curr = elem_curr.title;
         if (title_elem_curr.toLowerCase() === title.toLowerCase()) {

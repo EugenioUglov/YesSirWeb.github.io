@@ -37,7 +37,7 @@ a:hover {
     color: gray;
 }
 .info {
-    font-size: 14px;
+    font-size: 20px;
     text-align: center;
     color: #777;
     display: none;
@@ -71,11 +71,7 @@ a:hover {
     text-align: left;
     min-height: 150px;
 }
-#btn_voice_recognition {
-    border: 0;
-    background-color:transparent;
-    padding: 0;
-}     
+
 #language_selector_container {
    /* text-align: right; */
     padding: 5px;

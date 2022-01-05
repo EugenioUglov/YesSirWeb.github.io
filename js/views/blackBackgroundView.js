@@ -1,9 +1,9 @@
 const blackBackgroundView = {};
 
 blackBackgroundView.enable = function() {
-    $(".black_background")[0].style.display = "block";
+    $(".black_background").show();
 }
 
 blackBackgroundView.disable = function() {
-    $(".black_background")[0].style.display = "none";
+    $(".black_background").hide();
 }

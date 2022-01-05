@@ -1,0 +1,74 @@
+.ico-btn {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: 0;
+    bottom: 0;
+
+    height: 50px;
+    width: 50px;
+
+    border-radius: 50px;
+
+    cursor: pointer;
+    transition: all .20s cubic-bezier(0.4, 0.0, 0.2, 1);
+    background-color: #ffb100;
+    color: black;
+
+    /* margin-right: 100px; */
+    /* margin-bottom: 50px; */
+}
+
+.ico-btn__plus{
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: all .25s cubic-bezier(0.4, 0.0, 0.2, 1);;
+}
+
+.ico-btn__plus::after{
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: all .25s cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  transform: rotate(90deg);
+}
+
+.ico-btn.is-active .ico-btn__plus{
+  transform: rotate(225deg);
+}
+
+.icon_spinner {
+  animation: icon_spinner 1.3s linear infinite;
+}
+
+@keyframes icon_spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+#icon_accept_command {
+  content:url('../icons/search.png');
+
+  height: 25px;
+  width: 25px;
+  pointer-events: none;
+  color: #4285f4;
+}
+
+#icon_close {
+  content:url('../icons/x-fat.png');
+
+  height: 25px;
+  width: 25px;
+  pointer-events: none;
+  color: #4285f4;
+}

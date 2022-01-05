@@ -1,36 +1,36 @@
 class SpeakerView {
-    constructor() {
-        
+    constructor(controller) {
+        this.controller = controller; 
+        this.btn_speaker = $('.btn_speak');
+
+        this.setListeners();
     }
 
-    speak(text) {
+    speak(text, language = 'en-US') {
         const message = new SpeechSynthesisUtterance();
-        message.lang = "en-US";
+        message.lang = language;
         message.text = text;
         window.speechSynthesis.speak(message);
+       
+        this.changeTextForSpeakButton('Stop speak');
         
         return message;
     }
 
-    changeSpeakButtonText(btn_speaker, text) {
-        btn_speaker.innerText = text;
-    }
-
     stop() {
         window.speechSynthesis.cancel();
+        this.changeTextForSpeakButton('Speak');
+    }
+
+    changeTextForSpeakButton(text) {
+        const buttons_speakers = this.btn_speaker;
+
+        for(const btn_speaker of buttons_speakers) {
+            btn_speaker.innerText = text;
+        }
+    }
+
+    setListeners() {
+        this.btn_speaker.on('click', () => this.controller.onClickBtnSpeak(event));
     }
 }
-
-/*
-speakerView.start = function(text) {
-    const message = new SpeechSynthesisUtterance();
-    message.lang = "en-US";
-    message.text = text;
-    window.speechSynthesis.speak(message);
-    return message;
-}
-
-speakerView.stop = function() {
-    window.speechSynthesis.cancel();
-}
-*/

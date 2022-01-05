@@ -1,0 +1,5 @@
+class VoiceRecognitionView {
+    constructor() {
+
+    }
+}

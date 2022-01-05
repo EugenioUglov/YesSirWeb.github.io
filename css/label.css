@@ -1,0 +1,19 @@
+#label_help {
+  position: relative;
+  left: 15px;
+  top: 8px;
+  margin: 0 auto;
+
+  max-width: 680px;
+  font-size: 13px;
+
+  color: thistle;
+  text-align: left;
+  
+  pointer-events: none;
+}
+
+#elements_for_file_manager p {
+  font-size: 25px;
+  font-weight: bold;
+}

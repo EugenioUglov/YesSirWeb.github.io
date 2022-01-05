@@ -1,112 +1,123 @@
+class SearchController {
+    constructor() {
+        this.view = new SearchView();
+
+        // Set text gray in input field command.
+        $('#input_field_request')[0].style.color = 'gray';
+
+    }
+
+    searchByCommand(command, is_execute_actionBlock_by_title = true) {
+        $('.icon_spinner').show();
+        $('.actionBlocks_container').hide();
+        
+        let actionBlocks_to_show;
+
+        console.log('command', command);
+
+        if ( ! command) {
+            console.log('This is not a command');
+
+            // Show all infoBlocks.
+    
+            actionBlocks_to_show = actionBlockController.getActionBlocks();
+            console.log('actionBlocks_to_show', actionBlocks_to_show);
+    
+        
+            // Show data in images.
+            infoBlockModel.infoBlocks_on_page = actionBlockController.showActionBlocks(actionBlocks_to_show);
+        }
+        else {
+            // Show infoBlocks by user phrase.
+    
+            // Get command text from input field and find possible search data.
+            actionBlocks_to_show = infoBlockModel.getByPhrase(command);
+    
+        
+            if ( ! actionBlocks_to_show) {
+                actionBlocks_to_show = [];
+            }
+    
+            // Show infoBlocks separated by pages.
+            infoBlockModel.infoBlocks_on_page = actionBlockController.showActionBlocks(actionBlocks_to_show);
+            
+           
+            if (is_execute_actionBlock_by_title) {
+                // IF ActionBlock has been found with the same title THEN execute action.
+                for (const actionBlock of actionBlocks_to_show) {
+                    if (textAlgorithm.isSame(actionBlock.title, command)) {
+                        actionBlockController.executeActionBlock(actionBlock);
+                        
+                        break;
+                    }
+                }
+            }
+    
+            // IF has been found just one infoObject THEN execute action.
+            /*
+            if (actionBlocks_to_show.length === 1) {
+                let infoObj = actionBlocks_to_show[0];
+                actionBlockController.executeActionBlock(infoObj);
+            }
+            */
+        }
+    }
+
+    focus() {
+        this.view.focus();
+    }
+}
+
 // Show infoBlocks by user_phrase.
-function onEnterCommand(isExecuteInfoBlockByTitle = true) {
-    const user_phrase = $("#input_field_request")[0].value;
+function onEnterCommand(is_execute_actionBlock_by_title = true) {
+    const user_phrase = $('#input_field_request')[0].value;
     // Set color of text in input field command to black.
-    $("#input_field_request")[0].style.color = "black";
-    infoBlockSearcher.searchByCommand(user_phrase, isExecuteInfoBlockByTitle);
+    $('#input_field_request')[0].style.color = 'black';
+    searchController.searchByCommand(user_phrase, is_execute_actionBlock_by_title);
 }
 
 function onClear() {
-    infoBlockView.clearInfoBlocksArea();
-    $("#input_field_request")[0].value = "";
-
-    $("#input_field_request")[0].value = "";
-    let infoObjects_from_localStorage = infoBlockModel.getAll();
-    infoBlockModel.infoBlocks_on_page = infoBlockView.showInfoBlocksOnPages(infoObjects_from_localStorage);
-    infoBlockModel.showed_infoObjects = infoObjects_from_localStorage;
+    actionBlockController.clearInfoBlocksArea();
+    $('#input_field_request')[0].value = '';
+    
+    const actionBlocks = actionBlockController.getActionBlocks(); //infoBlockModel.getAll(); 
+    actionBlockController.showActionBlocks(actionBlocks);
 }
 
 // Execute a function when the user releases a key on the keyboard
-$("#input_field_request")[0].addEventListener("keyup", function(e) {
-    let isCommandInputFieldEmpty = $("#input_field_request")[0].value == "";
-
-    if (isCommandInputFieldEmpty) {
-        let isExecuteInfoBlockByTitle = false;
-        onEnterCommand(isExecuteInfoBlockByTitle);
+$('#input_field_request')[0].addEventListener('keyup', function(e) {
+    if (e.keyCode === keyCodeByKeyName.space) {
+        const is_execute_actionBlock_by_title = false;
+        onEnterCommand(is_execute_actionBlock_by_title);
     }
-
-    if (e.keyCode === keyName.Enter) {
+    else if (e.keyCode === keyCodeByKeyName.enter) {
         onEnterCommand();
     } 
 });
 
-/*execute a function presses a key on the keyboard:*/
-$("#input_field_request")[0].addEventListener("keydown", function(e) {
-    let x = document.getElementById(this.id + "view-list");
-    if (x) x = x.getElementsByTagName("div");
-
-
-    if (e.keyCode == keyCodeByKeyName.arrowDown) {
-        /*If the arrow DOWN key is pressed,
-        increase the currentFocus letiable:*/
-        currentFocus++;
-        /*and and make the current item more visible:*/
-        addActive(x);
-    } else if (e.keyCode == keyCodeByKeyName.arrowUp) { 
-        /*If the arrow UP key is pressed,
-        decrease the currentFocus letiable:*/
-        currentFocus--;
-        /*and and make the current item more visible:*/
-        addActive(x);
-    } else if (e.keyCode == keyCodeByKeyName.enter) {
-        /*If the ENTER key is pressed, prevent the form from being submitted,*/
-        console.log("Enter pressed ???");
-        e.preventDefault();
-        if (currentFocus > -1) {
-            /*and simulate a click on the "active" item:*/
-            if (x) x[currentFocus].click();
-        }
-    }
-});
-
 /*execute a function when someone writes in the text field:*/
-$("#input_field_request")[0].addEventListener("input", function(e) {
+$('#input_field_request')[0].addEventListener('input', function(e) {
     let lastCharacter = e.data;
-    label_help.innerText = "";
-    $("#input_field_request")[0].style.color = "gray";
+    
+    $('#input_field_request')[0].style.color = 'gray';
 
-    if (lastCharacter == " ") {
-        let isExecuteInfoBlockByTitle = false;
-        onEnterCommand(isExecuteInfoBlockByTitle);
+    if (lastCharacter == ' ') {
+        const is_execute_actionBlock_by_title = false;
+        onEnterCommand(is_execute_actionBlock_by_title);
     }
    // view.closeAllLists();
 });
 
-$("#input_field_request")[0].onfocus = () => {
-    $("#autocomplete")[0].style.boxShadow = "0px 0px 5px 1px #4285f4"; 
-    $("#autocomplete")[0].style.webkitBoxShadow =  "0px 0px 5px 2px #4285f4";
-    $("#autocomplete")[0].style.mozBoxShadow = "0px 0px 5px 2px #4285f4";
-}
 
-$("#input_field_request").focusout(function(){
-    $("#autocomplete")[0].style.boxShadow = null;
-    $("#autocomplete")[0].webkitBoxShadow =  null;
-    $("#autocomplete")[0].mozBoxShadow =  null;
-});
 
 
 // IF mouse over input field THEN set new title with text inside input field
-$("#input_field_request")[0].addEventListener("mouseenter", function( event ) {
+$('#input_field_request')[0].addEventListener('mouseenter', function( event ) {
     $(this).attr('title', input_field_request.value);
 });
 
-
-
-$("#btn_clear_input_field_command").click(function(){
-    $("#input_field_request")[0].focus();
-});
-
-$("#btn_accept_command").click(function(){
-    $("#input_field_request")[0].focus();
-});
-
-
-$("#btn_voice_recognition").click(function(){
-    $("#input_field_request")[0].focus();
-});
-
-$("#btn_accept_command")[0].addEventListener("click", onEnterCommand);
-$("#btn_clear_input_field_command")[0].addEventListener("click", onClear);
+$('#btn_accept_command')[0].addEventListener('click', onEnterCommand);
+$('#btn_clear_input_field_request')[0].addEventListener('click', onClear);
 
 function addActive(x) {
     /*a function to classify an item as "active":*/
@@ -116,12 +127,12 @@ function addActive(x) {
     if (currentFocus >= x.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = (x.length - 1);
     /*add class "view-active":*/
-    x[currentFocus].classList.add("autocomplete-active");
+    x[currentFocus].classList.add('autocomplete-active');
 }
 
 function removeActive(x) {
     /*a function to remove the "active" class from all view items:*/
     for (let i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
+        x[i].classList.remove('autocomplete-active');
     }
 }

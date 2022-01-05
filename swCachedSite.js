@@ -33,7 +33,7 @@ self.addEventListener('fetch', e => {
             caches.open(cacheName)
             .then(cache => {
                 // Add responce to the cache.
-                cache.put(e.request, resClone);
+                cache.put(e.request, resClone);  
             });
             return res;
         })
