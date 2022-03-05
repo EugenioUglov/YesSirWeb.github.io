@@ -4,10 +4,11 @@ authorizationDataModel.get = function() {
     let authorizationData;
 
     try {
-        authorizationData = JSON.parse(localStorage["authorization"]);
+        let authorizationData;
+        if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
     }
     catch {
-        authorizationData = localStorage["authorization"];
+        authorizationData = localStorage['authorization'];
     }
 
     return authorizationData;

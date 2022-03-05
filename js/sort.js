@@ -44,24 +44,24 @@ sort.getSortedArrayOfObjectsByProperty = function(arr_origin, property, is_sort_
 
 
 // Bubble sort O(n^2).
-// Get sorted infoObjects by property.
-sort.getSortedInfoObjectsByProperty = function(infoObjects, property = "priority") {
+// Get sorted actionBlocks by property.
+sort.getSortedActionBlocksByProperty = function(actionBlocks, property = "priority") {
     let is_sorting = true;
     while (is_sorting) {
         is_sorting = false;
-        for (let i = 0; i < infoObjects.length - 1; i++) {
-            let infoObj_curr = infoObjects[i];
-            let infoObj_next = infoObjects[i + 1];
+        for (let i = 0; i < actionBlocks.length - 1; i++) {
+            let infoObj_curr = actionBlocks[i];
+            let infoObj_next = actionBlocks[i + 1];
             if (infoObj_curr[property] < infoObj_next[property]) {
-                infoObjects[i] = infoObj_next;
-                infoObjects[i + 1] = infoObj_curr;
+                actionBlocks[i] = infoObj_next;
+                actionBlocks[i + 1] = infoObj_curr;
                 is_sorting = true;
             }
         }
     }
-    //console.log("sorted infoObjects:.");
-    //console.log(infoObjects);
-    return infoObjects;
+    //console.log("sorted actionBlocks:.");
+    //console.log(actionBlocks);
+    return actionBlocks;
 }
 
 

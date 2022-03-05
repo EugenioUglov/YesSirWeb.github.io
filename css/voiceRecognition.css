@@ -14,7 +14,7 @@ a:hover {
 .button {
     background: -webkit-linear-gradient(top,#008dfd 0,#0370ea 100%);
     border: 1px solid #076bd2;
-    border-radius: 3px;
+    border-radius: 8px;
     color: #fff;
     display: none;
     font-size: 13px;
@@ -36,12 +36,7 @@ a:hover {
 .interim {
     color: gray;
 }
-.info {
-    font-size: 20px;
-    text-align: center;
-    color: #777;
-    display: none;
-}
+
 
 .right {
     float: right;

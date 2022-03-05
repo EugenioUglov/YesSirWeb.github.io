@@ -11,11 +11,11 @@ class LogsModel {
         return this.logs;
     }
     
-    downloadFile() {
-        const logs = logsController.getLogs();
+    getDataForFile() {
+        const logs = this.getLogs();
 
-        const date_obj = new Date();
-        const date_text = date_obj.today() + '  ' + date_obj.timeNow();
+        const date = new Date();
+        const date_text = date.today() + '  ' + date.timeNow();
     
         // Set variable for name of the saving file with date and time. 
         const file_name = 'Logs_Action-Blocks ' + date_text;
@@ -32,6 +32,12 @@ class LogsModel {
             content += number_log + '. ' + log;
         }
 
-        fileManager.saveFile(content, file_name, extension);
+        const data_for_file = {
+            content: content,
+            name: file_name,
+            extension: extension
+        };
+
+        return data_for_file;
     }
 }

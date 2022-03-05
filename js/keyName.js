@@ -3,4 +3,4 @@ const keyCodeByKeyName = {
     arrowUp: 38,
     enter: 13,
     space: 32
-}
+};

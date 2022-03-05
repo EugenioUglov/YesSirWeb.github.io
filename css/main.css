@@ -94,13 +94,15 @@ div#welcome_page {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 30px;
+  text-align: center;
+
+  font-size: 15px;
 }
 
 .outline {
   padding: 10px;
   outline: 1px solid black;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 
@@ -185,6 +187,16 @@ div#welcome_page {
   margin: 10px;
 }
 
+#content_executed_from_actionBlock .content {
+  font-size: 15px;
+  text-align: center;
+  color: #a7a7a7;
+  display: none;
+  /*
+  white-space: pre-wrap;
+  */
+}
+
 
 @media (max-width: 1300px) {
     .content {
@@ -198,11 +210,28 @@ div#welcome_page {
 }
 
 @media (max-width: 450px) {
-    .content {
+  .content {
        padding-left: 0px;
        padding-right: 0px;
        text-align: center;
+  }
+
+  #btn_accept_input_field_request {
+    width: 50%;
+   
+  }
+
+  div#btn_clear_input_field_request {
+    width: 50%;
    }
+
+  #btn_voice_recognition {
+    width: 20%;
+  }
+
+  #btn_advanced_settings_for_search {
+    width: 20%;
+  }
 }
 
 
@@ -322,12 +351,12 @@ div#welcome_page {
 }
 
 .resize_field {
-  border-radius: 5px;
+  border-radius: 8px;
   resize: vertical;
 }
 
 .interactive_field {
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 #search_by_tags_container {
@@ -346,19 +375,14 @@ div#welcome_page {
 }
 
 #autocomplete {
-  display: flex; 
-
-  height: 39px;
-  width: 100%;
-  border-radius: 24px;
-  /* z-index: 3; */
-  height: 44px;
+  display: flex;
   margin: 0 auto;
-  
-
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  
-  max-width: 680px;
+  width: 100%;
+  /* z-index: 3; */
+  height: 50px;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+  /* max-width: 680px; */
+  border-radius: 24px;
 }
 
 #request_container {
@@ -366,12 +390,14 @@ div#welcome_page {
   display: flex;
   border: 1px solid #dfe1e5;
   box-shadow: none;
-  height: 39px;
+  height: 49px;
   width: 100%;
-  border-radius: 24px;
+  border-radius: 50px;
   /* z-index: 3; */
-  height: 44px;
   margin: 0 auto;
+  /* padding-bottom: 5px; */
+  padding: 10p;
+  padding: 3px;
 }
 
 
@@ -380,7 +406,7 @@ div#welcome_page {
 
 #input_field_request {
   border: none;
-  background-color: transparent; 
+  background-color: transparent;
   color: rgba(0,0,0,.87);
   word-wrap: break-word;
   outline: none;
@@ -389,7 +415,6 @@ div#welcome_page {
   -webkit-tap-highlight-color: transparent;
   margin-left: 10px;
   font-size: 16px;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -436,7 +461,7 @@ input[type=text] {
 }
 
 input[type=submit] {
-  background-color: DodgerBlue;
+  /* background-color: DodgerBlue; */
   color: #fff;
   cursor: pointer;
 }
@@ -469,11 +494,13 @@ input[type=submit] {
   background-color: #e9e9e9; 
 }
 
-/*when navigating through the items using the arrow keys:*/
+
+/*when navigating through the items using the arrow keys:
 .autocomplete-active {
   background-color: DodgerBlue !important; 
   color: #ffffff; 
 }
+*/
 
 /* Buttons */
 
@@ -488,8 +515,8 @@ input[type=submit] {
 
 #img_voice_recognition {
   position: relative;
-  height: 44px;
-  width: 44px;
+  width: 50px;
+  height: 50px;
   pointer-events: none;
   color: #000000;
   background-color: white;
@@ -506,7 +533,7 @@ div#list_of_type_action-blocks_to_create {
   width: 300px;
   height: 345px;
 
-  border-radius: 5px;
+  border-radius: 8px;
 
   border: 1px solid black;
   background-color: #1b1b1d;
@@ -527,14 +554,14 @@ ul {
 /* Style the list items */
 ul li {
   position: relative;
-  border-radius: 5px;
+  border-radius: 8px;
   margin: 10px;
   padding: 10px;
 
   cursor: pointer;
   list-style-type: none;
   background: #eee;
-  color: #c2c3ae;
+  color: #a3a3da;
   font-size: 18px;
   border: 1px solid;
   transition: 0.2s;
@@ -550,7 +577,7 @@ ul li {
 
 /* Darker background-color on hover */
 ul li:hover {
-  background: #573c00;
+  background: #38265f;
 }
 
 /* When clicked on, add a background color and strike out text */
@@ -635,4 +662,8 @@ scroll-container {
 
 .modal_header {
   margin-bottom: 80px;
+}
+
+.inline {
+  display: inline-block;
 }

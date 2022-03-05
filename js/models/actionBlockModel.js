@@ -1,105 +1,122 @@
 class ActionBlockModel {
-    constructor(dbManager) {
-        this.title_infoBlock_before_update = '';
+    constructor(dbManager, textManager, observable, dataStorageController) {
+        this.textManager = textManager;
+        this.title_actionBlock_before_update = '';
         this.dbManager = dbManager;
-        
-        
+        this.dataStorageController = dataStorageController;
+        this.actionBlocks = [];
+        this.actionBlocks_from_database = [];
+        this.indexes_actionBlocks_by_tag = [];
+        this.infoBlocks_on_page = '';
+        this.i_actionBlock_opened_settings;
+        this.is_menu_create_type_actionBlock_open = false;
+    
+        this.action_name = {
+            openURL: 'openURL',
+            showInfo: 'showInfo',
+            openFolder: 'openFolder',
+            showHTML: 'showHTML',
+            createActionBlock: 'createActionBlock',
+            showFileManager: 'showFileManager',
+            showDataStorageManager: 'showDataStorageManager',
+            showElementsForVoiceRecognitionManager: 'showElementsForVoiceRecognitionManager',
+            showLogs: 'showLogs',
+        };
+    
+        this.action_description_by_action_name = {
+            openURL: 'Open URL',
+            showInfo: 'Show info',
+            openFolder: 'Create folder (Search info by tags)',
+            showHTML: 'Show info in HTML mode'
+        };
+    
+        // Titles for input field info of action.
+        this.content_type_description_by_action = {
+            openURL: 'URL',
+            showInfo: 'Description',
+            openFolder: 'Tags to search',
+            showHTML: 'HTML code'
+        };
+
+        this.observable = observable;
+        console.log(this.dataStorageController);
     }
     
-    actionBlocks = [];
-    actionBlocks_from_database = [];
-    indexes_actionBlocks_by_tag = [];
-    infoBlocks_on_page = '';
 
-    
-    add(actionBlock_to_add, isShowAlert = true) {
-        //this.actionBlocks = infoBlockModel.getAll();
-      
-        // Add new Action-Block.
-        // const is_obj_added_to_array = insertInfoObjToArray(actionBlocks, actionBlock_to_add);
+    #actionBlocks_map = new Map();
+    #index_actionBlock_by_title = {};
+ 
 
-        const indexActionBlockByTitle = search.getIndexInfoObjByTitle(this.actionBlocks, actionBlock_to_add.title);
+    onStartSave() {
 
-
-        // If Action-Block not found in current Action-Blocks array.
-        if (indexActionBlockByTitle === -1) {
-            // Add new Action-Block to the beginning of array.
-            this.actionBlocks.unshift(actionBlock_to_add);
-        }
-        else {
-            if (isShowAlert) alert('Data with current title already exists. Title: ' + actionBlock_to_add.title);
-            else {
-                console.log('Data with current title already exists. Title: ' + actionBlock_to_add.title);
-            }
-
-            return false;
-        }
-        
-
-        console.log('actionBlocks after', this.actionBlocks);
-
-        this.#onUpdate();
-        
-        // Binary insert infoObject to array of infoObjects.
-        function insertInfoObjToArray(array, obj) {
-            //console.log(array);
-            let index = search.binarySearchInArrayOfObjectsByTitle(array, obj.title);
-            //console.log(index);
-            if (index < 0) {
-                // Add infoObject to array.
-                array.splice(-(index + 1), 0, obj);
-                //console.log("new array", array);
-                return true;
-            }
-            return false;
-        }
-    
-        return this.actionBlocks;
     }
 
-    get() {
+    onSaved() {
+
+    }
+
+    getActionBlocksMap() {
+        return this.#actionBlocks_map;
+    }
+
+    
+    getActionBlocks() {
         return this.actionBlocks;
     }
 
     getActionBlocksFromStorageAsync(onGetCallback) {
-        console.log('getActionBlocksFromStorageAsync');
         let that = this;
 
 
-        if (siteSettingsModel.get().storage === STORAGE.database){
-            getActionBlocksFromDatabase();
+        if (this.dataStorageController.getUserStorage() === storage_name.database) {
+            getActionBlocksFromDatabase(onGetCallback, onFail);
+
+            function onFail() {
+                alert('Data synchronization error! Action-Blocks will be saved in the browser storage');
+
+                $('#autorization_log').text('ERROR! Connection to database is failed');
+                $('#autorization_log').css('color', 'red');
+
+                localStorage.removeItem('authorization');
+                that.dataStorageController.setUserStorage(storage_name.localStorage);
+                that.getActionBlocksFromLocalStorageAsync(onGetCallback);
+            }
         }
-        else if (siteSettingsModel.get().storage === STORAGE.localStorage) {
-            this.getActionBlocksFromLocalStorage(onGetCallback)
+        else if (this.dataStorageController.getUserStorage() === storage_name.localStorage) {
+            that.getActionBlocksFromLocalStorageAsync(onGetCallback);
         }
 
-        function getActionBlocksFromDatabase() {
-            let actionBlocks = [];
+        function getActionBlocksFromDatabase(onGetCallback, failCallback) {
+            //console.log('dataFromDatabaseLoading');
+            const event_data_from_database_loading = {
+                name: 'dataFromDatabaseLoading',
+                data: {
+                    log: 'Loading data from database'
+                }
+            };
 
-            logsController.addLog('Get data from Database');
+            that.observable.dispatchEvent(event_data_from_database_loading.name, event_data_from_database_loading.data);
+         
 
-            $('.icon_spinner').show();
-            $('#rb_storage_db')[0].checked = true;
-            rb_storage_db.onChecked();
 
-            if (authorizationDataModel.get()) {
-                const nickname = authorizationDataModel.get().nickname;
-                const password = authorizationDataModel.get().password;
+            let authorizationData;
+            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
+
+            if (authorizationData) {
+                const nickname = authorizationData.nickname;
+                const password = authorizationData.password;
                 
                 $('#input_field_nickname')[0].value = nickname;
                 $('#input_field_password')[0].value = password;
 
+                $('#autorization_log').text('Connecting to database..');
                 
-                logsController.addLog('Connecting to the Database..');
                 
-                dbManager.authorization(nickname, password, onAuthorization);
+                that.dbManager.authorization(nickname, password, onAuthorization, failCallback);
 
                 function onAuthorization(DB_responce) {
-                    logsController.addLog('Waiting for responce from Database..');
-                    $('#autorization_log').text('Waiting for responce from Database..');
+                    $('#autorization_log').text('Waiting for responce from database..');
                     $('#autorization_log').css('color', 'gray');
-
-                    console.log(DB_responce);
 
                     if (DB_responce) {
                         if (DB_responce.access) {
@@ -108,86 +125,101 @@ class ActionBlockModel {
                             $('#autorization_log').css('color', 'green');
 
                             // Set authorization data to localStorage.
-                            localStorage['authorization'] = '{"nickname" : "' + nickname + '" , "password" : "' + 
-                                password + '" , "id" : "' + DB_responce.id + '" }';
+                            authorizationData = {
+                                id: DB_responce.id,
+                                nickname: nickname,
+                                password: password
+                            };
 
-                            logsController.addLog('Database connection is completed successfully for user: ' + nickname);
-                            
+
+                            localStorage['authorization'] = JSON.stringify(authorizationData);
+
+                            const event_database_connection_success = {
+                                name: 'databaseConnectionSuccess',
+                                data: {
+                                    log: 'Database connection is completed successfully for user: ' + nickname
+                                }
+                            };
+
+                            that.observable.dispatchEvent(event_database_connection_success.name, event_database_connection_success.data);
+
                             // Get data from DB.
-                            // getUserDataFromDatabase(onGetUserDataFromDB);
-                            if ( ! authorizationDataModel.get()) {
-                                alert('Error authorizationDataModel');
+                            if ( ! authorizationData) {
+                                alert('Error authorization');
                                 return false;
                             }
 
-                            const user_id = authorizationDataModel.get().id;
-                            dbManager.getUserData(user_id, onGetUserDataFromDB);
+                            const user_id = authorizationData.id;
+                            that.dbManager.getUserData(user_id, onGetUserDataFromDB);
 
-                            console.log('Authorization data', DB_responce);
                             $('#btn_authorization')[0].disabled = false;
                             window.scrollTo(pageXOffset, 0);
 
                             return;
 
                             function onGetUserDataFromDB(DB_responce) {
+                                console.log('onGetUserDataFromDB', DB_responce);
                                 // Get user_data from DB field.
 
-                                // is_possible_get_infoObjects_from_DB.
+                                // is_possible_get_actionBlocks_from_database.
                                 if (DB_responce) {
                                     if (DB_responce['user_data']) {
                                         let userDataFromDB;
+                                        let actionBlocks_from_database;
                                         
                                         // IF data from DB parsed successfully THEN go next.
                                         try {
                                             userDataFromDB = JSON.parse(DB_responce['user_data']);
+                                            actionBlocks_from_database = JSON.parse(userDataFromDB['actionBlocks']);
                                         }
                                         catch {
-                                            alert('ERROR!!! InfoObjects have not been loaded from DB. \nProbably infoOBjects data from DB are broken');
+                                            alert('ERROR! Action-Blocks have not been loaded from database. \nProbably data is broken.');
+
+                                            failCallback();
                                             return;
                                         }
-                            
-                            
-                                        const infoObjects_from_DB = JSON.parse(userDataFromDB['infoObjects']);
-                                        // that.actionBlocks = infoObjects_from_DB;
-                                        
-                                        console.log('infoObjects_from_DB', infoObjects_from_DB);
-                                        console.log('that from get data from database ', that);
-   
-                                        that.actionBlocks_from_database = [].concat(infoObjects_from_DB);
+                                        that.actionBlocks_from_database = [].concat(actionBlocks_from_database);
+                                        console.log('data from DB', that.actionBlocks_from_database);
                                         onGetCallback(that.actionBlocks_from_database);
-
                                         
                                         return;
-                                        
                                     }
                                 }
-                                else {
-                                    // actionBlockModel.saveInDatabase();
-                                }
-                                // IF data infoObjects weren't loaded from DB THEN set current infoObjects to DB.
-                                // actionBlockModel.saveInDatabase();
                             }
                         }
                     }
 
                     onGetCallback(null);
-                    logsController.addLog('Database connection is failed');
 
-                    $('#autorization_log').text('ERROR!!! Connection to DB is failed');
+                    const event_database_connection_failed = {
+                        name: 'databaseConnectionFailed',
+                        data: {
+                            log: 'Database connection is failed for user: ' + nickname
+                        }
+                    };
+                    
+                    that.observable.dispatchEvent(event_database_connection_failed.name, event_database_connection_failed.data);
+
+                    $('#autorization_log').text('ERROR! Connection to database is failed');
                     $('#autorization_log').css('color', 'red');
                     $('#btn_authorization')[0].disabled = false;
                 }
             }
             else {
-                alert('Error on authorization to database! Data is out of sync.\n\nThe data will be updated in the browser storage.\nLog in again to sync your data.');
-                onGetCallback(null);
+                alert('Error on authorization to database! Data is out of sync.\n\n\
+                    Data will be updated in the browser storage.\nLog in again to sync your data.');
+
+                $('#autorization_log').text('ERROR! Connection to database is failed');
+                $('#autorization_log').css('color', 'red');
+                failCallback();
             }
+
         }
     }
 
-    getActionBlocksFromLocalStorage(onGetCallback) {
+    getActionBlocksFromLocalStorageAsync(onGetCallback) {
         let actionBlocks = [];
-        const key = 'infoObjects';
+        const key = 'actionBlocks';
         
         if (localStorage.getItem(key)) {
             const actionBlocks_from_localStorage = JSON.parse(localStorage.getItem(key));
@@ -196,11 +228,559 @@ class ActionBlockModel {
             actionBlocks = actionBlocks.concat(actionBlocks_from_localStorage);
         }
 
-        this.actionBlocks = actionBlocks;
+        //this.setActionBlocks(actionBlocks);
 
         if (onGetCallback) onGetCallback(actionBlocks);
 
         return actionBlocks;
+    }
+
+    getIndexesActionBlocksByTag() {
+        const key = 'indexes_actionBlocks_by_tag';
+    
+        if (localStorage.getItem(key)) return JSON.parse(localStorage[key]);
+    
+        return {};
+    }
+
+    getIndexActionBlockByTitle(title) {
+        title = title.toLowerCase();
+        return this.#index_actionBlock_by_title[title];
+    }
+
+    getByPhrase(user_phrase) {
+        const that = this;
+
+        console.log('this', this);
+        // Delete characters "," from phrase.
+        user_phrase = user_phrase.replaceAll(',', '');
+    
+        // If phrase doesn't exist.
+        if ( ! user_phrase) {
+            console.log('Action-Blocks don\'t exist with tags: ' + user_phrase);
+            return;
+        }
+    
+        if (user_phrase === undefined || user_phrase === null) {
+            let error_text = 'user_phrase not defined during information searching';
+            console.log(error_text);
+        }
+    
+        // Here all objects from a storage which info can to be looking by user.
+        let found_actionBlocks = [];
+        
+        const actionBlocks = this.getActionBlocks();
+        
+        user_phrase = user_phrase.toLowerCase();
+        const user_words = this.textManager.splitText(user_phrase, ' ');
+        
+        
+        const indexes_actionBlocks_by_tag = this.getIndexesActionBlocksByTag();
+        const indexes_infoObjects_to_show = getIndexesInfoObjectsToShowByPhrase(user_words); 
+    
+    
+    
+        // Create an array with actionBlocks and priority value to show.
+        for (const i_obj of indexes_infoObjects_to_show) {
+            let actionBlock = actionBlocks[i_obj];
+    
+            let priority_actionBlock = this.#getPriorityActionBlockByTags(actionBlock, user_phrase);
+            actionBlock.priority = priority_actionBlock;
+            // console.log(actionBlock, priority_actionBlock);
+    
+            if (priority_actionBlock > 0) {
+                // Push current obj.
+                found_actionBlocks.push(actionBlock);
+            }
+        }
+    
+        const property_in_actionBlock_for_sort = 'priority';
+        let is_sort_from_A_to_Z = false;
+    
+        // Sort by priority.
+        found_actionBlocks = sort.getSortedActionBlocksByProperty(found_actionBlocks, property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
+    
+        return found_actionBlocks;
+    
+        function getIndexesInfoObjectsToShowByPhrase(user_words) {
+            const indexes_infoObjects_to_show = [];
+            
+            // Push index of infoObj by user phrase if it doesn't exist yet in array. 
+            for (const i_user_word in user_words) {
+                // One user word of phrase.
+                const user_word = user_words[i_user_word];
+                // Indexes of current tag.
+                const indexes_infoObjects_curr = indexes_actionBlocks_by_tag[user_word];
+    
+                // For each index of infoObject for current tag.
+                for (const i_index_infoObj_to_show in indexes_infoObjects_curr) {
+                    let i_infoObj_to_show = indexes_infoObjects_curr[i_index_infoObj_to_show];
+    
+                    let index_exist_in_indexes_infoObjects = arrayManager.isValueExistsInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
+    
+                    if (index_exist_in_indexes_infoObjects) {
+                        continue;
+                    }
+    
+                    indexes_infoObjects_to_show.push(i_infoObj_to_show);
+                }
+            }
+    
+            return indexes_infoObjects_to_show;
+        }
+
+                
+        
+    }
+
+    
+    getActionBlocksByTags(user_phrase, minus_tags) {
+        // Delete characters ',' from phrase.
+        user_phrase = user_phrase.replaceAll(',', ' ');
+        minus_tags = minus_tags.replaceAll(',', ' ');
+    
+        // If phrase doesn't exist.
+        if ( ! user_phrase) {
+            console.log('Action-Blocks don\'t exist with tags: ' + user_phrase);
+            return;
+        }
+    
+        if (user_phrase === undefined || user_phrase === null) {
+            let error_text = 'user_phrase not defined during information searching';
+            console.log(error_text);
+        }
+    
+        // Here all objects from a storage which info can to be looking by user.
+        let searched_infoObjects = [];
+        let actionBlocks = actionBlockController.getActionBlocks();
+        
+        user_phrase = user_phrase.toLowerCase();
+        minus_tags = minus_tags.toLowerCase();
+    
+        const user_tags = this.textManager.splitText(user_phrase, ' ');
+        const user_minus_tags = this.textManager.splitText(minus_tags, ' ');
+        
+        const indexes_actionBlocks_by_tag = actionBlockController.getIndexesActionBlocksByTag();
+    
+    
+        const indexes_infoObjects_to_show = getIndexesActionBlocksToShowByTags(user_tags, user_minus_tags); 
+    
+        // Create an array with actionBlocks and priority value to show.
+        for (let i_obj of indexes_infoObjects_to_show) {
+            let infoObj_curr = actionBlocks[i_obj];
+    
+            let priority_infoObj_curr = this.#getPriorityActionBlockByTags(infoObj_curr, user_phrase);
+            infoObj_curr.priority = priority_infoObj_curr;
+            console.log(infoObj_curr, priority_infoObj_curr);
+    
+            if (priority_infoObj_curr > 0) {
+                // Push current obj
+                searched_infoObjects.push(infoObj_curr);
+            }
+        }
+    
+        const property_in_actionBlock_for_sort = 'priority';
+        let is_sort_from_A_to_Z = false;
+    
+        // Sort by priority.
+        searched_infoObjects = sort.getSortedActionBlocksByProperty(searched_infoObjects, 
+            property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
+    
+        return searched_infoObjects;
+    
+    
+        function getIndexesActionBlocksToShowByTags(tags, minus_tags) {
+            let indexes_actionBlocks_to_show = [];
+    
+            // Push index of Action-blocks by user phrase if it doesn't exist yet in array. 
+            for (let i_tag in tags) {
+                // One user word of phrase.
+                let tag = tags[i_tag];
+    
+                if (indexes_actionBlocks_by_tag[tag] === undefined) {
+                    return [];
+                }
+                
+                // If array with indexes to show is empty. 
+                if (indexes_actionBlocks_to_show.length < 1) {
+                    // Add all Action-Blocks indexes of tag to array.
+                    indexes_actionBlocks_to_show = indexes_actionBlocks_to_show.concat(indexes_actionBlocks_by_tag[tag]);
+                }
+                else {
+                    indexes_actionBlocks_to_show = arrayManager.getSameElementsFromArrays
+                    (
+                        indexes_actionBlocks_to_show, indexes_actionBlocks_by_tag[tag]
+                    );
+    
+                    if (indexes_actionBlocks_to_show.length < 1) {
+                        // No same indexes in tags after comparation.
+    
+                        return []; 
+                    }
+                }
+            }
+    
+            indexes_actionBlocks_to_show = getIndexesActionBlocksWithoutMinusTags(indexes_actionBlocks_to_show, minus_tags);
+    
+            return indexes_actionBlocks_to_show;
+    
+    
+            function getIndexesActionBlocksWithoutMinusTags(indexes_actionBlocks_to_show, minus_tags) {
+                // Delete items with minus tags.
+                for (const minus_tag of minus_tags) {
+                    for (const i_index_infoObj_to_show in indexes_actionBlocks_to_show) {
+                        const i_infoObj_to_show = indexes_actionBlocks_to_show[i_index_infoObj_to_show];
+    
+                        // Compare minus tag with each Action-Block that has this tag.
+                        for (const index_actionBlock_with_minus_tag of indexes_actionBlocks_by_tag[minus_tag]) {
+                            if (index_actionBlock_with_minus_tag === i_infoObj_to_show) {
+                                indexes_actionBlocks_to_show[i_index_infoObj_to_show] = undefined;
+                            }
+                        }
+                    }
+                }
+    
+                // Delete all undefined elements from array.
+                indexes_actionBlocks_to_show = indexes_actionBlocks_to_show.filter(function(x) {
+                    return x !== undefined;
+                });
+    
+    
+                return indexes_actionBlocks_to_show;
+            }
+        }
+    }
+
+    getDefaultActionBlocks = function() {
+        const actionBlock_create = {
+            title: 'Create Action-Block',
+            tags: 'Create Action-Block, default',
+            action: 'showHTML',
+            content: '<script>actionBlockController.showElementsToCreateActionBlock()</script>',
+            imageURL: 'https://i.ibb.co/K6kqJQc/plus.png'
+        };
+
+        const actionBlock_create_note = {
+            title: 'Create a note',
+            tags: 'create note, voice recognition, default',
+            action: 'showHTML',
+            content: getContentActionBlockCreateNote(),
+            imageURL: 'https://i.ibb.co/K6kqJQc/plus.png'
+        };
+        
+        const actionBlock_open_file_manager = {
+            title: 'Open File Manager',
+            tags: 'File manager, save, upload, download, file, default',
+            action: 'showHTML',
+            content: getContentActionBlockOpenFileManager(),
+            imageURL: 'https://icon-library.com/images/file-download-icon/file-download-icon-19.jpg'
+        };
+    
+        const actionBlock_open_data_storage_manager = {
+            title: 'Open Data Storage Manager',
+            tags: 'Data Storage Manager, localstorage, database, default',
+            action: 'showHTML',
+            content: '<script>actionBlockController.showElementsForDataStorageManager()</script>',
+            imageURL: 'https://www.sostechgroup.com/wp-content/uploads/2016/08/ThinkstockPhotos-176551504.jpg'
+        };
+    
+    
+        const actionBlock_facebook_of_developer = {
+            title: 'Open Facebook page of developer',
+            tags: 'facebook, account, developer, contact, message, default',
+            action: 'openURL',
+            content: 'https://www.facebook.com/eugeniouglov',
+            imageURL: 'https://i.ibb.co/QJ4y5v3/DEVELOPER-facebook.png'
+        };
+    
+        const actionBlock_email_of_developer = {
+            title: 'Write email to developer - eugeniouglov@gmail.com',
+            tags: 'email, developer, contact, message, gmail, mail, default',
+            action: 'openURL',
+            content: 'mailto:eugeniouglov@gmail.com',
+            imageURL: 'https://i.ibb.co/dMHPk78/DEVELOPER-gmail.png'
+        };
+    
+        const actionBlock_logs = {
+            title: 'Show logs',
+            tags: 'logs, default',
+            action: 'showHTML',
+            content: '<script>logsController.showLogs()</script>',
+            imageURL: 'https://pbs.twimg.com/profile_banners/240696823/1528203940/1500x500'
+        };
+    
+        const actionBlock_voiceRecognitionSettings = {
+            title: 'Open voice recognition settings',
+            tags: 'voice recognition, default',
+            action: 'showHTML',
+            content: '<script>actionBlockController.showElementsForVoiceRecognitionManager()</script>',
+            imageURL: 'https://walkthechat.com/wp-content/uploads/2015/02/voice-recognition.jpg'
+        };
+
+
+        
+    
+        const default_actionBlocks = [
+            actionBlock_create,
+            actionBlock_create_note,
+
+            actionBlock_facebook_of_developer, 
+            actionBlock_email_of_developer,
+            
+            actionBlock_open_file_manager,
+            actionBlock_open_data_storage_manager,
+            actionBlock_logs,
+            actionBlock_voiceRecognitionSettings
+        ];
+
+        function getContentActionBlockOpenFileManager() {
+            return `<div id="elements_for_file_manager" class="elements_for_executed_actionBlock" padding-top: 50px;">
+            <br><br>
+        
+            <div class="outline">
+                <p>Save Action-Blocks to the file</p>
+                <button class="btn_download_actionBlocks btn" title="Save Action-Blocks in the file">Download Action-Blocks file</button>
+                <br><br>
+            </div>
+            <br>
+            <div class="outline">
+                <p>Upload file with Action-Blocks</p>
+                <div class="upload_commands_container">
+                    <button type="file" class="btn" title="Upload file with Action-Blocks"><input class="btn_upload_actionBlocks" type="file" name="file" title=" ">
+                    </button>
+                </div>
+            </div>
+            <br>
+            </div>
+            
+            <script>
+            
+            $('.btn_upload_actionBlocks').on('change', (event) => {
+            fileManager.uploadFile(onFileLoaded);
+            
+            function onFileLoaded(content_of_file) {
+            if (content_of_file === undefined) {
+                alert('Error! Data from the file has not been loaded');
+                return;
+            }
+            
+            // Get actionBlocks from the file.
+            let actionBlocks_from_file;
+            
+            console.log(content_of_file);
+            
+            try {
+                actionBlocks_from_file = JSON.parse(content_of_file);
+            }
+            catch(error) {
+                alert('Content of file is not correct. File must contain an Action-Blocks data.');
+                console.log(error);
+                return;
+            }
+            
+            $('#btn_close').click();
+            
+            const event_file_actionBlocks_uploaded = {
+            name: 'fileActionBlocksUploaded',
+            data: {
+            log: 'fileActionBlocksUploaded',
+            actionBlocks: actionBlocks_from_file
+            }
+            };
+            
+            observable.dispatchEvent(event_file_actionBlocks_uploaded.name, event_file_actionBlocks_uploaded.data);
+            }
+            
+            
+            
+            // Give possibility to load the same file again.
+            $('.btn_upload_actionBlocks').value = '';
+            });
+            
+            
+            downloadFileWithActionBlocks = () => {
+            const content = JSON.stringify(actionBlockController.getActionBlocks());
+            
+            const date_obj = new Date();
+            // Get date in format day.month.year hours.minutes.seconds.
+            // const date_text = date_obj.today() + '  ' + date_obj.timeNow();
+            
+            //months from 1-12
+            const month = date_obj.getUTCMonth() + 1;
+            const day = date_obj.getUTCDate();
+            const year = date_obj.getUTCFullYear();
+            const hours = date_obj.getHours();
+            const minutes = date_obj.getMinutes();
+            const seconds = date_obj.getSeconds();
+            
+            const date_text = '' + year + month + day + '_' + hours + minutes + seconds;
+            
+            // Set variable for name of the saving file with date and time. 
+            const file_name = 'Action-Blocks ' + date_text;
+            const extension = '.json';
+            
+            fileManager.downloadFile(content, file_name, extension);
+            }
+            
+            $('.btn_download_actionBlocks')[0].addEventListener('click', () => {
+            downloadFileWithActionBlocks();
+            });
+            </script>`;
+        }
+    
+        function getContentActionBlockCreateNote() {
+            return `<script>
+            actionBlockController.showElementsToCreateActionBlock('showInfo');
+
+            $('#settings_action_block_container').find('.dropdown_select_action').val('showInfo');
+            $('#title_action_descritption').text(content_type_description_by_action['showInfo']);
+
+  
+            let is_recognizer_active = true;
+            
+            // Создаем распознаватель
+            const recognizer = new webkitSpeechRecognition();
+            
+            // Ставим опцию, чтобы распознавание началось ещё до того, как пользователь закончит говорить
+            recognizer.interimResults = true;
+            
+            // Какой язык будем распознавать?
+            recognizer.lang = 'en-En';
+
+            $('.btn').on('click', () => {
+                console.log('stop voice recognition');
+                is_recognizer_active = false;
+                recognizer.stop();
+            });
+            
+            voiceRecognitionForContent();
+            
+            function voiceRecognitionForContent() {
+               $('.input_field_content').focus();
+                speakerController.speak('Please, tell the text of the note', onEndSpeak);
+            
+                function onEndSpeak() {
+                    let isFinalResult = false;
+            
+                    // Используем колбек для обработки результатов
+                    recognizer.onresult = function (event) {
+                        let result = event.results[event.resultIndex];
+            
+                        if (result.isFinal) {
+                            isFinalResult = true;
+                            const user_final_speech_text = result[0].transcript;
+                            $('.input_field_content').val(user_final_speech_text);
+                             speakerController.speak('Thank you!');
+                            voiceRecognitionForCommand();
+                        } else {
+                            const user_cotinuous_speech_text = result[0].transcript;
+                            $('.input_field_content').val(user_cotinuous_speech_text);
+                        }
+                    }
+                    recognizer.onend = function() {
+                            if (isFinalResult === false && 
+                                is_recognizer_active) recognizer.start();
+                    }
+                    // Начинаем слушать микрофон и распознавать голос
+                    recognizer.start(); 
+                }
+            }
+            
+            function voiceRecognitionForCommand() {
+               $('.input_field_title').focus();
+                speakerController.speak('Please, tell the command that opens this note', onEndSpeak);
+            
+                function onEndSpeak() {
+                    let isFinalResult = false;
+            
+                    // Используем колбек для обработки результатов
+                    recognizer.onresult = function (event) {
+                        let result = event.results[event.resultIndex];
+            
+                        if (result.isFinal) {
+                            isFinalResult = true;
+                            const user_final_speech_text = result[0].transcript;
+                            $('.input_field_title').val(user_final_speech_text);
+                            
+                            speakerController.speak('Thank you!');
+                            voiceRecognitionSaveResult();
+                    
+                        } else {
+                            const user_cotinuous_speech_text = result[0].transcript;
+                            $('.input_field_title').val(user_cotinuous_speech_text);
+                        }
+                            
+                
+                        }
+                        recognizer.onend = function() {
+                              if (isFinalResult === false &&
+                                is_recognizer_active) recognizer.start();
+                        }
+                    // Начинаем слушать микрофон и распознавать голос
+                    recognizer.start(); 
+                }
+            }
+            
+            function voiceRecognitionSaveResult() {
+                  speakerController.speak('Do you want to save this note?', onEndSpeak);
+            
+                function onEndSpeak() {
+                    let isFinalResult = false;
+            
+                    // Используем колбек для обработки результатов
+                    recognizer.onresult = function (event) {
+                        let result = event.results[event.resultIndex];
+            
+                        if (result.isFinal) {
+                            const user_text = result[0].transcript;
+
+                            if (result[0].transcript.includes('no') || result[0].transcript.includes('nope') || result[0].transcript.includes("don't")) {
+                                isFinalResult = true;
+                                speakerController.speak("Ok. I didn't save the note. You can customize the note manually. I'm switching off");
+                              
+                              return;
+                            }
+                            else if (result[0].transcript.includes('save') || result[0].transcript.includes('yes') || result[0].transcript.includes('yeah') || result[0].transcript.includes('want')) {
+                                isFinalResult = true;
+                                speakerController.speak('Ok. Note has been saved!', onEndSpeak);
+                                
+                                function onEndSpeak() {
+                                    $('#btn_create_action-block').click();
+                                }
+                                return;
+                            }
+                        } else {
+                            console.log('Промежуточный результат: ', result[0].transcript);
+                        }
+            
+            
+            
+                    }
+                    recognizer.onend = function() {
+                            console.log('onend | isFinalResult', isFinalResult);
+                            if (isFinalResult === false &&
+                                is_recognizer_active) recognizer.start();
+                    }
+                    // Начинаем слушать микрофон и распознавать голос
+                    recognizer.start(); 
+                }
+
+                observable.listen('noteClosed', function(observable, eventType, data) {
+                    recognizer.stop();
+                });
+            }
+                </script>`;
+        }
+
+        return default_actionBlocks;
+    }
+
+
+
+    setActionBlocksMap(actionBlocks_map_new) {
+        this.#actionBlocks_map = actionBlocks_map_new;
+
+        return this.#actionBlocks_map;
     }
 
     setActionBlocks(actionBlocks_to_save) {
@@ -210,90 +790,204 @@ class ActionBlockModel {
         return this.actionBlocks;
     }
 
-    getActionBlocks() {
-        return this.actionBlocks;
+    addActionBlockMap(actionBlock_to_add, is_show_alert_on_error = true) {
+        let actionBlocks = this.getActionBlocksMap();
+        actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
+
+        if (actionBlocks.has(actionBlock_to_add.title)) {
+            if (is_show_alert_on_error) alert('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+            else {
+                console.log('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+            }
+
+            return false;
+        }
+        
+        this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
+    
+        return true;
     }
 
-    save(actionBlocks) {
-        this.actionBlocks = actionBlocks;
-
-        // if ( ! actionBlocks) return false;
-
-        saveInLocalStorage(actionBlocks);
     
-        if (siteSettingsModel.get().storage === STORAGE.database)
+    add(actionBlock_to_add, is_show_alert_on_error = true) {
+        let actionBlocks = this.getActionBlocks();
+        actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
+        
+        const indexActionBlockByTitle = this.getIndexActionBlockByTitle(actionBlock_to_add.title);
+
+        // If Action-Block not found in current Action-Blocks array.
+        if (indexActionBlockByTitle === undefined) {
+            // Add new Action-Block to the beginning of array.
+            actionBlocks.unshift(actionBlock_to_add);
+            this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
+        }
+        else {
+            if (is_show_alert_on_error) alert('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+            else {
+                console.log('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+            }
+
+            return false;
+        }
+
+        this.setActionBlocks(actionBlocks);
+    
+        return true;
+    }
+
+ 
+
+    saveAsync(actionBlocks, callBackSavedSuccessfully, callBackError) {
+        const that = this;
+        this.actionBlocks = actionBlocks;
+        this.onStartSave();
+        
+
+        let isSavedInLocalStorage = saveInLocalStorage(actionBlocks);
+    
+        if (this.dataStorageController.getUserStorage() === storage_name.database)
         {
             // Send to DB.
-            saveInDatabase();
+            saveToDatabase(onUpdatedUserData, onDatabaseError);
+            
+            function onUpdatedUserData() {
+                that.observable.dispatchEvent('userDataUpdated', 'userDataUpdated');
+                
+                if (callBackSavedSuccessfully) callBackSavedSuccessfully();
+            }
+
+            function onDatabaseError() {
+                that.observable.dispatchEvent('databaseOperationFailed', 'databaseOperationFailed');
+                if (callBackError) callBackError();
+            }
+        }
+        else {
+            if (callBackSavedSuccessfully) callBackSavedSuccessfully();
         }
     
     
-        return true;
 
-        function saveInDatabase(onUpdatedUserData) {
-            console.log("authorizationData", authorizationDataModel.get());
-        
+        function saveToDatabase(callBackUpdatedUserData, callBackDatabaseError) {
+            console.log("saveToDatabase");
+            const actionBlocks_to_DB_string = JSON.stringify(that.getActionBlocks());
+
+            let authorizationData;
+            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
+
+            if ( ! authorizationData) {
+                alert('ERROR! Not saved in database. Authorization error.');
+                callBackDatabaseError();
+                return false; 
+            }
+            /*
             if 
-            ( 
-                ! authorizationDataModel.get() || 
-                JSON.stringify(this.actionBlocks_from_database) === JSON.stringify(this.getActionBlocks())
+            (
+                JSON.stringify(that.actionBlocks_from_database) === actionBlocks_to_DB_string
             ) {
-                console.log('not saved in database');
+                console.log('that.actionBlocks_from_database', that.actionBlocks_from_database);
+                console.log('actionBlocks_to_DB_string', actionBlocks_to_DB_string);
+                console.log('Not saved in database. Data the same.');
+                callBackDatabaseError();
                 return false;    
             }
-        
-            // Get infoObjects from localStorage
-            const infoObjects_to_DB_string = JSON.stringify(infoBlockModel.getAll());
+            */
+            
             // Set object to save in DB
             const userData_to_DB_obj = {
-                infoObjects: infoObjects_to_DB_string
-            }
+                actionBlocks: actionBlocks_to_DB_string
+            };
             // Stringify object for DB
             const userData_to_DB_string = JSON.stringify(userData_to_DB_obj);
-        
+
             // Upload data to user field
-            const user_id = authorizationDataModel.get().id;
+            const user_id = authorizationData.id;
             const data_to_send = userData_to_DB_string;
+            that.dbManager.setUserData(user_id, data_to_send, callBackUpdatedUserData, onFailSaveUserData);
             
-            this.dbManager.setUserData(user_id, data_to_send, onUpdatedUserData);
-            
+            function onFailSaveUserData() {
+                return false;
+            }
+
             return true;
         }
     
         function saveInLocalStorage(actionBlocks) {
-            const key = 'infoObjects';
-            console.log('save in localstorage', actionBlocks);
+            const key = 'actionBlocks';
             localStorage.setItem(key, JSON.stringify(actionBlocks));
+
+            return true;
         }
     }
 
-    updateIndexes() {
-        const indexes_infoObjects_by_tag = createIndexes();
-        const key = 'indexes_infoObjects_by_tag';
+    deleteActionBlockMapByTitle(title) {
+        const is_deleted = this.#actionBlocks_map.delete(title);
     
-        localStorage[key] = JSON.stringify(indexes_infoObjects_by_tag);
+        return is_deleted;
+    }
+
+    deleteActionBlockByTitle(title, is_show_alert_on_error = true) {
+        let i_actionBlock = this.getIndexActionBlockByTitle(title);
+        const is_deleted = this.deleteActionBlockByIndex(i_actionBlock, is_show_alert_on_error);
     
-        console.log('Update indexes', indexes_infoObjects_by_tag);
+        return is_deleted;
+    }
+
+    deleteActionBlockByIndex(i_actionBlock, is_show_alert_on_error = true) {
+        if (i_actionBlock < 0 || i_actionBlock >= this.actionBlocks.length || i_actionBlock === undefined) {
+            if (is_show_alert_on_error) alert('Data doesn\'t exist for Action-Block with index: ' + i_actionBlock);
+            return false;
+        }
+
+        // Delete infoObject from array.
+        this.actionBlocks.splice(i_actionBlock, 1);
+
+        this.setActionBlocks(this.actionBlocks);
+    
+        return true;
+    }
+
+    deleteCurrentActionBlock(is_show_alert_on_error = true) {
+        return this.deleteActionBlockByIndex(this.i_actionBlock_opened_settings, is_show_alert_on_error);
+    }
+
+
+    #onUpdate() {
+        const that = this;
+
+        this.saveAsync(this.actionBlocks, this.onSaved);
+        this.#updateTagsIndexes();
+        this.#updateTitleIndexes();
+        this.#updateActionBlocksMap();
+    }
+
+    #updateTagsIndexes() {
+        const that = this;
+
+        const indexes_actionBlocks_by_tag = createIndexes();
+        const key = 'indexes_actionBlocks_by_tag';
+    
+        localStorage[key] = JSON.stringify(indexes_actionBlocks_by_tag);
+    
+        console.log('Update indexes', indexes_actionBlocks_by_tag);
     
         return true;
     
-        // Get tags from all infoBlocks.
-        // Example: indexes_infoObjects_by_tag['hello'] = [1, 2];
-        function createIndexes(infoObjects) {
-            if ( ! infoObjects) infoObjects = infoBlockModel.getAll();
+        // Example: indexes_actionBlocks_by_tag['hello'] = [1, 2];
+        function createIndexes(actionBlocks) {
+            if ( ! actionBlocks) actionBlocks = that.getActionBlocks();
     
-            let indexes_infoObjects_by_tag = {};
+            let indexes_actionBlocks_by_tag = {};
     
     
-            // For all infoObjects.
-            for (const i_infoObj_to_paste in infoObjects) {
-                let infoObj = infoObjects[i_infoObj_to_paste];
-                let tags = infoObj.tags;
+            // For all actionBlocks.
+            for (const i_actionBlock_to_paste in actionBlocks) {
+                let actionBlock = actionBlocks[i_actionBlock_to_paste];
+                let tags = actionBlock.tags;
     
                 // For all tags.
                 for (const i_tag in tags) {
                     let tag = tags[i_tag];
-                    // !!! Not important
+                    
                     tag = tag.toLowerCase();
     
                     if ( ! tag) continue;
@@ -302,37 +996,166 @@ class ActionBlockModel {
                     while (tag[0] === ' ') tag = tag.replace(tag[0], '');
     
                     // Separated words of tag.
-                    let tag_words = textAlgorithm.splitText(tag, ' ');
+                    let tag_words = that.textManager.splitText(tag, ' ');
                     
                     // For each word in tag.
                     for (const i_wordTag in tag_words) {
                         let tag_word = tag_words[i_wordTag];
                     
-                        if ( ! indexes_infoObjects_by_tag[tag_word]) {
-                            indexes_infoObjects_by_tag[tag_word] = [];
+                        if ( ! indexes_actionBlocks_by_tag[tag_word]) {
+                            indexes_actionBlocks_by_tag[tag_word] = [];
                         }
                         
-                        // Indexes for link to infoObj.
-                        let indexes_arr = Object.values(indexes_infoObjects_by_tag[tag_word]);
+                        // Indexes for link to actionBlock.
+                        let indexes_arr = Object.values(indexes_actionBlocks_by_tag[tag_word]);
                         
                         // Each index must be different in indexes array.
-                        let isIndexExistInIndexesArr = arrayAlgorithm.isValueExistsInArray(indexes_arr, i_infoObj_to_paste);
+                        let isIndexExistInIndexesArr = arrayManager.isValueExistsInArray(indexes_arr, i_actionBlock_to_paste);
                         if (isIndexExistInIndexesArr) continue;
-                        indexes_infoObjects_by_tag[tag_word].push(i_infoObj_to_paste);
+                        indexes_actionBlocks_by_tag[tag_word].push(i_actionBlock_to_paste);
                     }
                 }
             }
     
-            console.log('indexes_infoObjects_by_tag', indexes_infoObjects_by_tag);
-    
-            return indexes_infoObjects_by_tag;
+            return indexes_actionBlocks_by_tag;
         }
     
     }
 
-    #onUpdate() {
-        this.save(this.actionBlocks);
-        this.updateIndexes();
+    #updateTitleIndexes() {
+        const that = this;
+        this.#index_actionBlock_by_title = createIndexes();
+        const key = 'index_actionBlock_by_title';
+    
+        localStorage[key] = JSON.stringify(this.#index_actionBlock_by_title);
+    
+        console.log('Update indexes', this.#index_actionBlock_by_title);
+    
+        return this.#index_actionBlock_by_title;
+    
+        // Example: index_actionBlock_by_title['my targets'] = 0;
+        function createIndexes(actionBlocks) {
+            if ( ! actionBlocks) actionBlocks = that.getActionBlocks();
+    
+            let index_actionBlock_by_title = {};
+    
+    
+            // For all actionBlocks.
+            for (const i_actionBlock in actionBlocks) {
+                const actionBlock = actionBlocks[i_actionBlock];
+                const title = actionBlock.title.toLowerCase();
+    
+                index_actionBlock_by_title[title] = i_actionBlock;
+            }
+    
+            return index_actionBlock_by_title;
+        }
+    }
+
+    #updateActionBlocksMap(actionBlocks) {
+        if (actionBlocks === undefined) actionBlocks = this.getActionBlocks();
+
+        const actionBlocks_map = new Map();
+
+        for (let i = actionBlocks.length - 1; i >= 0; i--) {
+            const actionBlock = actionBlocks[i]; 
+            actionBlocks_map.set(actionBlock.title, actionBlock);
+        }
+
+        console.log('actionBlocks_map', actionBlocks_map);
+    }
+
+    #getNormalizedTags(tags) {
+        let normalizedTags;
+    
+        // Change all new lines to symbol ',".
+        const tags_without_new_line = tags.replaceAll('\n', ',');
+        //tags_lower_case = tags_without_new_line.toLowerCase();
+    
+        let tags_array = this.textManager.getArrayByText(tags_without_new_line);
+        
+        // Delete empty symbols from sides in text.
+        for (const i_tag in tags_array) {
+            tags_array[i_tag] = tags_array[i_tag].trim();
+        }
+    
+        // Delete same tags.
+        const tags_set = new Set(tags_array);
+    
+        // Convertation from Set to Array.
+        normalizedTags = Array.from(tags_set);
+    
+        return normalizedTags;
+    }
+
+    // Get priority of object from DB. How many times words from user phrase are in the tags of objet DB.
+    // Priority = 0 means that user words not exist in tags of object.
+    #getPriorityActionBlockByTags(obj, user_phrase) {
+        let priority = 0;
+        let tags_phrases = obj.tags;
+
+        // Check for each object in a storage is the same TITLE with user phrase.
+        // IF 'title' == 'user phrase' THEN info is probably that we are looking. Add proiority for current info obj + 10
+        if (obj.title === undefined) {
+            console.log('Warning! title property doesn\'t exist in obj: ', obj);
+        }
+
+
+
+        // Separated words of user phrase.
+        const user_words = this.textManager.splitText(user_phrase, ' ');
+        // All tags.
+        let tags = [];
+
+        // For all user words.
+        for (const i_wordUser in user_words) {
+            // for each tags phrases separated by ','.
+            for (const i_inTags in tags_phrases) {
+                const tag = tags_phrases[i_inTags];
+                const tag_words = this.textManager.splitText(tag, ' ');
+                tags = tags.concat(tag_words);
+                //console.log('tag_words', tags);
+            }
+            
+            // For each word in tag.
+            for (let i_wordTag in tags) {
+                let user_word = user_words[i_wordUser];
+                let tag_word = tags[i_wordTag];
+                
+                //console.log(tag_word + ' == '+ user_words[i_wordUser] );
+
+                // If in tag exist user word THEN add priority for this info object.
+                if (this.textManager.isSame(user_word, tag_word)) {
+                    priority++;
+                    /*
+                    console.log('====== GROWUP PRIORITY =======');
+                    console.log('obj.title', obj.title);
+                    console.log('priority', priority);
+                    console.log('tag_word', tag_word);
+                    console.log('====== END GROWUP PRIORITY =======');
+                    */
+                    break;
+                }
+            }
+        }
+        
+        return priority;
+    }
+    
+
+    #isTitleSameAsPhrase(infoObject, phrase) {
+        if (this.textManager.isSame(infoObject.title, phrase)) {
+            return true;
+        }
+    
+        return false;
+    }
+
+    #deleteAllIndexes() {
+        const key = 'indexes_actionBlocks_by_tag';
+        localStorage[key] = '';
+    
+        return true;
     }
 }
 
@@ -340,531 +1163,4 @@ class ActionBlockModel {
 const infoBlockModel = {};
 
 infoBlockModel.infoBlocks_on_page = '';
-infoBlockModel.new_infoObjects_to_add = '';
 
-
-// Return an array with all info objects.
-infoBlockModel.getAll = function () {
-    let actionBlocks = [];
-    const key = 'infoObjects';
-
-    if (localStorage.getItem(key)) {
-        const actionBlocks_from_localStorage = JSON.parse(localStorage.getItem(key));
-
-        // Make array even if in localStorage just one Action-Block.
-        actionBlocks = actionBlocks.concat(actionBlocks_from_localStorage);
-    }
-    else {
-        console.log('Not possible to take data from localStorage. No key: ' + key);
-    }
-
-    return actionBlocks;
-}
-
-infoBlockModel.getByPhrase = function(user_phrase) {
-    console.log('getByPhrase');
-    // Delete characters "," from phrase.
-    user_phrase = user_phrase.replaceAll(',', '');
-
-    // If phrase doesn't exist.
-    if ( ! user_phrase) {
-        console.log('Info doesn\'t exist with tags: ' + user_phrase);
-        return;
-    }
-
-    if (user_phrase === undefined || user_phrase === null) {
-        let error_text = 'user_phrase not defined during information searching';
-        console.log(error_text);
-    }
-
-    // Here all objects from a storage which info can to be looking by user.
-    let searched_infoObjects = [];
-    // All infoObjects.
-    const infoObjects = infoBlockModel.getAll();
-    console.log('infoBlockModel.getByPhrase getAll', infoObjects);
-    
-    user_phrase = user_phrase.toLowerCase();
-    let user_words = textAlgorithm.splitText(user_phrase, ' ');
-    
-    
-    let indexes_infoObjects_by_tag = infoBlockModel.getIndexesActionBlocksByTag();
-    console.log('indexes_infoObjects_by_tag', indexes_infoObjects_by_tag);
-
-
-    const indexes_infoObjects_to_show = getIndexesInfoObjectsToShowByPhrase(user_words); 
-
-
-
-    console.log('indexes_infoObjects_to_show', indexes_infoObjects_to_show);
-
-    // Create an array with infoObjects and priority value to show.
-    for (let i_obj of indexes_infoObjects_to_show) {
-        let infoObj_curr = infoObjects[i_obj];
-
-        let priority_infoObj_curr = getPrioriptyObjByTags(infoObj_curr, user_phrase);
-        infoObj_curr.priority = priority_infoObj_curr;
-        console.log(infoObj_curr, priority_infoObj_curr);
-
-        if (priority_infoObj_curr > 0) {
-            // Push current obj
-            searched_infoObjects.push(infoObj_curr);
-        }
-    }
-
-    const property_in_actionBlock_for_sort = 'priority';
-    let is_sort_from_A_to_Z = false;
-
-    // Sort by priority.
-    searched_infoObjects = sort.getSortedInfoObjectsByProperty(searched_infoObjects, property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
-
-    return searched_infoObjects;
-
-    function getIndexesInfoObjectsToShowByPhrase(user_words) {
-        const indexes_infoObjects_to_show = [];
-        
-        // Push index of infoObj by user phrase if it doesn't exist yet in array. 
-        for (let i_user_word in user_words) {
-            // One user word of phrase.
-            let user_word = user_words[i_user_word];
-            // Indexes of current tag.
-            let indexes_infoObjects_curr = indexes_infoObjects_by_tag[user_word];
-
-            // For each index of infoObject for current tag.
-            for (i_index_infoObj_to_show in indexes_infoObjects_curr) {
-                let i_infoObj_to_show = indexes_infoObjects_curr[i_index_infoObj_to_show];
-
-                let index_exist_in_indexes_infoObjects = arrayAlgorithm.isValueExistsInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
-
-                if (index_exist_in_indexes_infoObjects) {
-                    continue;
-                }
-
-                indexes_infoObjects_to_show.push(i_infoObj_to_show);
-            }
-        }
-
-        return indexes_infoObjects_to_show;
-    }
-}
-
-infoBlockModel.getByTags = function(user_phrase, minus_tags) {
-    // Delete characters ',' from phrase.
-    user_phrase = user_phrase.replaceAll(',', ' ');
-    minus_tags = minus_tags.replaceAll(',', ' ');
-    console.log('plus_tags', user_phrase)
-
-    // If phrase doesn't exist.
-    if ( ! user_phrase) {
-        console.log('Info doesn\'t exist with tags: ' + user_phrase);
-        return;
-    }
-
-    if (user_phrase === undefined || user_phrase === null) {
-        let error_text = 'user_phrase not defined during information searching';
-        console.log(error_text);
-    }
-
-    // Here all objects from a storage which info can to be looking by user.
-    let searched_infoObjects = [];
-    // All infoObjects.
-    let infoObjects = infoBlockModel.getAll();
-    
-    user_phrase = user_phrase.toLowerCase();
-    minus_tags = minus_tags.toLowerCase();
-
-    const user_tags = textAlgorithm.splitText(user_phrase, ' ');
-    const user_minus_tags = textAlgorithm.splitText(minus_tags, ' ');
-
-    console.log('user_tags', user_tags);
-    console.log('minus_tags', user_minus_tags);
-    
-    const indexes_infoObjects_by_tag = infoBlockModel.getIndexesActionBlocksByTag();
-    console.log('indexes_infoObjects_by_tag', indexes_infoObjects_by_tag);
-
-
-    const indexes_infoObjects_to_show = getIndexesActionBlocksToShowByTags(user_tags, user_minus_tags); 
-
-
-
-    console.log('indexes');
-    console.log(indexes_infoObjects_to_show);
-
-    // Create an array with infoObjects and priority value to show.
-    for (let i_obj of indexes_infoObjects_to_show) {
-        let infoObj_curr = infoObjects[i_obj];
-
-        let priority_infoObj_curr = getPrioriptyObjByTags(infoObj_curr, user_phrase);
-        infoObj_curr.priority = priority_infoObj_curr;
-        console.log(infoObj_curr, priority_infoObj_curr);
-
-        if (priority_infoObj_curr > 0) {
-            // Push current obj
-            searched_infoObjects.push(infoObj_curr);
-        }
-    }
-
-    const property_in_actionBlock_for_sort = 'priority';
-    let is_sort_from_A_to_Z = false;
-
-    // Sort by priority.
-    searched_infoObjects = sort.getSortedInfoObjectsByProperty(searched_infoObjects, 
-        property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
-
-    return searched_infoObjects;
-
-
-    function getIndexesActionBlocksToShowByTags(tags, minus_tags) {
-        let indexes_actionBlocks_to_show = [];
-        console.log('=================================');
-        console.log('== getIndexesActionBlocksToShowByTags ==');
-
-        // Push index of Action-blocks by user phrase if it doesn't exist yet in array. 
-        for (let i_tag in tags) {
-            // One user word of phrase.
-            let tag = tags[i_tag];
-            console.log('tag: ', tag);
-
-            if (indexes_infoObjects_by_tag[tag] === undefined) { 
-                console.log('return', indexes_actionBlocks_to_show);
-
-                return [];
-            }
-            
-            // If array with indexes to show is empty. 
-            if (indexes_actionBlocks_to_show.length < 1) {
-                // Add all Action-Blocks indexes of tag to array.
-                indexes_actionBlocks_to_show = indexes_actionBlocks_to_show.concat(indexes_infoObjects_by_tag[tag]);
-                console.log('start indexes', indexes_actionBlocks_to_show);
-            }
-            else {
-                indexes_actionBlocks_to_show = arrayAlgorithm.getSameElementsFromArrays
-                (
-                    indexes_actionBlocks_to_show, indexes_infoObjects_by_tag[tag]
-                );
-
-                if (indexes_actionBlocks_to_show.length < 1) {
-                    // No same indexes in tags after comparation.
-
-                    return []; 
-                } 
-
-                console.log('indexes_actionBlocks_to_show after same comparation', indexes_actionBlocks_to_show);
-
-            }
-        }
-
-        indexes_actionBlocks_to_show = getIndexesActionBlocksWithoutMinusTags(indexes_actionBlocks_to_show, minus_tags);
-
-        console.log('=================================');
-
-        return indexes_actionBlocks_to_show;
-
-
-        function getIndexesActionBlocksWithoutMinusTags(indexes_actionBlocks_to_show, minus_tags) {
-            // Delete items with minus tags.
-            for (const minus_tag of minus_tags) {
-                for (const i_index_infoObj_to_show in indexes_actionBlocks_to_show) {
-                    const i_infoObj_to_show = indexes_actionBlocks_to_show[i_index_infoObj_to_show];
-                    console.log('i_infoObj_to_show', i_infoObj_to_show);
-
-                    // Compare minus tag with each Action-Block that has this tag.
-                    for (const index_actionBlock_with_minus_tag of indexes_infoObjects_by_tag[minus_tag]) {
-                        if (index_actionBlock_with_minus_tag === i_infoObj_to_show) {
-                            indexes_actionBlocks_to_show[i_index_infoObj_to_show] = undefined;
-                        }
-                    }
-                }
-            }
-
-            // Delete all undefined elements from array.
-            indexes_actionBlocks_to_show = indexes_actionBlocks_to_show.filter(function(x) {
-                return x !== undefined;
-            });
-
-
-            return indexes_actionBlocks_to_show;
-        }
-    }
-
-}
-
-
-
-
-
-infoBlockModel.deleteFromArrayByTitle = function(infoObjects, title) {
-    let i_infoObject_to_delete = search.binarySearchInArrayOfObjectsByTitle(infoObjects, title);
-
-
-    if ( ! i_infoObject_to_delete || i_infoObject_to_delete < 0 || i_infoObject_to_delete >= infoObjects.length) {
-       //alert("Data doesn't exist with title: " + title);
-        return false;
-    }
-
-    // Delete infoObject from array
-    infoObjects.splice(i_infoObject_to_delete, 1);
-
-    // Save indexes of infoObjects
-    infoBlockModel.updateIndexes();
-
-    return infoObjects;
-}
-
-infoBlockModel.deleteInfoObjByTitle = function (title, isShowAlertOnError = true) {
-    console.log('title to delete: ' + title);
-    let infoObjects = infoBlockModel.getAll();
-    let i_infoObject_to_delete = infoBlockModel.getIndexByTitle(title);
-
-    if (i_infoObject_to_delete < 0 || i_infoObject_to_delete >= infoObjects.length) {
-        if (isShowAlertOnError) alert('Data doesn\'t exist with title: ' + title);
-        return false;
-    }
-
-    // Delete infoObject from array.
-    infoObjects.splice(i_infoObject_to_delete, 1);
-    // Update info with deleted infoObj in localStorage.
-    localStorage.setItem('infoObjects', JSON.stringify(infoObjects));
-
-    actionBlockController.onUpdate();
-
-    return true;
-}
-
-infoBlockModel.deleteAll = function() {
-    // Delete from localStorage
-    let key = 'infoObjects';
-    localStorage[key] = '';
-
-    return true;
-}
-
-
-
-// .START (IndexesForInfoObjects).
-
-infoBlockModel.getIndexesActionBlocksByTag = function() {
-    const key = 'indexes_infoObjects_by_tag';
-
-    if (localStorage.getItem(key)) return JSON.parse(localStorage[key]);
-
-    return [];
-}
-
-infoBlockModel.getIndexByTitle = function (title) {
-    return search.binarySearchInArrayOfObjectsByTitle(infoBlockModel.getAll(), title);
-}
-
-infoBlockModel.updateIndexes = function() {
-    const indexes_infoObjects_by_tag = createIndexes();
-    const key = 'indexes_infoObjects_by_tag';
-
-    localStorage[key] = JSON.stringify(indexes_infoObjects_by_tag);
-
-    console.log('Update indexes infoBlocks');
-
-    return true;
-
-    // Get tags from all infoBlocks.
-    // Example: indexes_infoObjects_by_tag['hello'] = [1, 2];
-    function createIndexes(infoObjects) {
-        if ( ! infoObjects) infoObjects = infoBlockModel.getAll();
-
-        let indexes_infoObjects_by_tag = {};
-
-
-        // For all infoObjects.
-        for (i_infoObj_to_paste in infoObjects) {
-            let infoObj = infoObjects[i_infoObj_to_paste];
-            let tags = infoObj.tags;
-
-            // For all tags.
-            for (i_tag in tags) {
-                let tag = tags[i_tag];
-                // !!! Not important
-                tag = tag.toLowerCase();
-
-                if ( ! tag) continue;
-
-                // WHILE first symbol in tag is empty THEN delete empty.
-                while (tag[0] === ' ') tag = tag.replace(tag[0], '');
-
-                // Separated words of tag.
-                let tag_words = textAlgorithm.splitText(tag, ' ');
-                
-                // For each word in tag.
-                for (let i_wordTag in tag_words) {
-                    let tag_word = tag_words[i_wordTag];
-                
-                    if ( ! indexes_infoObjects_by_tag[tag_word]) {
-                        indexes_infoObjects_by_tag[tag_word] = [];
-                    }
-                    
-                    // Indexes for link to infoObj.
-                    let indexes_arr = Object.values(indexes_infoObjects_by_tag[tag_word]);
-                    
-                    // Each index must be different in indexes array.
-                    let isIndexExistInIndexesArr = arrayAlgorithm.isValueExistsInArray(indexes_arr, i_infoObj_to_paste);
-                    if (isIndexExistInIndexesArr) continue;
-                    indexes_infoObjects_by_tag[tag_word].push(i_infoObj_to_paste);
-                }
-            }
-        }
-
-        console.log('indexes_infoObjects_by_tag', indexes_infoObjects_by_tag);
-
-        return indexes_infoObjects_by_tag;
-    }
-
-}
-
-infoBlockModel.deleteAllIndexes = function() {
-    const key = 'indexes_infoObjects_by_tag';
-    localStorage[key] = '';
-
-    return true;
-}
-
-// .END (IndexesForInfoObjects).
-
-
-infoBlockModel.isTitleSameAsPhrase = function(infoObject, phrase) {
-    if (textAlgorithm.isSame(infoObject.title, phrase)) {
-        return true;
-    }
-
-    return false;
-}
-
-
-
-
-
-// Get priority of object from DB. How many times words from user phrase are in the tags of objet DB.
-// Priority = 0 means that user words not exist in tags of object.
-function getPrioriptyObjByTags(obj, user_phrase) {
-    let priority = 0;
-    let tags_phrases = obj.tags;
-
-    // Check for each object in a storage is the same TITLE with user phrase.
-    // IF 'title' == 'user phrase' THEN info is probably that we are looking. Add proiority for current info obj + 10
-    if (obj.title === undefined) {
-        console.log('Warning! title property doesn\'t exist in obj: ', obj);
-    }
-
-
-
-    // Separated words of user phrase.
-    let user_words = textAlgorithm.splitText(user_phrase, ' ');
-    // All tags.
-    let tags = [];
-
-    // For all user words.
-    for (let i_wordUser in user_words) {
-        // for each tags phrases separated by ','.
-        for (let i_inTags in tags_phrases) {
-            let tag = tags_phrases[i_inTags];
-            let tag_words = textAlgorithm.splitText(tag, ' ');
-            tags = tags.concat(tag_words);
-            //console.log('tag_words', tags);
-        }
-
-        console.log('tags', tags);
-        
-        // For each word in tag.
-        for (let i_wordTag in tags) {
-            let user_word = user_words[i_wordUser];
-            let tag_word = tags[i_wordTag];
-            
-            //console.log(tag_word + ' == '+ user_words[i_wordUser] );
-
-            // If in tag exist user word THEN add priority for this info object.
-            if (textAlgorithm.isSame(user_word, tag_word)) {
-                priority++;
-                console.log('====== GROWUP PRIORITY =======');
-                console.log('obj.title', obj.title);
-                console.log('priority', priority);
-                console.log('tag_word', tag_word);
-                console.log('====== END GROWUP PRIORITY =======');
-                break;
-            }
-        }
-    }
-    
-    return priority;
-}
-
-
-
-infoBlockModel.getDefaultActionBlocks = function() {
-    const actionBlock_create = {
-        title: 'Create Info-Block',
-        tags: 'Create Info-Block, default',
-        action: 'createInfoBlock',
-        imagePath: 'https://i.ibb.co/K6kqJQc/plus.png',
-        isEditable: false
-    };
-
-    const actionBlock_open_file_manager = {
-        title: 'Open File Manager',
-        tags: 'File Manager, save, upload, load, default',
-        action: 'showFileManager',
-        imagePath: 'https://icon-library.com/images/file-download-icon/file-download-icon-19.jpg',
-        isEditable: false
-    };
-
-    const actionBlock_open_data_storage_manager = {
-        title: 'Open Data Storage Manager',
-        tags: 'Data Storage Manager, localstorage, database, default',
-        action: 'showDataStorageManager',
-        imagePath: 'https://www.sostechgroup.com/wp-content/uploads/2016/08/ThinkstockPhotos-176551504.jpg',
-        isEditable: false
-    };
-
-
-    const actionBlock_facebook_of_developer = {
-        title: 'Open Facebook page of developer',
-        tags: 'facebook, account, developer, contact, message, default',
-        action: 'openUrl',
-        info: 'https://www.facebook.com/eugeniouglov',
-        imagePath: 'https://i.ibb.co/QJ4y5v3/DEVELOPER-facebook.png',
-        isEditable: false
-    };
-
-    const actionBlock_email_of_developer = {
-        title: 'Write email to developer - eugeniouglov@gmail.com',
-        tags: 'email, developer, contact, message, gmail, mail, default',
-        action: 'openUrl',
-        info: 'mailto:eugeniouglov@gmail.com',
-        imagePath: 'https://i.ibb.co/dMHPk78/DEVELOPER-gmail.png',
-        isEditable: false
-    };
-
-    const actionBlock_logs = {
-        title: 'Show logs',
-        tags: 'logs, default',
-        action: 'showLogs',
-        imagePath: 'https://pbs.twimg.com/profile_banners/240696823/1528203940/1500x500',
-        isEditable: false
-    };
-
-    const actionBlock_voiceRecognitionSettings = {
-        title: 'Open voice recognition settings',
-        tags: 'voice recognition, default',
-        action: 'showElementsForVoiceRecognitionManager',
-        imagePath: 'https://walkthechat.com/wp-content/uploads/2015/02/voice-recognition.jpg',
-        isEditable: false
-    };
-    
-
-    const default_actionBlocks = [
-        actionBlock_facebook_of_developer, 
-        actionBlock_email_of_developer,
-        actionBlock_create,
-        actionBlock_open_file_manager,
-        actionBlock_open_data_storage_manager,
-        actionBlock_logs,
-        actionBlock_voiceRecognitionSettings
-    ];
-
-    return default_actionBlocks;
-}

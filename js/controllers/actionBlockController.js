@@ -1,15 +1,143 @@
 class ActionBlockController {
-    constructor(dbManager) {
-        this.model = new ActionBlockModel(dbManager);
-        this.view = new ActionBlockView(this);
-        this.setListeners();
+    constructor(dbManager, observable, fileManager, textAlgorithm, dropdownManager, dataStorageController) {
+        this.fileManager = fileManager;
+        this.observable = observable;
+        this.textAlgorithm = textAlgorithm;
+        this.is_settings_to_update_actionBlock_opened = false;
+        this.is_actionBlock_executed = false;
+        this.is_result_voice_search = false; 
+        this.model = new ActionBlockModel(dbManager, textAlgorithm, observable, dataStorageController);
+        this.view = new ActionBlockView(fileManager, textAlgorithm, dropdownManager);
+        this.#setListeners();
+        this.#bindViewEvenets();
+        this.#init();
+    }
+
+    #actionBlocks_to_show = [];
+    index_last_showed_actionBlock = 0;
+
+    #init() {
+        const that = this;
+
+        this.model.onStartSave = function() {
+            that.onStartSave();
+        }
+
+        this.model.onSaved = function() {
+            that.onSaved();
+        }
+    }
+
+    onStartSave() {
+        
+    }
+
+    onSaved() {
+
+    }
+
+    
+
+    
+    #onClickBtnFixedPlus = () => {
+        this.view.onClickBtnFixedPlus();
+
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.view.hideListOfTypeActionBlocksToCreate();
+        }
+        else {
+            this.view.showListOfTypeActionBlocksToCreate();
+        }
+
+        this.model.is_menu_create_type_actionBlock_open = ! this.model.is_menu_create_type_actionBlock_open;
+    }
+
+    showByRequest = (request, is_execute_actionBlock_by_title = true) => {
+        const that = this;
+
+        console.log('showByRequest');
+
+        this.index_last_showed_actionBlock = 0;
+        
+        const event_actionBlocks_start_show = {
+            name: 'actionBlocksStartShow',
+            data: {
+                logs: 'Action-Blocks start show'
+            }
+        }
+
+        this.observable.dispatchEvent(event_actionBlocks_start_show.name, event_actionBlocks_start_show.data);
+
+        //setTimeout(show, 1);
+
+        //function show() {
+            let actionBlocks_to_show;
+
+            if (request === '') {
+                // Show data in images.
+                infoBlockModel.infoBlocks_on_page = that.showActionBlocks();
+    
+                return;
+            }
+            
+    
+    
+            // Get request text from input field and find possible search data.
+            actionBlocks_to_show = that.getActionBlocksByPhrase(request);
+
+        
+            if ( ! actionBlocks_to_show) {
+                actionBlocks_to_show = [];
+            }
+    
+            // Show Action-Blocks separated by pages.
+            infoBlockModel.infoBlocks_on_page = that.showActionBlocks(actionBlocks_to_show);
+            
+            console.log('+++++++++++A');
+            console.log('is_execute_actionBlock_by_title', is_execute_actionBlock_by_title);
+            if (is_execute_actionBlock_by_title) {
+                // IF ActionBlock has been found with the same title THEN execute action.
+                for (const actionBlock of actionBlocks_to_show) {
+                    console.log('actionBlock', actionBlock.title + ' is same to_');
+                    console.log('request', request);
+                    if (that.textAlgorithm.isSame(actionBlock.title, request)) {
+                        const i_actionBlock = that.model.getIndexActionBlockByTitle(actionBlock.title);
+                        console.log('execute', i_actionBlock);
+                        that.executeActionBlockByIndex(i_actionBlock);
+                        
+                        break;
+                    }
+                }
+            }
+            console.log('+++++++++++A');
+    
+            // IF has been found just one infoObject THEN execute action.
+            /*
+            if (actionBlocks_to_show.length === 1) {
+                let infoObj = actionBlocks_to_show[0];
+                actionBlockController.executeActionBlock(infoObj);
+            }
+            */
+        //}
+        
+    }
+
+    showSettingsToCreateNote = () => {
+         this.#showSettingsToCreateActionBlock(action_name.showInfo);
+    }
+
+    showSettingsToCreateLink = () => {
+        this.#showSettingsToCreateActionBlock(action_name.openURL);
+    }
+
+    showSettingsToCreateFolder = () => {
+        this.#showSettingsToCreateActionBlock(action_name.openFolder);
+    }
+
+    showSettingsToCreateAdvancedActionBlock = () => {
+        this.#showSettingsToCreateActionBlock(action_name.openURL);
     }
     
-    updatePreview() {
-        this.view.updatePreview();
-    }
-
-
 
     /*
     infoBlocks_area.infoBlocks.createByInfoObjects = function(actionBlocks) {
@@ -30,227 +158,78 @@ class ActionBlockController {
     }
     */
 
-
-
-
     getActionBlocks() {
-        return this.model.actionBlocks;
+        return this.model.getActionBlocks();
     }
 
     getActionBlocksOnPage() {
         return this.model.infoBlocks_on_page;
     }
-    
 
-
-    getActionBlocksFromLocalStorage() {
-        return this.model.getActionBlocksFromLocalStorage();
+    getIndexesActionBlocksByTag() {
+        return this.model.getIndexesActionBlocksByTag();
     }
     
 
-    createActionBlock(title, tags, action, info, image_path, isEditable = true) {
-        tags = getNormalizedTags(tags);
-    
+    createActionBlock(title, tags, action, content, image_URL, is_editable = true) {
         const action_block =
         {
             title: title,
             tags: tags,
             action: action,
-            info: info,
-            imagePath: image_path,
-            isEditable: isEditable
+            content: content,
+            imageURL: image_URL,
+            is_editable: is_editable
         };
     
-        this.model.add(action_block);
+        const is_created = this.model.add(action_block);
+
+        if ( ! is_created) {
+            return false;
+        }
 
         this.onUpdate();
     
         return true;
-    
-        function getNormalizedTags(tags) {
-            let normalizedTags;
-        
-            // Change all new lines to symbol ',".
-            const tags_without_new_line = tags.replaceAll('\n', ',');
-            //tags_lower_case = tags_without_new_line.toLowerCase();
-        
-            let tags_array = textAlgorithm.getArrayByText(tags_without_new_line);
-            
-            // Delete empty symbols from sides in text.
-            for (const i_tag in tags_array) {
-                tags_array[i_tag] = tags_array[i_tag].trim();
-            }
-        
-            // Delete same tags.
-            const tags_set = new Set(tags_array);
-        
-            normalizedTags = Array.from(tags_set);
-        
-            return normalizedTags;
-        }
     }
 
-
-
-    createDefaultActionBlocks() {
-        const actionBlocks_to_create = infoBlockModel.getDefaultActionBlocks();
-
-        actionBlocks_to_create.forEach(infoBlock => {
-                console.log(infoBlock.title + ' created');
-                this.createActionBlock(infoBlock.title, infoBlock.tags, infoBlock.action, infoBlock.info, 
-                    infoBlock.imagePath, infoBlock.isEditable);
-            }
-        );
-    }
-
-    updateActionBlock() {
-        const original_title = this.model.title_infoBlock_before_update;
-    
-        // Get new title value.
-        const input_field_title = $('#settings_action_block_container').find('.input_field_title');
-        let title = input_field_title.val();
-    
-        if ( ! title) {
-            alert('ERROR! Empty field for title');
-            return;
-        }
-      
-        // Get tags values
-        const input_field_tags = $('#settings_action_block_container').find('.input_field_tags')[0];
-        const tags_from_input_field = input_field_tags.value;
-        let tags = tags_from_input_field;
-    
-        if (original_title != title) {
-            // Add new tag getting text from title
-    
-            let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, '');
-            
-    
-            if (tags) tags = tags + ", ";
-            
-            // Add new tag getting text from title.
-            tags += title + ", " + title_without_symbols;
-        }
-    
-        
-    
-        /*
-        // Change all new lines to symbol ","
-        let tags_without_new_line = tags_with_title.replaceAll('\n', ',');
-        tags_without_new_line = tags_without_new_line.toLowerCase();
-        tags = textAlgorithm.getArrayByText(tags_without_new_line);
-        
-    
-        // Delete empty symbols from sides in text.
-        for (i_tag in tags) {
-            tags[i_tag] = tags[i_tag].trim();
-            console.log(tags[i_tag]);
-        }
-        console.log('tags array", tags);
-    
-        // Delete same tags.
-        let tags_set = new Set(tags);
-        console.log('tags_set", tags_set);
-        
-        tags = Array.from(tags_set);
-        console.log('tags array from set", tags);
-        */
-    
-        // Action.
-        const dropdown_select_action_for_update = $('#settings_action_block_container').find('.dropdown_select_action');
-        // Get selected action.
-        const selected_action = dropdown_select_action_for_update.find(':selected')[0].value;
-
-        if (selected_action === undefined || selected_action === null) {
-            alert('Impossible to create command. Dropdown action_user_choose = undefined');
-            return false;
-        }
-      
-        // Get info.
-        const input_field_info_container = $('#settings_action_block_container').find('.input_field_action_description');
-        const info = input_field_info_container.val();
-        
-        if ( ! info) {
-            alert('Impossible to create command. Action input field is empty');
-            return false;
-        }
-      
-      
-        //let input_field_action = $('#settings_action_block_container').find('#input_field_action')[0];
-      
-        // Get image path
-        const input_field_image_path_container = $('#settings_action_block_container').find('.input_field_image_path');
-        const image_path = input_field_image_path_container.val();
-      
-       
-        const index_of_title = infoBlockModel.getIndexByTitle(title);
-        let is_obj_exists_in_infoObjects = false;
-        if (index_of_title >= 0) {
-            is_obj_exists_in_infoObjects = true;
-        }
-        console.log('is title exist: '  + is_obj_exists_in_infoObjects + ' | original: ' + original_title + ' | title: ' + title);
-    
-        if (is_obj_exists_in_infoObjects && original_title != title) {
-            alert('Info already exists with title: ' + title);
-            return;
-        }
-    
-        const is_deleted_obj = infoBlockModel.deleteInfoObjByTitle(original_title);
-        if ( ! is_deleted_obj) {
-            alert('ERROR! Info container weren\'t delete');
-            return;
-        }
-        
-    
-        const isInfoBlockCreated = this.createActionBlock(title, tags, selected_action, info, image_path);
-    
-        if ( ! isInfoBlockCreated) return;
-    
-        setDefaultValuesForSettingsElementsActionBlock();
-        
-        
-        //clearContentInContainer($('#text_info_obj_create')[0]);
-        //$('<br><div align='left'>" + "Result created info object:" + "</div>').appendTo($('#text_info_obj_create')[0]);
-        //$('<div>" + JSON.stringify(infoObj_new) + "</div>').appendTo($('#text_info_obj_create')[0]);
-    
-        this.onUpdate();
-        infoPageView.close();
-    }
-    
-    updateDefaultInfoBlocks() {
+    updateDefaultActionBlocks = () => {
+        const that = this;
         const isShowAlertOnError = false;
 
-        let actionBlocks_to_create = infoBlockModel.getDefaultActionBlocks();
+        const actionBlocks_to_create = this.model.getDefaultActionBlocks();
 
-        // Delete previous default InfoBlocks.
-        for (const infoBlock_to_delete of actionBlocks_to_create) {
+        // Delete previous default Action-Blocks.
+        for (const actionBlock_to_delete of actionBlocks_to_create) {
             // Update site.
-            infoBlockModel.deleteInfoObjByTitle(infoBlock_to_delete.title, isShowAlertOnError);
+            this.model.deleteActionBlockByTitle(actionBlock_to_delete.title, isShowAlertOnError);
         }
         
-        // Create default Info-Blocks.
-        actionBlockController.createDefaultActionBlocks();
+        // Create default Action-Blocks.
+        createDefaultActionBlocks();
+        this.showActionBlocks();
+
+        return;
+
+        function createDefaultActionBlocks() {
+            actionBlocks_to_create.forEach(actionBlock => {
+                    that.createActionBlock(actionBlock.title, actionBlock.tags, actionBlock.action, actionBlock.content, 
+                        actionBlock.imageURL, actionBlock.isEditable);
+                }
+            );
+        }
     }
 
     save(actionBlocks) {
-        this.model.save(actionBlocks);
-
-        return true;
+        this.model.saveAsync(actionBlocks);
     }
     
-    deleteAll() {
-        infoBlockModel.deleteAll();
-        infoBlockModel.new_infoObjects_to_add = '';
-
-        this.onUpdate();
-    }
-
     onClickBtnDeleteAll() {
-        const text_confirm_window = 'Are you sure you want to delete ALL commands?' + '\n'+
+        const text_confirm_window = 'Are you sure you want to delete ALL commands?' + '\n' +
             '* It\'s recommended to download the commands first to save all created information';
     
         function onClickOkConfirm() {
-            this.deleteAll();
+           // this.deleteAll();
 
             return;
         }
@@ -261,143 +240,205 @@ class ActionBlockController {
         dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
     }
 
-    executeActionBlock(actionBlock) {
-        let obj = actionBlock;
+    executeActionBlockByIndex(i_actionBlock) {
+        const that = this;
+
+        if (this.is_actionBlock_executed) return;
+        
+
+        const actionBlocks = this.model.getActionBlocks();
+        const actionBlock = actionBlocks[i_actionBlock];
+        const obj = actionBlock;
         let action_name_of_actionBlock = obj.action;
-        let action_info = obj.info;
+   
+        let content = obj.content;
+        if (content === undefined) { 
+            console.log('Warning! Something wrong with contant. Maybe you use "content" instead "info" for Action-Blocks or content is undefined');
+            content = obj.info;
+        }
     
     
         if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = action_name.showInfo;
-        console.log('Im', action_name);
-        console.log('IMust be', action_name.showInfo);
+        else if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = action_name.openURL;
     
-        if (action_name_of_actionBlock === action_name.openUrl) {
-            openUrl(action_info);
+        if (action_name_of_actionBlock === action_name.openURL || action_name_of_actionBlock === action_name.openUrl) {
+            this.view.openURL(content);
+            console.log('URL opened');
+
+            const event_actionBlock_openURL_executed = {
+                name: 'actionBlockOpenURLExecuted',
+                data: {
+                    index: i_actionBlock,
+                    log: 'actionBlockOpenURLExecuted'
+                }
+            };
+
+            that.observable.dispatchEvent(event_actionBlock_openURL_executed.name, event_actionBlock_openURL_executed.data);
+
+            return;
         }
         // Action alertInfo must to include info option.
         else if (action_name_of_actionBlock === action_name.showInfo) {
-            $('#btn_back_main').show();
+            console.log('note executed');
+            this.is_actionBlock_executed = true;
             this.onPageContentChange();
+            this.view.onNoteExecuted();
 
             const isHTML = false;
-            showInfo(action_info, obj.title, isHTML);
-            
-            
-            const text_to_speak = action_info;
+            this.view.showInfo(content, obj.title, isHTML);
 
-            const event = {
-                name: 'executeActionBlock',
-                data: text_to_speak
+            if (this.is_result_voice_search) {
+                speakerController.speak(content);
+                this.is_result_voice_search = false;
+            }
+
+            const event_actionBlock_content_executed = {
+                name: 'actionBlockContentExecuted',
+                data: {
+                    index: i_actionBlock,
+                    log: 'actionBlockContentExecuted'
+                }
             };
 
-            // Subject.
-            observable.dispatchEvent(event.name, event.data);
+            that.observable.dispatchEvent(event_actionBlock_content_executed.name, event_actionBlock_content_executed.data);
 
-            $('.btn_speak').show();
-            $('#info_page_from_executed_action-block_container').show();
+            const event_actionBlock_note_executed = {
+                name: 'actionBlockNoteExecuted',
+                data: {
+                    index: i_actionBlock,
+                    log: 'actionBlockNoteExecuted',
+                    content: content
+                }
+            };
+
+            that.observable.dispatchEvent(event_actionBlock_note_executed.name, event_actionBlock_note_executed.data);
+
         }
         else if (action_name_of_actionBlock === action_name.showHTML) {
-            $('#btn_back_main').show();
+            this.is_actionBlock_executed = true;
             this.onPageContentChange();
             const isHTML = true;
-            showInfo(action_info, obj.title, isHTML);
-            $('#info_page_from_executed_action-block_container').show();
+            this.view.showInfo(content, obj.title, isHTML);
+            $('#content_executed_from_actionBlock').show();
+
+            const event_actionBlock_content_executed = {
+                name: 'actionBlockContentExecuted',
+                data: {
+                    index: i_actionBlock,
+                    log: 'actionBlockContentExecuted'
+                }
+            };
+
+            that.observable.dispatchEvent(event_actionBlock_content_executed.name, event_actionBlock_content_executed.data);
+
         }
         else if (action_name_of_actionBlock === action_name.openFolder) {
-            //console.log('open folder from infoblock');
-            actionBlockController.openFolder(obj, action_info);
-        }
-        else if (action_name_of_actionBlock === action_name.createInfoBlock) {
-            $('#btn_back_main').show();
-            this.view.showElementsToCreateInfoBlock();
-            this.onPageContentChange();
-        }
-        else if (action_name_of_actionBlock === action_name.showFileManager) {
-            $('#btn_back_main').show();
-            this.showElementsForFileManager();
-        }
-        else if (action_name_of_actionBlock === action_name.showDataStorageManager) {
-            $('#btn_back_main').show();
-            this.showElementsForDataStorageManager();
-        }
-        else if (action_name_of_actionBlock === action_name.showElementsForVoiceRecognitionManager) {
-            $('#btn_back_main').show();
-            this.showElementsForVoiceRecognitionManager();
-        }
-        else if (action_name_of_actionBlock === action_name.showLogs) {
-            $('#btn_back_main').show();
-            this.showLogs();
-        }
-        else {
-            console.log('ERROR!!! Action of infoObj doesn\'t exist. action_name: ', action_name_of_actionBlock);
-        }
-    }
-    
-    onClickFixedBtnPlus() {
-        if (isMenuCreateTypeActionBlockOpen) {
-            $('#list_of_type_action-blocks_to_create').hide();
-        }
-        else {
-            $('#list_of_type_action-blocks_to_create').show();
-        }
-    
-        console.log(this);
-        this.view.fixed_btn_plus.rotateIcon();
-        isMenuCreateTypeActionBlockOpen = ! isMenuCreateTypeActionBlockOpen;
-    }
+            //console.log('open folder from actionblock');
+            this.openFolder(i_actionBlock);
 
-    showActionBlocks(infoBlocks_to_show) {
-        $('.icon_spinner').show();
-        $('.actionBlocks_container').hide();
-        console.log('hide');
+            const event_folder_opened = {
+                name: 'actionBlockFolderExecuted',
+                data: {
+                    tags: content
+                }
+            };
+            
+            this.observable.dispatchEvent(event_folder_opened.name, event_folder_opened.data);
+            
+        }
+        /*
+        else if (action_name_of_actionBlock === action_name.showFileManager) {
+            this.onPageContentChange();
+            this.view.showElementsForFileManager();
+        }
+        */
+        else {
+            console.log('ERROR! Action of Action-Block doesn\'t exist. action_name: ', action_name_of_actionBlock);
+            return;
+        }
+
+        const event_actionBlock_executed = {
+            name: 'actionBlockExecuted',
+            data: {
+                index: i_actionBlock,
+                log: 'actionBlockExecuted'
+            }
+        };
+
+        that.observable.dispatchEvent(event_actionBlock_executed.name, event_actionBlock_executed.data);
+    }
+    
+
+
+    showActionBlocks = (actionBlocks_to_show) => {
+        if (window.location.hash.includes('#indexActionBlock')) return;
+
+        console.log('== showActionBlocks ==');
+        const that = this;
+
+
+        this.view.hideActionBlocksContainer();
+
+        const event_actionBlocks_start_show = {
+            name: 'actionBlocksStartShow',
+            data: {
+                logs: 'Action-Blocks start show'
+            }
+        }
         
-        this.model.updateIndexes();
+        this.observable.dispatchEvent(event_actionBlocks_start_show.name, event_actionBlocks_start_show.data);
+
+        that.index_last_showed_actionBlock = 0;
+
+        if (actionBlocks_to_show === undefined) {
+            actionBlocks_to_show = that.getActionBlocks();
+        }
         
         // IF infoBLocks in parameter THEN return emty array.
-        if ( ! infoBlocks_to_show) {
+        if ( ! actionBlocks_to_show) {
             return [];
         }
-        else if (Array.isArray(infoBlocks_to_show) === false) {
-            infoBlocks_to_show = [infoBlocks_to_show];
+        else if (Array.isArray(actionBlocks_to_show) === false) {
+            actionBlocks_to_show = [actionBlocks_to_show];
         }
-        
-        console.log('infoBlocks_to_show', infoBlocks_to_show);
+
+        that.#actionBlocks_to_show = actionBlocks_to_show;
     
-        const data_storage = STORAGE[siteSettingsModel.get().storage];
-        let data_storage_for_label_help = '';
-    
-        if (data_storage === STORAGE.database) {
-            data_storage_for_label_help = 'database';
-        }
-        else {
-            data_storage_for_label_help = 'browser';
-        }
-        
-    
-        label_help.innerText = 'Found ' + infoBlocks_to_show.length + ' results | ' 
-            + 'Saved in ' + data_storage_for_label_help + ' storage';  
-    
-        this.clearInfoBlocksArea();
+        that.clear();
     
         infoBlocks_area.page_curr = 1;
-        const max_count_pages_infoBlocks_on_page = 12;
+        const max_count_pages_actionBlocks_on_page = 12;
         const infoBlocks_on_page = {}; 
-       
+        
         let i_infoBlock_container = 0;
         infoBlocks_on_page[i_infoBlock_container] = [];
         let number_infoBlock_curr = 0;
-    
-    
-        // Push infoObjects to array sepparate by pages.
-        for (const i_obj in infoBlocks_to_show) {
-            this.showActionBlock(i_obj, infoBlocks_to_show[i_obj]);
-            continue;
-            infoBlocks_on_page[i_infoBlock_container].push(infoBlocks_to_show[i_obj]);
+
+        const count_actionBlocks_to_show = 50;
+
+
+        let i;
+
+        for (i = 0; i < actionBlocks_to_show.length; i++) {
+            if (i >= count_actionBlocks_to_show - 1) {
+                break;
+            }
+
+            that.showActionBlock(actionBlocks_to_show[i]);
+        }
+
+        that.index_last_showed_actionBlock = i;
+
+
+        // Push Action-Blocks to array sepparate by pages.
+        for (const i_obj in actionBlocks_to_show) {
+            break;
+            infoBlocks_on_page[i_infoBlock_container].push(actionBlocks_to_show[i_obj]);
             number_infoBlock_curr = Number(i_obj) + 1;
-            //console.log(number_infoBlock_curr + "%" + max_count_pages_infoBlocks_on_page, infoBlocks_to_show[i_obj]);
+            //console.log(number_infoBlock_curr + "%" + max_count_pages_actionBlocks_on_page, actionBlocks_to_show[i_obj]);
     
 
-            if ((number_infoBlock_curr != infoBlocks_to_show.length) && (number_infoBlock_curr % max_count_pages_infoBlocks_on_page === 0)) {
+            if ((number_infoBlock_curr != actionBlocks_to_show.length) && (number_infoBlock_curr % max_count_pages_actionBlocks_on_page === 0)) {
                 console.log('!!!');
                 //console.log(i_obj);
                 i_infoBlock_container++;
@@ -424,14 +465,14 @@ class ActionBlockController {
                 // .END - Show arrows.
                 
                 // showPageDots(page_curr_for_infoBlock_containers);
-                console.log('Action-Block to show', infoBlocks_to_show[i_obj]);
+                console.log('Action-Block to show', actionBlocks_to_show[i_obj]);
                 
             }
             
         }
         
         const count_pages = Object.keys(infoBlocks_on_page).length;
-        this.model.count_pages = count_pages;
+        that.model.count_pages = count_pages;
 
         if (count_pages > 1) {
             // Set text number of page.
@@ -439,216 +480,233 @@ class ActionBlockController {
             setNumberPage(current_page, count_pages);
         }
     
-        this.model.infoBlocks_on_page = infoBlocks_on_page[0];
+        that.model.infoBlocks_on_page = infoBlocks_on_page[0];
         infoBlockModel.infoBlocks_on_page = infoBlocks_on_page;
         
+
+        that.view.showActionBlocksContainer();
         
-        $('.icon_spinner').hide();
-        $('.actionBlocks_container').show();
-        console.log('show');
-    
+        that.view.bindClickActionBlock(that.#onClickActionBlock, that.#onClickSettingsActionBlock);
+        
+
+        const event_actionBlocks_showed = {
+            name: 'actionBlocksShowed',
+            data: {
+                log: 'actionBlocksShowed'
+            }
+        }
+
+        that.observable.dispatchEvent(event_actionBlocks_showed.name, event_actionBlocks_showed.data);
+       
+        
+        console.log('====');
+
         return infoBlocks_on_page;
+    
     }
 
-    showActionBlock(id, actionBlock) {
-        const actionBlock_html = this.view.addOnPage(id, actionBlock);
-        this.setListenerForActionBlock(actionBlock, actionBlock_html);
+    showActionBlock(actionBlock) {
+        const actionBlock_html = this.view.addOnPage(this.model.getIndexActionBlockByTitle(actionBlock.title), actionBlock);
     }
 
-    showActionBlocksFromStorageAsync() {
-        $('.icon_spinner').show();
-        $('.actionBlocks_container').hide();
-
+    showActionBlocksFromStorage = () => {
         const that = this;
-        this.model.getActionBlocksFromStorageAsync(onGetCallback);
+        console.log("1");
+        console.log(this.model.getActionBlocks());
+        this.view.hideActionBlocksContainer();
 
-        function onGetCallback(actionBlocks_from_DB) {
-            // IF data from DB and from localStorage is equal THEN return.
-            if (JSON.stringify(actionBlocks_from_DB) === JSON.stringify(that.model.getActionBlocksFromLocalStorage())) {
-                console.log('Data from DB is the same as in localStorage');
+        this.model.getActionBlocksFromStorageAsync(onGetActionBlocksCallback);
 
-                that.showActionBlocks(that.model.getActionBlocksFromLocalStorage());
+        function onGetActionBlocksCallback(actionBlocks) {
+            const actionBlocks_from_localStorage = that.model.getActionBlocksFromLocalStorageAsync();
+            const actionBlokcs_from_user_storage = actionBlocks;
+            console.log('actionBlocks_from_localStorage', actionBlocks_from_localStorage);
+            console.log('actionBlokcs_from_user_storage', actionBlokcs_from_user_storage);
+
+            // IF data is equal to data from localStorage THEN show Action-Blocks. 
+            // ELSE open dialog database.
+            if (JSON.stringify(actionBlokcs_from_user_storage) === JSON.stringify(actionBlocks_from_localStorage)) {
+                that.model.setActionBlocks(actionBlocks);
+                that.showActionBlocks(actionBlocks);
             }
             else {
-                fileManagerController.downloadActionBlocks();
+                that.downloadFileWithActionBlocks(actionBlocks_from_localStorage);
+                console.log("3");
+                console.log(that.model.getActionBlocks());
                 
-                that.model.setActionBlocks(actionBlocks_from_DB);
-
-                dialogDatabaseView.show();
+                that.observable.dispatchEvent('actionBlocksFromDatabaseNotEqualCurrentActionBlocksLoaded', 'Action-Blocks loaded');
+                
+                console.log("4");
+                console.log(that.model.getActionBlocks());
             }
+
+            console.log('dispatchEvent: actionBlocksLoaded');
+            that.observable.dispatchEvent('actionBlocksLoaded', 'Action-Blocks loaded');
+
+            
+            console.log("5");
+            console.log(that.model.getActionBlocks());
         }
     }
 
-    openFolder(folderObj, tags) {
-        let data_to_show;
-        if ( ! tags) {
+    showActionBlocksByTags(user_plus_tags, user_minus_tags) {
+        // Get command text from input field and find possible search data.
+        let actionBlocks_to_show = this.model.getActionBlocksByTags(user_plus_tags, user_minus_tags);
+
+
+        if ( ! actionBlocks_to_show) {
+            actionBlocks_to_show = [];
+        }
+
+        // Show infoBlocks separated by pages.
+        infoBlockModel.infoBlocks_on_page = this.showActionBlocks(actionBlocks_to_show);
+    }
+
+    addOnPageNextActionBlocks() {
+        console.log('== addOnPageNextActionBlocks ==');
+        if (this.#actionBlocks_to_show === undefined) {
+            return;
+        }
+
+        let count_actionBlocks_curr = 0;
+        const max_count_actionBlocks_to_add_on_page = 50;
+
+        const actionBlocks = this.#actionBlocks_to_show;
+
+        console.log(`add Action-Blocks from index ${this.index_last_showed_actionBlock} to ${this.index_last_showed_actionBlock + max_count_actionBlocks_to_add_on_page}`);
+        
+        let i;
+
+        for (i = this.index_last_showed_actionBlock; i < actionBlocks.length; i++) {
+            if (count_actionBlocks_curr >= max_count_actionBlocks_to_add_on_page) {
+                break;
+            }
+
+            this.showActionBlock(actionBlocks[i]);
+            count_actionBlocks_curr++;
+        }
+        
+        this.index_last_showed_actionBlock = i;
+        
+        console.log('index_last_showed_actionBlock', this.index_last_showed_actionBlock);
+
+        console.log('====');
+
+        this.view.bindClickActionBlock(this.#onClickActionBlock, this.#onClickSettingsActionBlock);
+    }
+
+
+
+    getActionBlocksByPhrase(phrase) {
+        return this.model.getByPhrase(phrase);
+    }
+    
+
+
+    openFolder(i_actionBlock) {
+        const actionBlocks = this.model.getActionBlocks();
+        const actionBlock = actionBlocks[i_actionBlock];
+        const obj = actionBlock;
+        const search_tags = actionBlock.content;
+
+        let actionBlocks_to_show;
+
+        if ( ! search_tags) {
             console.log('Warning! Tags for folder don\'t exist');
             return;
         }
       
-        this.clearInfoBlocksArea();
-        $('#input_field_request')[0].value = "";
+        this.clear();
         // Get command text from input field and find possible search data.
-        data_to_show = infoBlockModel.getByPhrase(tags);
+        actionBlocks_to_show = this.model.getByPhrase(search_tags);
     
     
-        // Delete from array a folder. For don't show a folder with showed infoBlocks.
-        console.log('Delete folder', data_to_show)
-        let i_infoObject_to_delete = search.getIndexInfoObjByTitle(data_to_show, folderObj.title);
-        console.log(i_infoObject_to_delete);
-        if (i_infoObject_to_delete >= 0) {
-            data_to_show.splice(i_infoObject_to_delete, 1);
+        // Delete a folder from array. In order to don't show a folder with Action-Blocks.
+        if (i_actionBlock >= 0) {
+            actionBlocks_to_show.splice(i_actionBlock, 1);
         }
-    
-        // Show infoBlocks.
-        //actionBlockController.showActionBlocks(data_to_show);
+
         
-    
-        // Paste tags to input field.
-        $('#input_field_request')[0].value = tags;
-    
-        focusInputField();
-    
-        // !!!
-        infoBlockModel.infoBlocks_on_page = actionBlockController.showActionBlocks(data_to_show);
+        infoBlockModel.infoBlocks_on_page = this.showActionBlocks(actionBlocks_to_show);
         
         /*
-        if (data_to_show.length === 1) {
+        if (actionBlocks_to_show.length === 1) {
             // Open the first infoObject
     
-            let infoObj = data_to_show[0];
+            let infoObj = actionBlocks_to_show[0];
             actionBlockController.executeActionBlock(infoObj);
         }
         */
     }
 
-    getAll() {
-        return infoBlockModel.getAll();
-    }
-
-    
-    showElementsToUpdateInfoBlock(actionBlock) {
-        this.onPageContentChange();
-        this.view.showElementsToUpdateInfoBlock(actionBlock);
-    }
-
-    showElementsForFileManager() {
-        this.onPageContentChange();
-        $('#elements_for_file_manager').show();
-    }
-
-    showElementsForDataStorageManager() {
-        this.onPageContentChange();
-        $('#elements_for_data_storage').show();
-    }
-
-    showLogs() {
-        this.onPageContentChange();
-        $('#elements_for_logs').show();
-    }
-
-    showElementsForVoiceRecognitionManager() {
-        this.onPageContentChange();
-        $('#elements_for_voice_recognition_settings').show();
-    }
-
     onPageContentChange() {
-        this.view.onPageContentChange(isMenuCreateTypeActionBlockOpen);
-        isMenuCreateTypeActionBlockOpen = false;
+        console.log('onPageContentChange()');
+        this.view.onPageContentChange(this.model.is_menu_create_type_actionBlock_open);
     }
 
-    showSettingsForNoteActionBlock() {
-        this.showSettingsForActionBlockByActionName(action_name.showInfo);
+    clear() {
+        this.view.clear();
     }
 
-    showSettingsForLinkActionBlock() {
-        this.showSettingsForActionBlockByActionName(action_name.openUrl);
-    }
-
-    showSettingsForFolderActionBlock() {
-        this.showSettingsForActionBlockByActionName(action_name.openFolder);
-    }
-
-    showSettingsForAdvancedActionBlock() {
-        this.showSettingsForActionBlockByActionName(action_name.openUrl);
-        // DropDown to choose action of Action-Block show.
-        $('#settings_action_block_container').find('.type_action-block_container').show();
-    }
+    onClickBtnRewriteActionBlocks = function() {
+        const text_confirm_window = 'Before rewrite all the commands data is recommended to save current data..' + 
+            '\n' + 'Are you sure you want to rewrite it now?';
     
-    showSettingsForActionBlockByActionName(action_name) {
-        infoBlockModel.action_for_new_actionBlock = action_name;
-        $('#list_of_type_action-blocks_to_create').hide();
-        // DropDown to choose action of Action-Block hide.
-        $('#settings_action_block_container').find('.type_action-block_container').hide();
-        this.view.showElementsToCreateInfoBlock();
-        isMenuCreateTypeActionBlockOpen = false;
-        
-        this.onPageContentChange();
-        $('#title_action_descritption').text(content_type_description_by_action[action_name]);
-    }
-
-
-    setListenerForActionBlock(actionBlock, infoBlock_container) {
-        let is_mouse_eneter_settings = false;
-        const that = this;
-        
-        function onClickBtnSettings(e) {
-            that.model.title_infoBlock_before_update = actionBlock.title;
-            that.showElementsToUpdateInfoBlock(actionBlock);
-        }
+        dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
     
-        // On click infoBlock.
-        infoBlock_container.on('click', () => {
-            if (is_mouse_eneter_settings) return false;
-    
-            this.executeActionBlock(actionBlock);
+        function onClickOkConfirm() {
+            $('#dialog_database_manager')[0].close();
+            observable.dispatchEvent('clickBtnRewrite', 'Click button Rewrite');
             
-        });
-    
-        const settings_container = infoBlock_container.find('.settings')[0];
-    
-        if (settings_container) {
-            settings_container.onmouseenter = function(){is_mouse_eneter_settings = true;};
-            settings_container.onmouseleave = function(){is_mouse_eneter_settings = false;};
-            settings_container.addEventListener('click', onClickBtnSettings);
-        }
-    }
-
-    setListeners() {
-        const that = this;
-
-
-        observable.listen('clickBtnRewrite', function(observable, eventType, data) {
-            console.log(data);
-
-            that.model.setActionBlocks(that.model.actionBlocks_from_database);
-            that.showActionBlocks(that.model.actionBlocks);
-        });
-    }
-
-    onClickBtnDeleteInfoBlock() {
-        const title = $('#settings_action_block_container').find('.input_field_title')[0].value;
-        const infoObjects = infoBlockModel.getAll();
-        
-        //  let i_infoObject_to_delete = binarySearchInObjectsArrByTitle(infoObjects, title);
-        const i_infoObject_to_delete = infoBlockModel.getIndexByTitle(title);
-    
-        if (i_infoObject_to_delete < 0) {
-            alert('Command doesn\'t exist with title: ' + title);
             return;
         }
     
+        function onClickCancelConfirm() {
+            return;
+        }
+    }
+
+    onClickBtnDeleteActionBlock = (title) => {
+        const event_new_settings_for_actionBlocks_applied = {
+            name: 'new_settings_for_actionBlocks_applied',
+            data: {
+                log: 'new_settings_for_actionBlocks_applied'
+            }
+        };
+
+        this.observable.dispatchEvent(event_new_settings_for_actionBlocks_applied.name, 
+            event_new_settings_for_actionBlocks_applied.data);
+
+        const that = this;
+
+        this.view.closeSettings();
+        
+        /*
+        const i_actionBlock_to_delete = this.model.getIndexActionBlockByTitle(title);
+    
+        if (i_actionBlock_to_delete < 0) {
+            alert('Action-Block doesn\'t exist with title: ' + title);
+            return;
+        }
+        */
+
         const text_confirm_window = 'Are you sure you want to delete' + '\n' + ' "' + title + '" ?';
     
         function onClickOkConfirm() {
-            // Delete infoObject from array
-            // infoObjects.splice(i_infoObject_to_delete, 1);
-           
-            infoBlockModel.deleteInfoObjByTitle(title);
+            that.model.deleteCurrentActionBlock();
     
-            this.onUpdate();
-            infoPageView.close();
-    
+            that.onUpdate();
+            
+            const event_actionBlock_deleted = {
+                name: 'actionBlockDeleted',
+                data: {
+                    log: 'Action-Block deleted ' + title
+                }
+            };
+            
+            that.observable.dispatchEvent(event_actionBlock_deleted.name, event_actionBlock_deleted.data);
+            
+
             return;
         }
     
@@ -657,137 +715,426 @@ class ActionBlockController {
         }
       
         dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    }
+
+    onClickBtnCreateActionBlock = (title, tags_plus_title, content, image_URL) => {
+        const event_onClickBtnCreateActionBlock = {
+            name: 'btnCreateActionBlockClicked',
+            data: {
+                log: 'btnCreateActionBlockClicked'
+            }
+        };
+
+        this.observable.dispatchEvent(event_onClickBtnCreateActionBlock.name, 
+            event_onClickBtnCreateActionBlock.data);
+
+        const is_actionBlock_created = this.createActionBlock(title, tags_plus_title, 
+            infoBlockModel.action_for_new_actionBlock, content, image_URL);
+
+        if ( ! is_actionBlock_created) return;
+
+        this.view.closeSettings();
+        this.view.clearAllFields();
+
+        const event_new_settings_for_actionBlocks_applied = {
+            name: 'new_settings_for_actionBlocks_applied',
+            data: {
+                log: 'new_settings_for_actionBlocks_applied'
+            }
+        };
+
+        this.observable.dispatchEvent(event_new_settings_for_actionBlocks_applied.name, 
+            event_new_settings_for_actionBlocks_applied.data);
+    }
+
+    onClickBtnUpdateActionBlock = (title, tags, selected_action, content, image_url) => {
+        const event_new_settings_for_actionBlocks_applied = {
+            name: 'new_settings_for_actionBlocks_applied',
+            data: {
+                log: 'new_settings_for_actionBlocks_applied'
+            }
+        };
+
+        this.observable.dispatchEvent(event_new_settings_for_actionBlocks_applied.name, 
+            event_new_settings_for_actionBlocks_applied.data);
+
+        this.view.closeSettings();
+        this.view.setDefaultValuesForSettingsElementsActionBlock();
+
+        const that = this;
+        const original_title = this.model.title_actionBlock_before_update;
+
+  
+        // Check new title validation.
+        if (original_title != title) {
+            const is_new_title_valid = checkNewTitleValidation();
+
+            if (is_new_title_valid == false) {
+                return false;
+            }
+
+            addTitleToTags();
+        }
+
+        //const is_deleted = this.model.deleteActionBlockByTitle(original_title);
+        const is_deleted = this.model.deleteCurrentActionBlock();
+        if ( ! is_deleted) {
+            alert('ERROR! Action-Block hasn\'t been deleted');
+            return;
+        }
+        
+    
+        const isActionBlockCreated = this.createActionBlock(title, tags, selected_action, content, image_url);
+    
+        if ( ! isActionBlockCreated) {
+            alert('ERROR! Action-Bclok hasn\'t been created.');
+            return;
+        }
+    
+    
+    
         this.onUpdate();
-    }
-
-    clearInfoBlocksArea() {
-        this.view.clearInfoBlocksArea();
-    }
-
-    onClickBtnCreateActionBlock() {
-        // Get title value.
-        const input_field_title = settings_action_block_container.find('.input_field_title');
-        const title = textAlgorithm.getTextInOneLine(input_field_title.val());
-        console.log(title);
+        return true;
         
+
+        function checkNewTitleValidation() {
+            const index_of_title = that.model.getIndexActionBlockByTitle(title);
+            let is_actionBlock_aleready_exists = false;
+    
+            if (index_of_title >= 0) {
+                is_actionBlock_aleready_exists = true;
+            }
         
-        if ( ! title) {
-            alert('Impossible to create command. Title field is empty');
-            return false;
+            if (is_actionBlock_aleready_exists) {
+                alert('Action-Block already exists with title: ' + title);
+                return false;
+            }
+
+            return true;
         }
 
-        // .Start tags.
-        // Get tags values.
-        let input_field_tags = settings_action_block_container.find('.input_field_tags')[0];
-        let tags_from_field = input_field_tags.value;
-        
-
-        let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, '');
-        console.log('title_without_symbols', title_without_symbols);
-
-        let tags_plus_title = '';
-
-        if (tags_from_field) tags_plus_title += tags_from_field + ', ';
-
-        // Add new tag getting text from title.
-        tags_plus_title += title + ', ' + title_without_symbols;
-        // .End tags.
-
-
-
-        // Get action.
-        //let selected_action = settings_action_block_container.find('.dropdown_select_action').find(':selected')[0];
-        //let action_user_choose = selected_action.value;
-
-        if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
-            alert('Impossible to create command.\nProbably dropdown menu for action has been broken.');
-            return false;
+        function addTitleToTags() {
+            // Add new tag getting text from title
+    
+            const title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, '');
+            
+    
+            if (tags) tags = tags + ", ";
+            
+            // Add new tag getting text from title.
+            tags += title + ", " + title_without_symbols;
         }
-
-        // Get info of action.
-        const input_field_info_container = settings_action_block_container.find('.input_field_action_description');
-        let info = input_field_info_container.val();
-
-        if ( ! info) {
-            infoBlockModel.action_for_new_actionBlock = action_name.showInfo;
-            info = title;
-            // alert('Impossible to create command. Info field for action is empty');
-            // return false;
-        }
-        
-
-
-        //let input_field_action = settings_action_block_container.find('#input_field_action')[0];
-
-        const input_field_image_path_container = settings_action_block_container.find('.input_field_image_path');
-        const image_path = input_field_image_path_container.val();
-
-        //console.log(action_description_container.val())
-
-        /*
-        clearContentInContainer($('#text_info_obj_create')[0]);
-        $('<br><div align='left'>" + "Result created info object:" + "</div>').appendTo($('#text_info_obj_create')[0]);
-        $('<div>" + JSON.stringify(infoObj_new) + "</div>').appendTo($('#text_info_obj_create')[0]);
-        */
-
-        //console.log('title: " + input_field_title.value + " | tags: " + input_field_tags.value + " | action: " + action_user_choose + " | input_field_action: " + input_field_action.value + " | image path: " + image_path.value);
-        
-        const isInfoBlockCreated = actionBlockController.createActionBlock(title, tags_plus_title, infoBlockModel.action_for_new_actionBlock, info, image_path);
-
-        if ( ! isInfoBlockCreated) return;
-        
-        // Clear all fields.
-        settings_action_block_container.find('.resize_field').val('');
-
-
-        //setDefaultValuesForSettingsElementsActionBlock();
-        infoPageView.close();
     }
-
-
+    
 
     onUpdate() {
-        $('#input_field_request')[0].value = '';
-
-        //const infoObjects_from_localStorage = infoBlockModel.getAll();
-        const actionBlocks = this.model.get();
+        this.view.onUpdate();
         
         // Refresh Action-Blocks on page.
-        infoBlockModel.infoBlocks_on_page = this.showActionBlocks(actionBlocks);
+        infoBlockModel.infoBlocks_on_page = this.showActionBlocks();
     
-        // Scroll top.
-        scrollView.scrollTo();
+
+        const event_actionBlocks_updated = {
+            name: 'actionBlocksUpdated',
+            data: {
+                log: 'actionBlocksUpdated'
+            }
+        };
+
+        observable.dispatchEvent(event_actionBlocks_updated.name, event_actionBlocks_updated.data);
     }
-}
 
-const infoBlockController = {};
+    downloadFileWithActionBlocks = (actionBlocks) => {
+        if ( ! actionBlocks) actionBlocks = this.getActionBlocks();
+        const content = JSON.stringify(actionBlocks);
+
+        const date = new Date();
+        // Get date in format day.month.year hours.minutes.seconds.
+        // const date_text = date.today() + '  ' + date.timeNow();
+
+        //months from 1-12
+        const month = date.getUTCMonth() + 1;
+        const day = date.getUTCDate();
+        const year = date.getUTCFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+
+        const date_text = '' + year + month + day + '_' + hours + minutes + seconds;
+
+        // Set variable for name of the saving file with date and time. 
+        const file_name = 'Action-Blocks ' + date_text;
+        const extension = '.json';
+
+        this.fileManager.downloadFile(content, file_name, extension);
+    }
+
+    uploadFileWithActionBlocks = (actionBlocks_from_file) => {
+        this.view.closeSettings();
+
+        const event_file_actionBlocks_uploaded = {
+            name: 'fileActionBlocksUploaded',
+            data: {
+                log: 'fileActionBlocksUploaded',
+                actionBlocks: actionBlocks_from_file
+            }
+        };
+
+        this.observable.dispatchEvent(event_file_actionBlocks_uploaded.name, event_file_actionBlocks_uploaded.data);
+    }
 
 
-const settings_action_block_container = $('#settings_action_block_container');
+    showElementsForVoiceRecognitionManager() {
+        this.view.showElementsForVoiceRecognitionManager();
+    }
 
+    showElementsForDataStorageManager() {
+        this.view.showElementsForDataStorageManager();
+    }
 
-const btn_delete_all_infoBlocks = $('#btn_delete_all_infoBlocks')[0];
+    showElementsToCreateActionBlock() {
+        this.view.showElementsToCreateActionBlock();
+    }
 
+    
+    #onClickActionBlock = (i_actionBlock) => {
+        //this.executeActionBlockByIndex(i_actionBlock);
 
+        const that = this;
 
-let isMenuCreateTypeActionBlockOpen = false;
+        const actionBlocks = this.model.getActionBlocks();
+        const actionBlock = actionBlocks[i_actionBlock];
+        const obj = actionBlock;
+        let action_name_of_actionBlock = obj.action;
+        let content = obj.content;
 
+        const event_actionBlock_executed = {
+            name: 'actionBlockClicked',
+            data: {
+                index: i_actionBlock,
+                log: 'actionBlockClicked'
+            }
+        };
 
+        that.observable.dispatchEvent(event_actionBlock_executed.name, event_actionBlock_executed.data);
 
+        console.log('onClickActionBlock');
+    }
 
-$('#btn_create_infoBlock')[0].addEventListener('click', function () {
+    #onClickSettingsActionBlock = (i_actionBlock) => {
+        this.is_settings_to_update_actionBlock_opened = true;
+        console.log('is_settings_to_update_actionBlock_opened', this.is_settings_to_update_actionBlock_opened);
 
-});
+        const event_settings_actionBlock = {
+            name: 'settingsActionBlockShowed',
+            data: {
+                log: 'Settings Action Block Showed'
+            }
+        };
 
+        this.observable.dispatchEvent(event_settings_actionBlock.name, event_settings_actionBlock.data);
 
-function setDefaultValuesForSettingsElementsActionBlock() {
-    // Get title value
-    let input_field_title = $('#settings_action_block_container').find('.input_field_title');
-    input_field_title.val('');
-    let input_field_tags = $('#settings_action_block_container').find('.input_field_tags')[0];
-    input_field_tags.value = '';
-    let input_field_info_container = $('#settings_action_block_container').find('.input_field_action_description');
-    input_field_info_container.val('');
-    let input_field_image_path_container = $('#settings_action_block_container').find('.input_field_image_path');
-    input_field_image_path_container.val('');
+        const actionBlocks = this.model.getActionBlocks();
+        const actionBlock = actionBlocks[i_actionBlock];
+        this.model.title_actionBlock_before_update = actionBlock.title;
+        this.onPageContentChange();
+        this.view.showElementsToUpdateActionBlock(actionBlock);
+        this.model.i_actionBlock_opened_settings = i_actionBlock;
+    }
+
+    #onClickBtnCancelSettings = () => {
+        const event = {
+            name: 'noteClosed',
+            data: 'Note closed'
+        };
+
+        this.observable.dispatchEvent(event.name, event.data);
+    }
+    
+    #bindViewEvenets() {
+        this.view.bindClickBtnFixedPlus(this.#onClickBtnFixedPlus);
+        this.view.bindClickBtnDefaultActionBlocks(this.updateDefaultActionBlocks);
+        //this.view.bindClickBtnDownloadActionBlocks(this.downloadFileWithActionBlocks);
+        //this.view.bindUploadFileWithActionBlocks(this.uploadFileWithActionBlocks);
+        
+        this.view.bindClickBtnSettingsToCreateNote(this.showSettingsToCreateNote);
+        this.view.bindClickBtnSettingsToCreateLink(this.showSettingsToCreateLink);
+        this.view.bindClickBtnSettingsToCreateFolder(this.showSettingsToCreateFolder);
+        this.view.bindClickBtnSettingsToCreateAdvancedActionBlock(this.showSettingsToCreateAdvancedActionBlock);
+
+        this.view.bindCreateActionBlock(this.onClickBtnCreateActionBlock);
+        this.view.bindUpdateActionBlock(this.onClickBtnUpdateActionBlock);
+        this.view.bindDeleteActionBlock(this.onClickBtnDeleteActionBlock);
+        this.view.bindClickBtnRewriteActionBlocks(this.onClickBtnRewriteActionBlocks);
+
+        this.view.bindClickBtnCancelSettings(this.#onClickBtnCancelSettings);
+    }
+
+   
+    
+    
+    #showSettingsToCreateActionBlock = (action_name) => {
+        infoBlockModel.action_for_new_actionBlock = action_name;
+
+        this.view.showElementsToCreateActionBlock(action_name);
+        this.model.is_menu_create_type_actionBlock_open = false;
+        
+        this.onPageContentChange();
+
+        const event_settings_actionBlock = {
+            name: 'settingsActionBlockShowed',
+            data: {
+                log: 'Settings Action Block Showed'
+            }
+        };
+
+        this.observable.dispatchEvent(event_settings_actionBlock.name, event_settings_actionBlock.data);
+    }
+
+    #setListeners() {
+        const that = this;
+
+        setObservableListener();
+
+        function setObservableListener() {
+            that.observable.listen('hashChanged', function(observable, eventType, data){
+                that.view.clear();
+
+                if (window.location.hash === '#main' || window.location.hash === '' || window.location.hash === '#undefined') {
+                    console.log('ActionBlock listen main page');
+
+                    if (that.getActionBlocks().length > 0) {
+                        that.view.onOpenMainPageWithActionBlocks();
+                        that.showActionBlocks();
+                    }
+                    else {
+                        that.view.onOpenMainPageWithoutActionBlocks();
+                    }
+                    
+                    that.view.onShowMainPage();
+                }
+                else if (window.location.hash.includes('#request')) {
+                    console.log('ActionBlock listen request');
+                    showByRequestFromHash();
+    
+                    function showByRequestFromHash() {
+                        let request = '';
+                        const text_to_cut = window.location.hash;
+                        const from_character_request = '=';
+        
+                        let is_execute_actionBlock_by_title = false;
+        
+                        if (window.location.hash.includes('&executebytitle=false')) {
+                            is_execute_actionBlock_by_title = false;
+                            const to_character_request = '&executebytitle';
+                            request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request, to_character_request);
+                        }
+                        else if (window.location.hash.includes('&executebytitle=true')) {
+                            is_execute_actionBlock_by_title = true;
+                            const to_character_request = '&executebytitle';
+                            request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request, to_character_request);
+                        }
+                        else {
+                            request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request);
+                        }
+                        
+                        request = that.textAlgorithm.replaceSymbols(request, '%20', ' ');
+        
+        
+                        const last_character_of_requets = request.slice(-1);;
+        
+                        if (last_character_of_requets === ' ') {
+                            is_execute_actionBlock_by_title = false;
+                        }
+        
+                        that.showByRequest(request, is_execute_actionBlock_by_title);
+                    }
+                }
+                else if (window.location.hash.includes('#indexActionBlock')) {
+                    console.log('executeActionBlockFromHash');
+
+                    executeActionBlockFromHash();
+    
+                    function executeActionBlockFromHash() {
+                        const text_to_cut = window.location.hash;
+                        const from_character = '=';
+        
+                        const i_actionBlock = that.textAlgorithm.getCuttedText(text_to_cut, from_character);
+                        that.executeActionBlockByIndex(i_actionBlock);
+                    }
+                }
+            });
+    
+            /*
+            that.observable.listen('requestEntered', function(observable, eventType, data){
+                const request = data.request;
+                let is_execute_actionBlock_by_title = true;
+                if (data.is_execute_actionBlock_by_title != undefined) is_execute_actionBlock_by_title = data.is_execute_actionBlock_by_title;
+    
+                that.showByRequest(request, is_execute_actionBlock_by_title);
+            });
+            */
+    
+            that.observable.listen('databaseDialogCanceled', function(observable, eventType, data) {
+                console.log('databaseDialogCanceled');
+                const actionBlocks_from_localStorage = that.model.getActionBlocksFromLocalStorageAsync();
+                that.model.setActionBlocks(actionBlocks_from_localStorage);
+                that.showActionBlocks();
+            });
+
+            that.observable.listen('resultVoiceRecognition', function(observable, eventType, data){
+                that.is_result_voice_search = true;
+            });
+
+            that.observable.listen('keyUpOnRequestFieldPressed', function(observable, eventType, data){
+                that.view.hideActionBlocksContainer();
+                const request = data.request;
+                const clicked_keyCode = data.keyCode;
+                let is_execute_actionBlock_by_title = false;
+    
+                that.showByRequest(request, is_execute_actionBlock_by_title);
+            });
+            
+            
+            that.observable.listen('clickBtnRewrite', function(observable, eventType, data) {
+                that.model.setActionBlocks(that.model.actionBlocks_from_database);
+                that.showActionBlocks();
+            });
+    
+            that.observable.listen('fileActionBlocksUploaded', function(observable, eventType, data) {
+                that.model.setActionBlocks(data.actionBlocks);
+                that.showActionBlocks();
+            });
+    
+            
+            that.observable.listen('btnClearRequestFieldClicked', function(observable, eventType, data) {
+                that.showActionBlocks();
+            });
+            
+            that.observable.listen('btnAuthorizationClicked', function(observable, eventType, data) {
+                that.showActionBlocksFromStorage();
+            });
+    
+            that.observable.listen('rbLocalStorageClicked', function(observable, eventType, data) {
+                infoBlockModel.infoBlocks_on_page = that.showActionBlocks();
+            });
+    
+            that.observable.listen('scrolledToBottom', function(observable, eventType, data) {
+                if ($("#main_page_container").is(":visible") === false) return;
+
+                that.addOnPageNextActionBlocks();
+            });
+
+            that.observable.listen('noteClosed', function(observable, eventType, data) {
+                that.is_actionBlock_executed = false;
+
+                if (that.is_settings_to_update_actionBlock_opened) {
+                    that.is_settings_to_update_actionBlock_opened = false;
+                    that.view.setDefaultValuesForSettingsElementsActionBlock();
+                }
+
+                that.view.showActionBlocksContainer();
+            });            
+        }
+    }
 }

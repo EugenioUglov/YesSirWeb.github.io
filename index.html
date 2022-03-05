@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 
-	<title>Search By Command</title>
+	<title>Fati Search</title>
 	<!-- Favicon -->
 	<link rel="icon" type="image/x-icon" href="./images/icons/favicon.ico"/>
 	<meta name="viewport"
@@ -38,51 +38,60 @@
 
 <body>
 	<div class = "content">
-		<br>
 		<div class="container">
 			<!--Make sure the form has the autocomplete function switched off:-->
 			<!--<form autocomplete="off" action="/action_page.php">	</form>-->
 		
-		
-			<div id="search_area">
+			<div id="main_page_container" style="margin-top: 20px">
 				<div id="autocomplete">
 					<div id="request_container">
 						<div id="input_field_request_container">
-							<input id="input_field_request" title="input field" type="text" autocomplete="on" placeholder="Write request here.." autofocus>
+							<input id="input_field_request" title="input field" type="text" autocomplete="on" placeholder="Search" autofocus>
 						</div>
 
-						<div id="btn_clear_input_field_request" class="btn" title="Clear text in input field">
+
+						<div id="btn_clear_input_field_request" class="btn_icon" title="Clear text in input field">
 							<!-- Get X button from site-->
-							<div id="img_clear_input_field_request" focusable="false">
+								
+							<div style="width: 40px;height: 40px;align-items: center;justify-content: center;display: flex;">
+								<div id="img_clear_input_field_request" focusable="false"></div>
 							</div>
-						</div>	
+						</div>
 						
-						<div id="btn_accept_command" class="btn" title="Search info">
+						<div id="btn_accept_input_field_request" class="btn_icon" title="Search info">
+
 							<!-- Get search button from site-->
-							<div id="icon_accept_command">
+							<div style="width: 50px;height: 50px;display: flex;align-items: center;justify-content: center;"><div id="icon_accept_command">
 								<!--
 								<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
 								-->
-							</div>
+							</div></div>
 						</div>
+						
+				
 
 					</div>	
-					
-					<div id="btn_voice_recognition" class="btn" title="Tell request using voice" onclick="startButton(event)">
+
+
+					<div id="btn_voice_recognition" class="inline btn_icon" title="Tell request using voice">
 						<img id="img_voice_recognition" src="./icons/mic.gif" alt="Start">
 					</div>
 
-					<button id="btn_advanced_settings_for_search" class="btn" type="button" title="Advanced search"></button>
+					<div id="btn_advanced_settings_for_search" class="btn_icon" type="button" title="Advanced search">
+						<div style="width: 50px; height: 50px;"></div>
+					</div>
 				</div>
 
+
+					
 				<div id="search_by_tags_container" class="gray_container" style="padding: 10px; display: none;">
-					<h2>Search by tags</h2>
+					<h2 style="margin-bottom: 20px;">Search by tags</h2>
 	
 					<div class="flex_container">
 						<!--<img src="./icons/tag.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">-->
 						<div class="text_title_for_input_field" title="Tags to find an information.">Search Action-Blocks with tags</div>
 					</div>
-					<div><textarea class="input_field_plus_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+					<div><textarea class="input_field_plus_tags interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px"></textarea></div>
 					<div align="left" class="text_example">Example: targets, target, task, to do, plan</div>
 					<br><br>
 			
@@ -90,9 +99,9 @@
 						<!--<img src="./icons/tag.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">-->
 						<div class="text_title_for_input_field" title="Minus tags.">Don't search Action-Blocks with tags</div>
 					</div>
-					<div><textarea class="input_field_minus_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+					<div><textarea class="input_field_minus_tags interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px"></textarea></div>
 					<div align="left" class="text_example">Example: hobby, skill up</div>
-					<br>
+				
 	
 					<div id="btn_search_by_tags" class="btn" title="Search" style="cursor:pointer; float: right; border-radius: 10px;" >
 						<!-- Get search button from site-->
@@ -105,20 +114,22 @@
 
 				</div>
 
-				<form id="rb_search_mode_container" style="display: none;">
-					<label id="rb_search_by_request" class="rb_container" title="Write a text as in google ">
-						<div class="rb_label">Search by request</div>
-						<input type="radio" checked="checked" name="radio">
+				<div id="advanced_settings" style="display: none;">
+					<form id="rb_search_mode_container">
+						<label id="rb_search_by_request" class="rb_container" title="Write a text as in google ">
+							<div class="rb_label">Search by approximate matches</div>
+							<input type="radio" checked="checked" name="radio">
+							<span class="checkmark"></span>
+						</label>
+						<label id="rb_search_by_tags" class="rb_container">
+							<div class="rb_label">Search for an exact match</div>
+						<input type="radio" name="radio">
 						<span class="checkmark"></span>
-					</label>
-					<label id="rb_search_by_tags" class="rb_container">
-						<div class="rb_label">Search by tags</div>
-					<input type="radio" name="radio">
-					<span class="checkmark"></span>
-					</label>
-				</form>
+						</label>
+					</form>
+				</div>
 				
-				<div id="label_help">Found 6 results | Saved in browser storage</div>
+				<div id="label_help"></div>
 
 				<!--
 				<br>
@@ -155,8 +166,6 @@
 				<!--<script src="./autocomplete/js/index.js"></script>-->
 				
 
-				<br><br><br><br>
-
 				
 
 				<!-- 
@@ -170,7 +179,7 @@
 				
 					<!-- Text number page -->
 					
-					<div class="count_pages_infoBlocks"></div>
+					<div class="count_pages_actionBlocks"></div>
 					<a class="next">&#10095;</a>
 				</div>
 				
@@ -178,9 +187,9 @@
 				<div class="dots" style="display: none;"></div>
 		
 				<br><br>
-				<img src="./icons/spinner-greyblue.svg" class="icon_spinner" width="200px" height="200px" alt="tags icon" style="display: none;">
 						
 				<div class="actionBlocks_container" style="display: none;"></div>
+				<img src="./icons/spinner-greyblue.svg" class="icon_spinner" width="200px" height="200px" alt="tags icon" style="display: none;">
 				<br><br>
 
 				<!-- Arrows -->
@@ -189,13 +198,12 @@
 					<a class="prev">&#10094;</a>
 			
 					<!-- Text number page -->
-					<div class="count_pages_infoBlocks"></div>
+					<div class="count_pages_actionBlocks"></div>
 					<a class="next">&#10095;</a>
 				</div>
 			
 			</div>
 
-			<br><br>
 			
 				<div class="modal_header">
 						<button id="btn_close" class="btn btn_right" title="Close" style="cursor: pointer; display: none;" >
@@ -204,11 +212,10 @@
 							</div>
 						</button>
 						
-						<button class="btn_speak btn btn_right" type="button" style="display: none;">Speak</button>
-				
-				</div>	
+						<button class="btn_content_speaker btn btn_right" type="button" style="display: none;">Speak</button>
+				</div>
 
-				<div id="elements_to_create_action-block" class="elements_for_executed_infoBlock" style="display: none;" disabled>
+				<div id="elements_to_create_action-block" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
 
 
 					<!--
@@ -222,40 +229,34 @@
 
 				</div>
 
-				<div id="elements_to_update_infoBlock" class="elements_for_executed_infoBlock" style="display: none;" disabled>
+				<div id="elements_to_update_actionBlock" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
 
 					<div style="font-size:30px"><b> Update Action-Block </b></div>
-					<br>
-
 					<div class="title_infoBlock" style="font-size:30px"></div>
-
-					<br><br>
-
 				</div>
 
-				<div id="settings_action_block_container" class="elements_for_executed_infoBlock" style="display: none;" disabled>
-					<div style="outline: 1px solid gray; padding:10px; border-radius: 10px;">
+				<div id="settings_action_block_container" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
+					<div style="outline: 1px solid gray; padding: 10px; border-radius: 10px;">
 						<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title / Command</div> 
-						<div><textarea class="input_field_title interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px" required></textarea> </div>
+						<div><textarea class="input_field_title interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px" required></textarea> </div>
 						<div align="left" class="text_example">Example: Show my tasks</div>
 						<br>
 
 						<div class="type_action-block_container">
 							<div class="text_title_for_input_field" title="Action when a command is triggered">Action</div>
-							<select name="topic" class="dropdown_select_action interactive_field" style="cursor:pointer">
+							<select name="topic" class="dropdown_select_action interactive_field" style="cursor: pointer">
 							</select>
 							<br><br>
 						</div>
 						
 						<div class="action_description_container">
 							<div id="title_action_descritption" class="text_title_for_input_field">URL</div>
-							<textarea class="input_field_action_description interactive_field resize_field" rows=10 value="..."></textarea>
+							<textarea class="input_field_content interactive_field resize_field" rows=10 value=""></textarea>
 						</div>
 					</div>
-					<br><br>
 				
 				
-					<div class="optional_elements_for_action-block" style="outline: 1px solid gray; padding:10px; margin-bottom: 10px; border-radius: 10px;">	
+					<div class="optional_elements_for_action-block" style="outline: 1px solid gray; padding: 20px; margin-bottom: 10px; border-radius: 10px; margin-top: 20px;">	
 						<h2>Optional</h2>
 						<br>
 						<div class="flex_container">
@@ -264,7 +265,7 @@
 						</div>
 						<!--<select name="topic" id="dropdown_select_language" style="width:227px">
 						</select>-->
-						<div><textarea class="input_field_tags interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+						<div><textarea class="input_field_tags interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px"></textarea></div>
 						<div align="left" class="text_example">Example: targets, target, task, to do, plan</div>
 						<br>
 						
@@ -272,11 +273,11 @@
 							<img src="./icons/picture.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">
 							<div class="text_title_for_input_field" title="Path to the image">Image URL</div> 
 						</div>
-						<div><textarea class="input_field_image_path interactive_field resize_field" placeholder="..." rows="1" cols="50" max-width="20px"></textarea></div>
+						<div><textarea class="input_field_image_URL interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px"></textarea></div>
 						<div align="left" class="text_example">Example: https://imageTitle.jpg</div>
 					</div>
 
-					<div class="action-block_preview_container" style="outline: 1px solid gray;">
+					<div class="action-block_preview_container" style="outline: 1px solid gray; padding: 20px; border-radius: 10px; margin-top: 20px">
 						<h2>Preview</h2>
 						<div class="actionBlocks_container">
 							<div class="infoBlock_preview_container">
@@ -292,68 +293,31 @@
 					</div>
 
 					
-					<div class="bottom_buttons" style="margin-top: 50px;">
-						<button id="btn_delete_infoBlock" class="btn btn_right" type="button" style="display: none;">Delete</button>
-						<button id="btn_create_infoBlock" class="btn btn_save btn_right" type="button">Save</button>
-						<button class="btn_back btn btn_right" type="button">Cancel</button></div>
+					<div class="bottom_buttons" style="margin-top: 50px; margin-bottom: 180px;">
+						
+						
+						<button id="btn_create_action-block" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
+						<button id="btn_update_action-block" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
+						<button id="btn_create_default_ActionBlocks" class="btn btn_right" style="margin-top: 10px; margin-left: 20px; display: none;" type="button">Create default Action-Blocks</button>
+						<button id="btn_delete_action-block" class="btn btn_right" style="margin-top: 10px;" type="button">Delete</button>
+						<button id="btn_cancel" class="btn_back btn btn_right" style="margin-top: 10px;" type="button">Cancel</button></div>
 					</div>
-
-					<div align="left" id="text_info_obj_create" class="text_example"></div>
-					<br><br>
+					
 				</div>
 
-				<br><br>
 				<div style="margin-bottom: 30px;">
-					<!--<button id="btn_update_infoBlock" class="btn btn_save btn_right" type="button">Save</button>-->	
+					<!--<button id="btn_update_action-block" class="btn btn_save btn_right" type="button">Save</button>-->	
 					<!--<button class="btn_back btn btn_right" type="button">Back</button>-->
 				</div>
 
-
-				<!--
-				<div id="elements_for_delete_infoBlock" class="elements_for_executed_infoBlock" class="center">
-					<div style="font-size:30px"><b> Delete Action-Block </b></div>
-					<br>
-					<div class="title_infoBlock" style="font-size:30px"></div>
-					<br><br>
-					<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title:</div> 
-					<div><textarea class="input_field_title interactive_field" placeholder="..." rows="1" cols="50" max-width="20px" disabled></textarea> </div>
-					<br>
-					<br>
-
-				</div>
-				-->
-
-				<div id="elements_for_file_manager" class="elements_for_executed_infoBlock" style="display: none;" disabled>
-					<div class="center" style="font-size:30px"><b><div class="title"><b> File manager </b></div></b></div>
-					<br><br>
-
-					<div class="outline">
-						<p>Save Action-Blocks to the file</p>
-						<button id="btn_download_actionBlocks" class="btn" title="Save your data in the file">Download Action-Blocks file</button>
-						<br><br>
-					</div>
-					<br>
-					<div class="outline">
-						<p>Upload file with Action-Blocks</p>
-						<div class="upload_commands_container">
-							<button id="btn_upload_commands" type="file" class="btn" title="Save your data in the file"><input id="btn_upload_commands" class="" type="file" name="file" title=" ">
-							</button>
-							<!--<input id="btn_upload_commands" type="file" name="file" title=" " />-->
-						</div>
-					</div>
-					<br>
-				</div>
-		
-				<div id="elements_for_data_storage" class="elements_for_executed_infoBlock" style="display: none;">
+				<div id="elements_for_data_storage" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;">
 					<div class="center">
-						<div style="font-size:30px"><b><div class="title"><b> Data storage </b></div></b></div>
-						<br><br>
 						<div class="data_storage_container">
 							<div class="forms">
 								<div id="autorization_log"></div>
 								<br>
 
-								<span class = "rb_container" id = "rb_storage_localStorage_container">
+								<span class="rb_container" id="rb_storage_localStorage_container">
 									<label for="rb_storage_localStorage" title = "Save and load data from the current browser">
 										<input type="radio" id="rb_storage_localStorage" name="radio" checked>
 										<span class="rdo"></span>
@@ -361,9 +325,9 @@
 									</label>
 								</span>
 				
-								<span class = "rb_container" id="rb_storage_db_conainer">
-									<label for="rb_storage_db" title = "Save and load data from any browser and device">
-										<input type="radio" id="rb_storage_db" name="radio">
+								<span class="rb_container" id="rb_storage_database_conainer">
+									<label for="rb_storage_database" title = "Save and load data from any browser and device">
+										<input type="radio" id="rb_storage_database" name="radio">
 										<span class="rdo"></span>
 										<span class="text">Database</span>
 									</label>
@@ -384,12 +348,9 @@
 								<div class="info_data_storage outline">
 									<b>Info</b>
 									<br><br>
-									* LocalStorage - save data just in browser storage. When site will be open from another device or browser then data will be another.
+									* LocalStorage - save data in browser storage. Data will not been synchronized between other devices and browsers.
 									<br><br>
 									* DB - all saved commands will be available from different devices and browsers.
-									<br><br>
-									Attention! <br>
-									All data is stored as a text. The authorization form has been created only for the purpose of gaining access to information and has no security levels.
 								</div>
 							</div>
 						</div>
@@ -397,10 +358,8 @@
 					</div>
 				</div>
 
-				<div id="elements_for_voice_recognition_settings" class="elements_for_executed_infoBlock" style="display: none;" disabled>
+				<div id="elements_for_voice_recognition_settings" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
 					<div class="center">
-						<div class="center" style="font-size:30px"><b><div class="title"><b> Voice Recognition </b></div></b></div>
-						<br><br>
 						<div class="outline">
 							<p>Language for speech recognition</p>
 							<div id="language_selector_container">
@@ -414,18 +373,14 @@
 					</div>
 				</div>	
 
-				<div id="elements_for_logs" class="elements_for_executed_infoBlock" style="display: none;" disabled>
+				<div id="elements_for_logs" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
 					<div class="center">
 						<!-- Logs -->
 						<!-- * Logs to see errors and warnings. Also a possibilities how to resolve -->
-						<div class="center" style="font-size:30px"><b><div class="title"><b> Logs </b></div></b></div>
-						<br><br>
-
 						<button id="btn_download_logs" class="btn" title="Save logs in the file">Download logs</button>
 						<br>
 
 						<div class="outline">
-						
 							<!-- Speech API logs -->
 							<div id="info">
 								<p id="info_speak_now">Speak now.</p>
@@ -465,19 +420,14 @@
 					</div>
 				</div>
 
-
-				<div id="info_page_from_executed_action-block_container" style="display: none; margin-bottom: 10px;">
-					
-					<!--<button class="btn_back btn btn_right" type="button">Back</button>-->
-					<br><br>
-					<div id="content_executed_from_infoBlock">
-						<b></b><div class="title center" style="font-size:30px"></div></b>
-						<div class="info"></div>
-					</div>
+				<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
+					<b></b><div class="title center" style="font-size:30px"></div></b>
+					<div class="content"></div>
 				</div>
+				
 
 				
-				<button id="btn_back_main" class="btn_back btn btn_right" type="button" style="display: none; margin-bottom: 50px;">Back</button>
+				<button id="btn_back_main" class="btn_back btn btn_right" type="button" style="margin-bottom: 50px; display: none;">Back</button>
 				
 				<div class="modal_container"></div>
 		</div>
@@ -488,14 +438,14 @@
 		<div id="list_of_type_action-blocks_to_create" style="display: none;">
 			<div class="title" style="padding: 10px;font-size: 25px;text-transform: uppercase;"><b>Create</b></div>
 			<ul id="myUL">
-				<li id="btn_create_note" title="Text information" value="showInfo">Note</li>
-				<li id="btn_create_link" title="URL to web page" value="openUrl">Link to web page</li>
-				<li id="btn_create_folder" title="Search with additional tags" value="openFolder">Folder</li>
-				<li id="btn_create_advanced_action-block" title="More settings to choose action for Action-Block"  value="advanced">Advanced</li>
+				<li id="btn_settings_to_create_note" title="Text information" value="showInfo">Note</li>
+				<li id="btn_settings_to_create_link" title="URL to web page" value="openURL">Link to web page</li>
+				<!--<li id="btn_settings_to_create_folder" title="Search with additional tags" value="openFolder">Folder</li>-->
+				<li id="btn_settings_to_create_advanced_action-block" title="More settings to choose action for Action-Block"  value="advanced">Advanced</li>
 			  </ul>
 		</div>
 
-		<div class="ico-btn" id="fixed_btn_plus">
+		<div id="fixed_btn_plus" class="ico-btn btn">
 			<span class="ico-btn__plus"></span>
 		</div>
 		  <!--
@@ -506,14 +456,14 @@
 		</button>
 	-->
 
-		<button id="btn_scroll_up" style="display: none;">
+		<div id="btn_scroll_up" class="ico-btn btn" style="display: none;">
 			^
-		</button>
+		</div>
 	</div>
 
 
 
-	<dialog id="dialog_upload_InfoBloks_from_file">
+	<dialog id="dialog_upload_actionBloks_from_file">
 		<form method="dialog">
 			<!-- Title text -->
 			<div class="center"><b><div class="title"></div></b></div>
@@ -523,8 +473,8 @@
 			</div>
 			<br>
 			<div class="center">
-				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default">Add</button>
-				<button class="btn_rewrite_infoBlocks btn_in_dialog_container" value="default">Rewrite</button>
+				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default" style="display: none;">Add</button>
+				<button class="btn_rewrite_actionBlocks btn_in_dialog_container" value="default">Rewrite</button>
 				<button class="btn_cancel btn_in_dialog_container" value="cancel">Cancel</button>
 			</div>
 			</menu>
@@ -533,8 +483,6 @@
 
 	<dialog id="dialog_database_manager">
 		<form method="dialog">
-			<!-- Title text -->
-			<div class="center"><b><div class="title">Database manager</div></b></div>
 			<!-- Info text -->
 			<div class="text_info">InfoBlocks in the database not the same with the current InfoBlocks.
 									<br>Add: Add InfoBlocks from the loading source to current and skip all InfoBlocks with the same titles.
@@ -544,9 +492,9 @@
 			</div>
 			<br>
 			<div class="center">
-				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default">Add</button>
-				<button class="btn_rewrite_infoBlocks btn_in_dialog_container" value="default">Rewrite</button>
-				<button class="btn_upload_infoBlocks btn_in_dialog_container" value="default">Upload</button>
+				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default" style="display: none;">Add</button>
+				<button class="btn_rewrite_actionBlocks btn_in_dialog_container" value="default">Rewrite</button>
+				<button class="btn_upload_actionBlocks btn_in_dialog_container" value="default">Upload</button>
 				<button class="btn_cancel btn_in_dialog_container" value="cancel">Cancel</button>
 			</div>
 			</menu>
@@ -565,13 +513,6 @@
 			</form>
 		</div>
 	</dialog>
-
-	<!--	
-	<div id="fixed_elements_on_show_info" class="fixed_elements">
-		<button class="btn_back" value="close"><b>Back</b></button>
-		<button class="btn_speak" value="speak"><b>Speak</b></button>
-	</div>
-	-->
 
 	<div id="welcome_page" style="display: none;">
 		<p>
@@ -592,67 +533,62 @@
 	<script src="./js/date.js"></script>
 	<script src="./js/keyName.js"></script>
 	<script src="./js/textareaResizer.js"></script>
-	<script src="./js/textAlgorithm.js"></script>
+	<script src="./js/textManager.js"></script>
 	<script src="./js/search.js"></script>
 	<script src="./js/sort.js"></script>
-	<!--<script src="./js/voiceRecognition.js"></script>-->
-	<script src="./js/dataManagers/dbManager.js"></script>
-	<script src="./js/dataManagers/fileManager.js"></script>
+	<script src="./js/dbManager.js"></script>
+	<script src="./js/fileManager.js"></script>
 	<script src="./js/storage.js"></script>
 	<script src="./js/actionName.js"></script>
 	<script src="./js/actionDescription.js"></script>
 	<script src="./js/contentTypeDescription.js"></script>
-	<script src="./js/inputField.js"></script>
+	<!--<script src="./js/inputField.js"></script>-->
 	<script src="./js/dialogWindow.js"></script>
-	<script src="./js/dropdown.js"></script>
+	<script src="./js/dropdownManager.js"></script>
 	<script src="./js/radiobutton.js"></script>
-	<script src="./js/arrayAlgorithm.js"></script>
+	<script src="./js/arrayManager.js"></script>
 	<script src="./js/observable.js"></script>
+	<script src="./js/mapDataStructure.js"></script>
 	
 
-	<script src="./js/models/authorizationDataModel.js"></script>
-	<script src="./js/models/siteSettingsModel.js"></script>
+	<script src="./js/models/noteModel.js"></script>
 	<script src="./js/models/actionBlockModel.js"></script>
 	<script src="./js/models/speakerModel.js"></script>
-	<script src="./js/controllers/voiceRecognitionModel.js"></script>
+	<script src="./js/models/voiceRecognitionModel.js"></script>
 	<script src="./js/models/versionModel.js"></script>
 	<script src="./js/models/logsModel.js"></script>
+	<script src="./js/models/loadingModel.js"></script>
 	
+	<script src="./js/views/noteView.js"></script>
 	<script src="./js/views/scrollView.js"></script>
-	<script src="./js/views/dialogUploadCommands.js"></script>
-	<script src="./js/views/dialogDatabaseView.js"></script>
-	<script src="./js/views/blackBackgroundView.js"></script>
 	<script src="./js/views/speakerView.js"></script>
-	<script src="./js/controllers/voiceRecognitionView.js"></script>
+	<script src="./js/views/voiceRecognitionView.js"></script>
 	<script src="./js/views/actionBlockView.js"></script>
-	<script src="./js/views/infoPageView.js"></script>
 	<script src="./js/views/versionView.js"></script>
 	<script src="./js/views/logsView.js"></script>
 	<script src="./js/views/autocompleteView.js"></script>
 	<script src="./js/views/searchView.js"></script>
+	<script src="./js/views/loadingView.js"></script>
+	<script src="./js/views/dataStorageView.js"></script>
 	
+	
+	<script src="./js/controllers/logsController.js"></script>
+	<script src="./js/controllers/pageController.js"></script>
+	<script src="./js/controllers/noteController.js"></script>
 	<script src="./js/controllers/versionController.js"></script>
 	<script src="./js/controllers/speakerController.js"></script>
 	<script src="./js/controllers/voiceRecognitionController.js"></script>
-	<script src="./js/controllers/fileManagerController.js"></script>
-	<script src="./js/controllers/infoBlockSettingsController.js"></script>
 	<script src="./js/controllers/scrollController.js"></script>
 	<script src="./js/controllers/searchController.js"></script>
 	<script src="./js/controllers/dataStorageController.js"></script>
 	<script src="./js/controllers/actionBlockController.js"></script>
-	<script src="./js/controllers/pageForActionBlocksController.js"></script>
-	<script src="./js/controllers/infoPageController.js"></script>
 	<script src="./js/controllers/autocompleteController.js"></script>
 	<script src="./js/controllers/dialogWindows/databaseDialogController.js"></script>
-	<script src="./js/controllers/dialogWindows/infoBlocksUploadDialogController.js"></script>
-	<script src="./js/controllers/logsController.js"></script>
+	<script src="./js/controllers/loadingController.js"></script>
 	
+
 	<script src="./js/main.js"></script>
 
-	
-	
-	
-	
 	<script src="./js/cacheRegistrator.js"></script>
 	<!-- .END (Load scripts) -->
 

@@ -1,65 +1,60 @@
 class SpeakerController {
     constructor(observable) {
-        this.speakerView = new SpeakerView(this);
-        this.speakerModel =  new SpeakerModel();
+        this.view = new SpeakerView(this);
+        this.model =  new SpeakerModel();
         this.observable = observable;
 
-        this.setListeners();
+        this.#setListeners();
+        this.#bindViewEvents();
     }
     
-    speakHandler() {
-        if (this.speakerModel.is_speaking_now) {
-            this.stopSpeak();
-        }
-        else {
-            this.speak(this.speakerModel.text_to_speak);
-        }
-    }
 
-    speak(text_to_speak) {
-        this.speakerModel.is_speaking_now = true;
-        this.speakerModel.text_to_speak = text_to_speak;
+    speak(text_to_speak, onEndSpeak) {
+        this.model.is_speaking_now = true;
+        this.model.text_to_speak = text_to_speak;
 
-        const speak_bot = this.speakerView.speak(text_to_speak);
+        const speak_bot = this.view.speak(text_to_speak);
 
         speak_bot.onend = () => {
-            this.speakerView.changeTextForSpeakButton('Speak');
-            this.speakerModel.is_speaking_now = false;
+            this.view.changeTextForSpeakButton('Speak');
+            this.model.is_speaking_now = false;
+            if (onEndSpeak) onEndSpeak();
         }
     }
 
     stopSpeak() {
-        this.speakerView.stop();
-        this.speakerModel.is_speaking_now = false;
+        this.view.stop();
+        this.model.is_speaking_now = false;
     }
 
-    onClickBtnSpeak(event) {
-        // Don't close panel after click speak button.
-        event.preventDefault();
-
-        this.speakHandler();
+    onClickBtnSpeak = () => {
+        if (this.model.is_speaking_now) {
+            this.stopSpeak();
+        }
+        else {
+            this.speak(this.model.text_to_speak);
+        }
     }
 
     setTextForSpeech(text) {
-        this.speakerModel.text_to_speak = text;
+        this.model.text_to_speak = text;
     }
 
-    setListeners() {
+    #setListeners() {
         const that = this;
 
-        this.observable.listen('executeActionBlock', function(observable, eventType, data) {
-            that.speak(data);
+        this.observable.listen('noteClosed', function(observable, eventType, data) {
+            that.stopSpeak();
+            that.setTextForSpeech('');
+            that.view.hideBtnSpeakContent();
         });
 
-        this.observable.listen('closeContentContainer', function(observable, eventType, data) {
-            that.stopSpeak();
+        this.observable.listen('actionBlockNoteExecuted', function(observable, eventType, data) {
+            that.setTextForSpeech(data.content);
         });
     }
 
-    
+    #bindViewEvents() {
+        this.view.bindClickBtnSpeak(this.onClickBtnSpeak);
+    }
 }
-
-
-
-
-

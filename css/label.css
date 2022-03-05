@@ -1,15 +1,10 @@
 #label_help {
   position: relative;
-  left: 15px;
-  top: 8px;
-  margin: 0 auto;
-
-  max-width: 680px;
+  padding-left: 20px;
+  top: 10px;
   font-size: 13px;
-
   color: thistle;
   text-align: left;
-  
   pointer-events: none;
 }
 

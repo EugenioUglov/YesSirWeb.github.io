@@ -1,23 +1,16 @@
 .ico-btn {
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    right: 0;
-    bottom: 0;
-
-    height: 50px;
-    width: 50px;
-
-    border-radius: 50px;
-
-    cursor: pointer;
-    transition: all .20s cubic-bezier(0.4, 0.0, 0.2, 1);
-    background-color: #ffb100;
-    color: black;
-
-    /* margin-right: 100px; */
-    /* margin-bottom: 50px; */
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all .20s cubic-bezier(0.4, 0.0, 0.2, 1);
+  color: black;
 }
 
 .ico-btn__plus{

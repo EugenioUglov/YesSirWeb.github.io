@@ -1,12 +1,105 @@
 class SearchView {
-    constructor() {
-        this.setListener();
+    constructor(controller, textManager) {
+        this.textManager = textManager;
+        this.controller = controller;
+        
+        this.#setEventListeners();
     }
 
-    setListener() {
+
+
+    onStart() {
+        // Set text gray in input field command.
+        $('#input_field_request')[0].style.color = 'gray';
+    }
+
+    getUserRequest() {
+        const user_phrase = $('#input_field_request')[0].value;
+        return user_phrase;
+    }
+
+    setTextToInputField(text) {
+        $('#input_field_request')[0].value = text;
+    }
+
+    searchByTags() {
+        const input_field_plus_tags = $("#search_by_tags_container").find(".input_field_plus_tags");
+        const user_plus_tags = input_field_plus_tags.val();
+
+        const input_field_minus_tags = $("#search_by_tags_container").find(".input_field_minus_tags");
+        const user_minus_tags = input_field_minus_tags.val();
+
+        if ( ! user_plus_tags) return;
+
+        // Show Action-Blocks by tags.
+
+        //this.onClickBtnSearchByTags(user_plus_tags, user_minus_tags);
+
+        return [user_plus_tags, user_minus_tags]
+    }
+
+    /*
+    onClickBtnSearchByTags(user_plus_tags, user_minus_tags) {
+        
+    }
+    */
+
+    onEnter() {
+        // Set color of text in input field command to black.
+        $('#input_field_request')[0].style.color = 'black';
+    }
+
+    clear() {
+        $('#input_field_request')[0].value = '';
+    }
+
+    bindClickBtnEnterRequest(handler) {
+        const that = this;
+        $('#btn_accept_input_field_request')[0].addEventListener('click', () => { 
+            that.onEnter(); 
+            handler();
+        });
+    }
+    
+    bindClickBtnClearRequestField(handler) {
+        $('#btn_clear_input_field_request')[0].addEventListener('click', () => {
+            handler();
+            $("#input_field_request")[0].focus();
+        });
+    }
+
+    bindKeyUpRequestField(handler) {
+        // Execute a function when the user releases a key on the keyboard.
+        $('#input_field_request')[0].addEventListener('keyup', function(e) {
+            const request = $('#input_field_request')[0].value;
+            handler(request, e.keyCode);
+        });
+    }
+
+    bindClickBtnSearchByTags(handler) {
+        $('#btn_search_by_tags').click(() => {
+            const user_tags = this.searchByTags();
+            handler(user_tags[0], user_tags[1]);
+        });
+    }
+
+    #setEventListeners() {
+        const that = this;
+
+        /*execute a function when someone writes in the text field:*/
+        $('#input_field_request')[0].addEventListener('input', function(e) {
+            const lastCharacter = e.data;
+            
+            $('#input_field_request')[0].style.color = 'gray';
+            return;
+        });
+        
+
+        
+
         $('#btn_advanced_settings_for_search').click(function() {
-            if ($('#rb_search_mode_container').is(':visible')) $('#rb_search_mode_container').hide();
-            else $('#rb_search_mode_container').show();
+            if ($('#advanced_settings').is(':visible')) $('#advanced_settings').hide();
+            else $('#advanced_settings').show();
         });
 
         $("#rb_search_by_request").on("click", function() {
@@ -19,9 +112,7 @@ class SearchView {
             $("#search_by_tags_container").show();
         });
 
-        $('#btn_search_by_tags').click(function() {
-            this.searchByTags();
-        });
+
 
         $('.input_field_plus_tags').keypress(function(event) {
             // Enter.
@@ -35,7 +126,7 @@ class SearchView {
             // Enter.
             if (event.keyCode == 13) {
                 event.preventDefault();
-                this.searchByTags();
+                that.searchByTags();
             }
         });
 
@@ -50,12 +141,7 @@ class SearchView {
             $("#autocomplete")[0].webkitBoxShadow =  null;
             $("#autocomplete")[0].mozBoxShadow =  null;
         });
-
-        $("#btn_clear_input_field_request").click(function(){
-            $("#input_field_request")[0].focus();
-        });
-        
-        $("#btn_accept_command").click(function(){
+        $("#btn_accept_input_field_request").click(function(){
             $("#input_field_request")[0].focus();
         });
         
@@ -63,37 +149,23 @@ class SearchView {
         $("#btn_voice_recognition").click(function(){
             $("#input_field_request")[0].focus();
         });
+
+        // IF mouse over input field THEN set new title with text inside input field.
+        /*
+        $('#input_field_request')[0].addEventListener('mouseenter', function( event ) {
+            $(this).attr('title', $('#input_field_request')[0].value);
+        });
+        */
     }
 
-    searchByTags() {
-        console.log("search by tags");
-
-        const input_field_plus_tags = $("#search_by_tags_container").find(".input_field_plus_tags");
-        const user_plus_tags = input_field_plus_tags.val();
-
-        const input_field_minus_tags = $("#search_by_tags_container").find(".input_field_minus_tags");
-        const user_minus_tags = input_field_minus_tags.val();
-
-        if ( ! user_plus_tags) return;
-
-        // Show Action-Blocks by tags.
-
-        // Get command text from input field and find possible search data.
-        let actionBlocks_to_show = infoBlockModel.getByTags(user_plus_tags, user_minus_tags);
     
-        console.log("actionBlocks_to_show", actionBlocks_to_show);
 
-    
-        if ( ! actionBlocks_to_show) {
-            actionBlocks_to_show = [];
-        }
 
-        // Show infoBlocks separated by pages.
-        infoBlockModel.infoBlocks_on_page = actionBlockController.showActionBlocks(actionBlocks_to_show);
-    }
 
     focus() {
         // Focus on input field command.
-        $('#input_field_request')[0].focus();
+        $('#input_field_request')[0].focus();            
+        $('#input_field_request')[0].select();
+        $('#input_field_request')[0].selectionStart = $('#input_field_request')[0].value.length;
     }
 }

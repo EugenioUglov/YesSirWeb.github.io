@@ -1,138 +1,121 @@
 class SearchController {
-    constructor() {
-        this.view = new SearchView();
+    constructor(observable, textAlgorithm) {
+        this.observable = observable;
+        this.textAlgorithm = textAlgorithm;
 
-        // Set text gray in input field command.
-        $('#input_field_request')[0].style.color = 'gray';
+        this.view = new SearchView(this, textAlgorithm);
 
+        this.view.onStart();
+
+        this.#setEventListeners();
+        this.#bindViewEvenets();
+
+        this.init();
     }
 
-    searchByCommand(command, is_execute_actionBlock_by_title = true) {
-        $('.icon_spinner').show();
-        $('.actionBlocks_container').hide();
-        
-        let actionBlocks_to_show;
+    init() {
+        const that = this;
+        this.view.bindKeyUpRequestField(that.#onKeyUpRequestField);
+    }
 
-        console.log('command', command);
+    
+    onClickBtnSearchByTags(handler) {
+        this.view.bindClickBtnSearchByTags((user_plus_tags, user_minus_tags) => handler(user_plus_tags, user_minus_tags));
+    }
 
-        if ( ! command) {
-            console.log('This is not a command');
+    // Show infoBlocks by user_phrase.
+    onEnter = (is_execute_actionBlock_by_title = true) => {
+        const request = this.view.getUserRequest();
 
-            // Show all infoBlocks.
-    
-            actionBlocks_to_show = actionBlockController.getActionBlocks();
-            console.log('actionBlocks_to_show', actionBlocks_to_show);
-    
+        const event = {
+            name: 'requestEntered',
+            data: {
+                request: request,
+                is_execute_actionBlock_by_title: is_execute_actionBlock_by_title
+            }
+        };
+
+        observable.dispatchEvent(event.name, event.data);
+    }
+
+    onClear = () => {
+        this.view.clear();
         
-            // Show data in images.
-            infoBlockModel.infoBlocks_on_page = actionBlockController.showActionBlocks(actionBlocks_to_show);
-        }
-        else {
-            // Show infoBlocks by user phrase.
-    
-            // Get command text from input field and find possible search data.
-            actionBlocks_to_show = infoBlockModel.getByPhrase(command);
-    
-        
-            if ( ! actionBlocks_to_show) {
-                actionBlocks_to_show = [];
-            }
-    
-            // Show infoBlocks separated by pages.
-            infoBlockModel.infoBlocks_on_page = actionBlockController.showActionBlocks(actionBlocks_to_show);
-            
-           
-            if (is_execute_actionBlock_by_title) {
-                // IF ActionBlock has been found with the same title THEN execute action.
-                for (const actionBlock of actionBlocks_to_show) {
-                    if (textAlgorithm.isSame(actionBlock.title, command)) {
-                        actionBlockController.executeActionBlock(actionBlock);
-                        
-                        break;
-                    }
-                }
-            }
-    
-            // IF has been found just one infoObject THEN execute action.
-            /*
-            if (actionBlocks_to_show.length === 1) {
-                let infoObj = actionBlocks_to_show[0];
-                actionBlockController.executeActionBlock(infoObj);
-            }
-            */
-        }
+        observable.dispatchEvent('btnClearRequestFieldClicked', 'Button Clear Request Field Clicked');
     }
 
     focus() {
         this.view.focus();
     }
-}
 
-// Show infoBlocks by user_phrase.
-function onEnterCommand(is_execute_actionBlock_by_title = true) {
-    const user_phrase = $('#input_field_request')[0].value;
-    // Set color of text in input field command to black.
-    $('#input_field_request')[0].style.color = 'black';
-    searchController.searchByCommand(user_phrase, is_execute_actionBlock_by_title);
-}
+    #setEventListeners() {
+        const that = this;
 
-function onClear() {
-    actionBlockController.clearInfoBlocksArea();
-    $('#input_field_request')[0].value = '';
-    
-    const actionBlocks = actionBlockController.getActionBlocks(); //infoBlockModel.getAll(); 
-    actionBlockController.showActionBlocks(actionBlocks);
-}
+        setObservableListeners();
+      
 
-// Execute a function when the user releases a key on the keyboard
-$('#input_field_request')[0].addEventListener('keyup', function(e) {
-    if (e.keyCode === keyCodeByKeyName.space) {
-        const is_execute_actionBlock_by_title = false;
-        onEnterCommand(is_execute_actionBlock_by_title);
+        function setObservableListeners() {
+            that.observable.listen('actionBlockFolderExecuted', function(observable, eventType, data) {
+                that.view.setTextToInputField(data.tags)
+                that.view.focus();
+            });
+
+            that.observable.listen('fileActionBlocksUploaded', function(observable, eventType, data) {
+                that.view.clear();
+            });
+
+            
+            that.observable.listen('hashChanged', function(observable, eventType, data){
+                let request = '';
+
+                if (window.location.hash.includes('#request')) {
+                    request = getRequestFromHash();
+                }
+
+                function getRequestFromHash() {
+                    const text_to_cut = window.location.hash;
+                    const from_character_request = '=';
+
+                    let is_execute_actionBlock_by_title = false;
+
+                    if (window.location.hash.includes('&executebytitle')) {
+                        is_execute_actionBlock_by_title = false;
+                        const to_character_request = '&executebytitle';
+                        request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request, to_character_request);
+                    }
+                    else {
+                        request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request);
+                    }
+
+                    request = that.textAlgorithm.replaceSymbols(request, '%20', ' ');
+
+                    return request;
+                }
+
+                $('#input_field_request').val(request);
+                
+            });
+        }
     }
-    else if (e.keyCode === keyCodeByKeyName.enter) {
-        onEnterCommand();
-    } 
-});
 
-/*execute a function when someone writes in the text field:*/
-$('#input_field_request')[0].addEventListener('input', function(e) {
-    let lastCharacter = e.data;
-    
-    $('#input_field_request')[0].style.color = 'gray';
+    #onKeyUpRequestField = (request, clicked_keyCode) => {
+        const that = this;
 
-    if (lastCharacter == ' ') {
-        const is_execute_actionBlock_by_title = false;
-        onEnterCommand(is_execute_actionBlock_by_title);
+        const event = {
+            name: 'keyUpOnRequestFieldPressed',
+            data: {
+                request: request,
+                keyCode: clicked_keyCode,
+                log: 'Key Up On Request Field Pressed, keyCode' + clicked_keyCode
+            }
+        };
+
+        that.observable.dispatchEvent(event.name, event.data);
     }
-   // view.closeAllLists();
-});
 
-
-
-
-// IF mouse over input field THEN set new title with text inside input field
-$('#input_field_request')[0].addEventListener('mouseenter', function( event ) {
-    $(this).attr('title', input_field_request.value);
-});
-
-$('#btn_accept_command')[0].addEventListener('click', onEnterCommand);
-$('#btn_clear_input_field_request')[0].addEventListener('click', onClear);
-
-function addActive(x) {
-    /*a function to classify an item as "active":*/
-    if (!x) return false;
-    /*start by removing the "active" class on all items:*/
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    /*add class "view-active":*/
-    x[currentFocus].classList.add('autocomplete-active');
-}
-
-function removeActive(x) {
-    /*a function to remove the "active" class from all view items:*/
-    for (let i = 0; i < x.length; i++) {
-        x[i].classList.remove('autocomplete-active');
+    #bindViewEvenets() {
+        this.view.bindClickBtnClearRequestField(this.onClear);
+        this.view.bindClickBtnEnterRequest(this.onEnter);
+        
     }
 }

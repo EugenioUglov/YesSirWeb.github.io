@@ -18,10 +18,22 @@
    margin: 10px;
    cursor: pointer;
    /* outline: 1px solid #303030; */
-   border-radius: 12px;
+   border-radius: 8px;
+    /*
+   background-image: linear-gradient( 0deg,#482340,#3a2d62);
+  
+   background-image: linear-gradient(34deg,#11142a,#5d66a7);
+   */
+   
+   background-image: linear-gradient(0deg,#0a1218,#3a2d62);
+   
+   /*
+   background-image: linear-gradient(0deg,#475b6c,#d37c9d);
    background-color: #1c1c1e;
-   /* Set shadows */
-   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+   */
+
+   /* Set outline */
+   box-shadow: 0 0 0.1pt 0.4pt #7364ed4d;
 
  
    /* Speed of animation on mouse hover and over of element */
@@ -33,6 +45,8 @@
    -moz-transition: transform 0.5s;
    -o-transition: transform 0.5s;
    *//**/
+
+   box-shadow: 0 0 0.1pt 0.23pt #6495ed45;
 }
 
 .infoBlock img {
@@ -40,7 +54,7 @@
    /*height:250px;*/
    height: 11.11rem;
    /* padding: 3px; */
-   border-radius: 10px;
+   border-radius: 8px;
    /* Image cut */
    -o-object-fit:cover;
       object-fit:cover;
@@ -218,7 +232,7 @@
    background-color: #717171;
 }
 
-.count_pages_infoBlocks {
+.count_pages_actionBlocks {
    display: inline-block; 
    margin: 18px;
    top: 0;
@@ -252,23 +266,28 @@
 
 @media (max-width: 1300px) {
    .actionBlocks_container {
-      /* grid-template-columns: repeat(auto-fit, 8rem); */
-      grid-template-columns: repeat(auto-fit, 125px);
+      grid-template-columns: repeat(auto-fit, 7.5rem); 
+      /* grid-template-columns: repeat(auto-fit, 125px); */
+      /* grid-template-columns: repeat(auto-fit, 150px); */
       padding-left: 0px;
       padding-right: 0px;
    }
    .infoBlock img {
       height: 6rem;
+      /*height: 143px;*/
    }
    .infoBlock {
-      /* width: 7rem; */
-      width: 120px;
+      width: 7rem; 
+       /* width: 143px;*/
       margin: 5px;
-      background-color: #1c1c1e;
+      /* background-color: #1c1c1e; */
+      /*
+      background-image: linear-gradient(0deg,#0a1218,#3a2d62);
+      */
    }
 
    .actionBlocks_container .title {
-      font-size: 15px;
+      font-size: 13px;
       display: inline-block;
       padding: 15px 10px;
    }

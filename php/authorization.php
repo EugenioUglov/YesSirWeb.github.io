@@ -25,7 +25,7 @@
     $dataFromJS = $_POST;
 
     // .START (Set default data for messageForJs)
-    $messageForJs["message"] = "ERROR!!!";
+    $messageForJs["message"] = "ERROR!";
     $messageForJs["access"] = false;
     $messageForJs["id"] = -1;
     // .END (Set default data for messageForJs))
@@ -70,7 +70,7 @@
             $messageForJs["id"] = mysqli_insert_id($conn);
         }
         else {
-            $messageForJs["message"] = "ERROR!!! Connection failed";
+            $messageForJs["message"] = "ERROR! Connection failed";
         }
 
         return $messageForJs;
@@ -79,7 +79,7 @@
     function LoginUser($nickname, $password, $conn) {
         $table = 'users_info';
         // .START (Set default settings for return)
-        $messageForJs["message"] = "ERROR!!! Uncorrect data";
+        $messageForJs["message"] = "ERROR! Uncorrect data";
         $messageForJs["access"] = false;
         $messageForJs["id"] = -1;
         // .END (Set default settings for return)

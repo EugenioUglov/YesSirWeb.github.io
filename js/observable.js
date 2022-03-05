@@ -5,14 +5,14 @@
 // Listener.
 var observable = new Observable();
 
-observable.listen("myEvent", function(observable, eventType, data){
+observable.listen('myEvent', function(observable, eventType, data) {
     // Handle myEvent.
     console.log('Listener hear: ' + data);
 });
 
 // Subject.
-observable.dispatchEvent("myEvent", 'Subject1 call');
-observable.dispatchEvent("myEvent", 'Subject2 call');
+observable.dispatchEvent('myEvent', 'Subject1 call');
+observable.dispatchEvent('myEvent', 'Subject2 call');
 ***************************************************************/
 
 var Observable;
@@ -41,7 +41,7 @@ var Observable;
         if (!(handlers = listeners[type])) {
             return;
         }
-        for (i = 0, n = handlers.length; i < n; i++) {
+        for (let i = 0, n = handlers.length; i < n; i++) {
             handler = handlers[i];
             if (typeof (context) !== "undefined" && context !== handler.context) continue;
             if (handler.method.call(

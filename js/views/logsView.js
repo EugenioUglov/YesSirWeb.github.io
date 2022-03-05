@@ -3,11 +3,15 @@ class LogsView {
         this.controller = controller;
         this.setListener();
 
-        this.logs_container = $(".logs_text")[0];
+        this.logs_container = $('.logs_text')[0];
     }
 
-    show(log) {
+    setLogForLabelHelp(log) {
         label_help.innerText = log;
+    }
+
+    showContainerWithLogs() {
+        $('#elements_for_logs').show();
     }
 
     setListener() {
@@ -18,15 +22,15 @@ class LogsView {
     
     // Show log with red text.
     showErrorLog() {
-        this.logs_container.innerHTML += "<div style=\"color:#e85894;\">" + "* ERROR!!! " +text + "</div><br><br>";
+        this.logs_container.innerHTML += '<div style="color:#e85894;">' + '* ERROR! ' + text + '</div><br><br>';
     }
 
     // Show log with grey text.
     addWarningLog() {
-        this.logs_container.innerHTML += "<div style=\"color:#A36A00;\">" + "* Warning! " +text + "</div><br><br>";
+        this.logs_container.innerHTML += '<div style="color:#A36A00;">' + '* Warning! ' + text + '</div><br><br>';
     }
 
     clear() {
-        this.logs_container.innerHTML = "";
+        this.logs_container.innerHTML = '';
     }
 }

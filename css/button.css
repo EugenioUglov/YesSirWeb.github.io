@@ -6,48 +6,52 @@ button {
     width: 120px;
     padding: 10px;
     height: 50px;
+
+    
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px;
     /* color: #274f99; */
     background-color: transparent;
     background-repeat: no-repeat;
-    cursor: pointer;
-    overflow: hidden;
-    outline: 1px solid #ffffffc2;
     color: #d1c4ac;
+    transition: .1s;
+}
+
+.btn_icon {
+    cursor: pointer;
+    border-radius: 8px;
+    /* color: #274f99; */
+    background-color: transparent;
+    background-repeat: no-repeat;
+    color: #d1c4ac;    
+    transition: .1s;
+}
+
+.btn_icon:hover {
+    box-shadow: 0 0 3pt 2pt blueviolet;
 }
 
 .btn:hover {
-    outline: 1px solid blueviolet;
+    box-shadow: 0 0 3pt 2pt blueviolet;
 }
 
 .btn_right {
     float: right;
-    margin-left: 10px;
+    margin-left: 30px;
 }
 
 .btn_save {
-    background-color: slateblue;
+    background-color: #3927ad;
     color: ghostwhite;
 }
 
-.fixed_elements .btn_speak {
+.fixed_elements .btn_content_speaker {
     position: fixed;
     border-radius: 40px;
     width: 60px;
     height: 60px;
     border: 1px solid black;
 }
-
-.fixed_elements .btn_back {
-    position: fixed;
-    border-radius: 40px;
-    width: 60px;
-    height: 60px;
-    border: 1px solid black;
-    bottom: 120px;
-}
-
 
 
 .fixed_elements #fixed_btn_plus {
@@ -66,46 +70,56 @@ button {
   
 .fixed_elements #btn_scroll_up {
     position: fixed;
-    border-radius: 40px;
+    bottom: 120px;
+    right: 40px;
     width: 60px;
     height: 60px;
-    border: 1px solid black;
-    bottom: 120px;
+    background-color: #796ce0;
+    border-radius: 40px;
     font-size: 20px;
+    background-image: linear-gradient( 0deg,#da45ba,#2f1482);
+    box-shadow: 0 0 1pt 1pt #0e0e0e;
+    transition: box-shadow 0.3s ease-in-out;
+    /* transition: transform 250ms; */
+    transition: transform 250ms, opacity 400ms;
+    /* opacity: 0; */
+    /* transform: translate(0, 10vh); */
+    transition: all 1s;
 }
   
 
 /*
-.fixed_elements #fixed_btn_plus:focus, #btn_scroll_up:focus, .btn_speak:focus, .btn_back:focus {
+.fixed_elements #fixed_btn_plus:focus, #btn_scroll_up:focus, .btn_content_speaker:focus, .btn_back:focus {
     outline: 0 none;
 }
 
 
 
-.fixed_elements #fixed_btn_plus:active, #btn_scroll_up:active, .btn_speak:active, .btn_back:active {
+.fixed_elements #fixed_btn_plus:active, #btn_scroll_up:active, .btn_content_speaker:active, .btn_back:active {
     background-color: rgba(39, 184, 224, 0.904); 
 }
 */
-.fixed_elements #fixed_btn_plus:hover, #btn_scroll_up:hover, .btn_back, .btn_speak {
-    /*
+   /*
+.fixed_elements #fixed_btn_plus:hover, #btn_scroll_up:hover, .btn_back, .btn_content_speaker {
+ 
     border-color: black;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.085) inset, 0 0 8px rgba(82, 168, 236, 0.6);
     outline: 0 none;
     background-color: rgba(204, 242, 252, 0.904); 
-    */
+ 
 }
+   */
 
-
-#btn_upload_commands {
+#btn_upload_actionBlocks {
     padding: 0;
     margin: 0;
     width: 135px;
     cursor: pointer;
 }
 
-#btn_delete_infoBlock {
-    color: #8f3f3f;
-    background-color: #321212;
+#btn_delete_action-block {
+    color: #eecaca;
+    background-color: #5c0202;
 }
 
 .icon_tag {
@@ -123,33 +137,35 @@ li{position:relative;}
 li:not(.sidebar-brand):before{position:absolute; left:-20px;font-family: FontAwesome;color:red;width: 30px;}
 
 div#btn_clear_input_field_request {
-    /* margin-top: 2px; */
+    /* margin-top: 1px; */
     background-color: #9e9a9a2b;
+    background-color: #ffffff;
     border-radius: 50px;
-    width: 45px;
+    width: 40px;
     height: 40px;
-    /* align-items: center; */
-    /* align-content: center; */
-    /* text-align: center; */
+    align-items: center;
+    align-content: center;
+    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    /* outline: black solid 1px; */
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
-#btn_accept_command {
-    /* margin-right: 10px; */
+#btn_accept_input_field_request {
+    margin-right: 15px; 
     display: flex;
     align-items: center;
     justify-content: center;
-
-    width: 45px;
+    width: 40px;
     height: 40px;
-    margin-right: 10px;
-
+    /* margin-right: 5px; */
     /* background-color: #aca5a578; */
-    background-color: #9e9a9a2b;
+    /* background-color: #9e9a9a2b; */
+    background-color: #ffffff;
     border-radius: 50px;
-
     cursor: pointer;
 }
 
@@ -188,18 +204,26 @@ div#btn_search_by_tags {
 }
 
 #btn_advanced_settings_for_search {
-    background-image: url(https://yastatic.net/s3/web4static/_/v2/cRpWOVFEazl8wyn9pSRVJiwY4Jg.svg);
-    background-position: center;
-    width: 50px;
     margin-left: 5px;
+    width: 50px;
+    height: 50px;
+    background-image: url(https://yastatic.net/s3/web4static/_/v2/cRpWOVFEazl8wyn9pSRVJiwY4Jg.svg);
+    background-color: #ffffff;
+    background-position: center;
     border-radius: 50px;
 }
 
 #btn_voice_recognition {
+    margin: 0px 10px;
+    height: 50px;
+    width: 50px;
     border: 0;
-    background-color:transparent;
-    padding: 0;
-    margin-left: 20px;
+    border-radius: 50px;
+    /* background-color: transparent; */
+    /* padding: 0; */
+    /* margin-left: 20px; */
+    /* padding: 0; */
+    /* background-color: #9e9a9a2b; */
 }
 
 #btn_download_actionBlocks, #btn_download_logs {
@@ -223,28 +247,28 @@ div#btn_search_by_tags {
 }
 
 
+/*
+#btn_clear_input_field_request {
+    display: inline-block;
+    width: 110px;
+    height: 60px;
+    margin-left: 5px;
+    margin-right: 5px;
+    align-items: center;
+    text-align: center;
 
-#btn_clear_input_field_request, #btn_voice_recognition {
-  width: 44px;
-  height: 44px;
-  cursor: pointer;
-  fill:currentColor;
-  background-color: transparent;
-  border: none;
-  display: inline-block;
-  margin-left: 5px;
-  margin-right: 5px;
-  cursor: pointer;
-  
+    cursor: pointer;
+    fill: currentColor;
+    background-color: transparent;
+    border: none;
 
-  align-items: center;
-  text-align: center;
+    border-radius: 50px;
 }
-
+*/
 
 #btn_clear_input_field_request:active #img_clear_input_field_request,
 #btn_voice_recognition:active #img_voice_recognition,
-#btn_accept_command:active #icon_accept_command {
+#btn_accept_input_field_request:active #icon_accept_command {
     /* Set outline light around block with image */
     box-shadow: 0px 0px 1px 1px #4285f4; 
     -webkit-box-shadow: 0px 0px 5px 2px #4285f4;
@@ -256,12 +280,12 @@ div#btn_search_by_tags {
 
 
 
-#btn_clear_input_field_request:focus, #btn_accept_command:focus {
+#btn_clear_input_field_request:focus, #btn_accept_input_field_request:focus {
   border: none;
   outline: none; 
 }
 
-#btn_clear_input_field_request:hover, #btn_accept_command:hover {
+#btn_clear_input_field_request:hover, #btn_accept_input_field_request:hover {
   /* Set outline light around block with image 
   box-shadow: 0px 0px 5px 1px DodgerBlue; 
   -webkit-box-shadow: 0px 0px 5px 1px DodgerBlue;

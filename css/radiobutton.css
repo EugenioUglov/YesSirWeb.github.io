@@ -3,8 +3,9 @@
   display: block;
   position: relative;
   margin-bottom: 12px;
+  margin-left: 10px;
+
   cursor: pointer;
-  font-size: 18px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -14,7 +15,8 @@
 .rb_label {
   text-align: left;
   position: relative;
-  left: 15px;
+  margin-left: 35px;
+  font-size: 15px;
 }
 
 form#rb_search_mode_container {
@@ -23,7 +25,16 @@ form#rb_search_mode_container {
   background-color: #222121;
   outline: 10px;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 8px;
+}
+
+.gray_container {
+  margin: 30px auto;
+  max-width: 680px;
+  background-color: #222121;
+  outline: 10px;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 /* Hide the browser's default radio button */
