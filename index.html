@@ -484,18 +484,18 @@
 	<dialog id="dialog_database_manager">
 		<form method="dialog">
 			<!-- Info text -->
-			<div class="text_info">InfoBlocks in the database not the same with the current InfoBlocks.
-									<br>Add: Add InfoBlocks from the loading source to current and skip all InfoBlocks with the same titles.
-									<br>Rewrite: DELETE current InfoBlocks and add new InfoBlocks from the loading source.
-									<br>Upload: DELETE InfoBlocks from the database and upload a current InfoBlocks.
-									<br>Cancel: Switch to local storage type mode.
+			<div class="text_info">Action-Blocks in the database not the same with the current Action-Blocks.
+				Choose what to do with current Action-Blocks.
 			</div>
 			<br>
 			<div class="center">
-				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default" style="display: none;">Add</button>
-				<button class="btn_rewrite_actionBlocks btn_in_dialog_container" value="default">Rewrite</button>
-				<button class="btn_upload_actionBlocks btn_in_dialog_container" value="default">Upload</button>
-				<button class="btn_cancel btn_in_dialog_container" value="cancel">Cancel</button>
+				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default" style="display: none;" 
+					title="Add Action-Blocks from the loading source to current and skip all Action-Blocks with the same titles">Add</button>
+				<button class="btn_rewrite_actionBlocks btn_in_dialog_container" value="default" 
+					title="DELETE current Action-Blocks and get from the loading source">Get Action-Blocks from database</button>
+				<button class="btn_upload_actionBlocks btn_in_dialog_container" value="default" 
+					title="DELETE Action-Blocks from the database and upload current Action-Blocks">Upload current Action-Blocks to database</button>
+				<button class="btn_cancel btn_in_dialog_container" value="cancel" title="Switch to local storage mode">Cancel</button>
 			</div>
 			</menu>
 		</form>

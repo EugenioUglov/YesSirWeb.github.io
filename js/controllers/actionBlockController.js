@@ -649,8 +649,8 @@ class ActionBlockController {
     }
 
     onClickBtnRewriteActionBlocks = function() {
-        const text_confirm_window = 'Before rewrite all the commands data is recommended to save current data..' + 
-            '\n' + 'Are you sure you want to rewrite it now?';
+        const text_confirm_window = 'All current Action-Blocks will be deleted and replaced with Action-Blocks retrieved from the database.' + 
+            '\n' + 'Are you sure you want to replace it now?';
     
         dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
     
