@@ -1,9 +1,11 @@
 class ActionBlockModel {
-    constructor(dbManager, textManager, observable, dataStorageController) {
+    constructor(dbManager, textManager, observable, dataStorageController, mapDataStructure, logsController) {
         this.textManager = textManager;
         this.title_actionBlock_before_update = '';
         this.dbManager = dbManager;
         this.dataStorageController = dataStorageController;
+        this.mapDataStructure = mapDataStructure;
+        this.logsController = logsController;
         this.actionBlocks = [];
         this.actionBlocks_from_database = [];
         this.indexes_actionBlocks_by_tag = [];
@@ -40,20 +42,18 @@ class ActionBlockModel {
 
         this.observable = observable;
         console.log(this.dataStorageController);
+
+        this.#init();
     }
     
 
-    #actionBlocks_map = new Map();
+    #actionBlocks_map;
     #index_actionBlock_by_title = {};
- 
-
-    onStartSave() {
-
+    
+    #init() {
+        this.#actionBlocks_map = new Map();
     }
 
-    onSaved() {
-
-    }
 
     getActionBlocksMap() {
         return this.#actionBlocks_map;
@@ -179,6 +179,160 @@ class ActionBlockModel {
                                             return;
                                         }
                                         that.actionBlocks_from_database = [].concat(actionBlocks_from_database);
+                                        console.log('data from DB', that.actionBlocks_from_database);
+                                        onGetCallback(that.actionBlocks_from_database);
+                                        
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    onGetCallback(null);
+
+                    const event_database_connection_failed = {
+                        name: 'databaseConnectionFailed',
+                        data: {
+                            log: 'Database connection is failed for user: ' + nickname
+                        }
+                    };
+                    
+                    that.observable.dispatchEvent(event_database_connection_failed.name, event_database_connection_failed.data);
+
+                    $('#autorization_log').text('ERROR! Connection to database is failed');
+                    $('#autorization_log').css('color', 'red');
+                    $('#btn_authorization')[0].disabled = false;
+                }
+            }
+            else {
+                alert('Error on authorization to database! Data is out of sync.\n\n\
+                    Data will be updated in the browser storage.\nLog in again to sync your data.');
+
+                $('#autorization_log').text('ERROR! Connection to database is failed');
+                $('#autorization_log').css('color', 'red');
+                failCallback();
+            }
+
+        }
+    }
+
+    getActionBlocksMapFromStorageAsync(onGetCallback) {
+        let that = this;
+
+
+        if (this.dataStorageController.getUserStorage() === storage_name.database) {
+            getActionBlocksFromDatabase(onGetCallback, onFail);
+
+            function onFail() {
+                alert('Data synchronization error! Action-Blocks will be saved in the browser storage');
+
+                $('#autorization_log').text('ERROR! Connection to database is failed');
+                $('#autorization_log').css('color', 'red');
+
+                localStorage.removeItem('authorization');
+                that.dataStorageController.setUserStorage(storage_name.localStorage);
+                that.getActionBlocksFromLocalStorageAsync(onGetCallback);
+            }
+        }
+        else if (this.dataStorageController.getUserStorage() === storage_name.localStorage) {
+            that.getActionBlocksFromLocalStorageAsync(onGetCallback);
+        }
+
+        function getActionBlocksFromDatabase(onGetCallback, failCallback) {
+            //console.log('dataFromDatabaseLoading');
+            const event_data_from_database_loading = {
+                name: 'dataFromDatabaseLoading',
+                data: {
+                    log: 'Loading data from database'
+                }
+            };
+
+            that.observable.dispatchEvent(event_data_from_database_loading.name, event_data_from_database_loading.data);
+         
+
+
+            let authorizationData;
+            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
+
+            if (authorizationData) {
+                const nickname = authorizationData.nickname;
+                const password = authorizationData.password;
+                
+                $('#input_field_nickname')[0].value = nickname;
+                $('#input_field_password')[0].value = password;
+
+                $('#autorization_log').text('Connecting to database..');
+                
+                
+                that.dbManager.authorization(nickname, password, onAuthorization, failCallback);
+
+                function onAuthorization(DB_responce) {
+                    $('#autorization_log').text('Waiting for responce from database..');
+                    $('#autorization_log').css('color', 'gray');
+
+                    if (DB_responce) {
+                        if (DB_responce.access) {
+                            // Set text: authorization completed successfully.
+                            $('#autorization_log').text('Authorization completed successfully for user: ' + nickname);
+                            $('#autorization_log').css('color', 'green');
+
+                            // Set authorization data to localStorage.
+                            authorizationData = {
+                                id: DB_responce.id,
+                                nickname: nickname,
+                                password: password
+                            };
+
+
+                            localStorage['authorization'] = JSON.stringify(authorizationData);
+
+                            const event_database_connection_success = {
+                                name: 'databaseConnectionSuccess',
+                                data: {
+                                    log: 'Database connection is completed successfully for user: ' + nickname
+                                }
+                            };
+
+                            that.observable.dispatchEvent(event_database_connection_success.name, event_database_connection_success.data);
+
+                            // Get data from DB.
+                            if ( ! authorizationData) {
+                                alert('Error authorization');
+                                return false;
+                            }
+
+                            const user_id = authorizationData.id;
+                            that.dbManager.getUserData(user_id, onGetUserDataFromDB);
+
+                            $('#btn_authorization')[0].disabled = false;
+                            window.scrollTo(pageXOffset, 0);
+
+                            return;
+
+                            function onGetUserDataFromDB(DB_responce) {
+                                console.log('onGetUserDataFromDB', DB_responce);
+                                // Get user_data from DB field.
+
+                                // is_possible_get_actionBlocks_from_database.
+                                if (DB_responce) {
+                                    if (DB_responce['user_data']) {
+                                        let userDataFromDB;
+                                        let actionBlocks_from_database = new Map();
+                                        
+                                        // IF data from DB parsed successfully THEN go next.
+                                        try {
+                                            userDataFromDB = JSON.parse(DB_responce['user_data']);
+                                            actionBlocks_from_database = that.mapDataStructure.getParsed(userDataFromDB['actionBlocks']);
+                                        }
+                                        catch {
+                                            alert('ERROR! Action-Blocks have not been loaded from database. \nProbably data is broken.');
+
+                                            failCallback();
+                                            return;
+                                        }
+
+                                        that.actionBlocks_from_database = actionBlocks_from_database;
                                         console.log('data from DB', that.actionBlocks_from_database);
                                         onGetCallback(that.actionBlocks_from_database);
                                         
@@ -778,7 +932,9 @@ class ActionBlockModel {
 
 
     setActionBlocksMap(actionBlocks_map_new) {
-        this.#actionBlocks_map = actionBlocks_map_new;
+        actionBlocks_map_new.forEach(actionBlock => {
+            this.#actionBlocks_map.set(actionBlock.title, actionBlock);
+        });
 
         return this.#actionBlocks_map;
     }
@@ -791,19 +947,23 @@ class ActionBlockModel {
     }
 
     addActionBlockMap(actionBlock_to_add, is_show_alert_on_error = true) {
-        let actionBlocks = this.getActionBlocksMap();
-        actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
+        //actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags.join(', '));
+        
 
-        if (actionBlocks.has(actionBlock_to_add.title)) {
-            if (is_show_alert_on_error) alert('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+        if (this.#actionBlocks_map.has(actionBlock_to_add.title)) {
+            if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
             else {
-                console.log('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+                console.log('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
             }
 
             return false;
         }
         
+        console.log('this.#actionBlocks_map add Action-Block ' + actionBlock_to_add.title, this.#actionBlocks_map);
+
         this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
+        console.log('add ' + actionBlock_to_add.title + ' to actionBlocks_map', this.#actionBlocks_map);
+        
     
         return true;
     }
@@ -811,6 +971,7 @@ class ActionBlockModel {
     
     add(actionBlock_to_add, is_show_alert_on_error = true) {
         let actionBlocks = this.getActionBlocks();
+        console.log('!!!', actionBlock_to_add.tags);
         actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
         
         const indexActionBlockByTitle = this.getIndexActionBlockByTitle(actionBlock_to_add.title);
@@ -819,12 +980,13 @@ class ActionBlockModel {
         if (indexActionBlockByTitle === undefined) {
             // Add new Action-Block to the beginning of array.
             actionBlocks.unshift(actionBlock_to_add);
-            this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
+            console.log('ActionBlock created', actionBlock_to_add.title);
+            //this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
         }
         else {
-            if (is_show_alert_on_error) alert('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+            if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
             else {
-                console.log('Data with current title already exists. Title: ' + actionBlock_to_add.title);
+                console.log('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
             }
 
             return false;
@@ -840,7 +1002,93 @@ class ActionBlockModel {
     saveAsync(actionBlocks, callBackSavedSuccessfully, callBackError) {
         const that = this;
         this.actionBlocks = actionBlocks;
-        this.onStartSave();
+
+        this.logsController.showLog('Data is saving... Don\'t close this tab');
+
+        let isSavedInLocalStorage = saveInLocalStorage(actionBlocks);
+    
+        if (this.dataStorageController.getUserStorage() === storage_name.database)
+        {
+            // Send to DB.
+            saveToDatabase(onUpdatedUserData, onDatabaseError);
+            
+            function onUpdatedUserData() {
+                that.observable.dispatchEvent('userDataUpdated', 'userDataUpdated');
+                
+                if (callBackSavedSuccessfully) callBackSavedSuccessfully();
+            }
+
+            function onDatabaseError() {
+                that.observable.dispatchEvent('databaseOperationFailed', 'databaseOperationFailed');
+                if (callBackError) callBackError();
+            }
+        }
+        else {
+            if (callBackSavedSuccessfully) callBackSavedSuccessfully();
+        }
+    
+    
+
+        function saveToDatabase(callBackUpdatedUserData, callBackDatabaseError) {
+            console.log("saveToDatabase");
+            const actionBlocks_to_DB_string = JSON.stringify(that.getActionBlocks());
+
+            let authorizationData;
+            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
+
+            if ( ! authorizationData) {
+                alert('ERROR! Not saved in database. Authorization error.');
+                callBackDatabaseError();
+                return false; 
+            }
+            /*
+            if 
+            (
+                JSON.stringify(that.actionBlocks_from_database) === actionBlocks_to_DB_string
+            ) {
+                console.log('that.actionBlocks_from_database', that.actionBlocks_from_database);
+                console.log('actionBlocks_to_DB_string', actionBlocks_to_DB_string);
+                console.log('Not saved in database. Data the same.');
+                callBackDatabaseError();
+                return false;    
+            }
+            */
+            
+            // Set object to save in DB
+            const userData_to_DB_obj = {
+                actionBlocks: actionBlocks_to_DB_string
+            };
+            // Stringify object for DB
+            const userData_to_DB_string = JSON.stringify(userData_to_DB_obj);
+
+            // Upload data to user field
+            const user_id = authorizationData.id;
+            const data_to_send = userData_to_DB_string;
+            that.dbManager.setUserData(user_id, data_to_send, callBackUpdatedUserData, onFailSaveUserData);
+            
+            function onFailSaveUserData() {
+                return false;
+            }
+
+            return true;
+        }
+    
+        function saveInLocalStorage(actionBlocks) {
+            const key = 'actionBlocks';
+            localStorage.setItem(key, JSON.stringify(actionBlocks));
+
+            return true;
+        }
+    }
+
+    saveActionBlocksMapAsync(actionBlocks, callBackSavedSuccessfully, callBackError) {
+        const that = this;
+        if ( ! actionBlocks) {
+            actionBlocks = this.#actionBlocks_map;
+        }
+
+        actionBlocks = this.mapDataStructure.getStringified(actionBlocks);
+        this.logsController.showLog('Data is saving... Don\'t close this tab');
         
 
         let isSavedInLocalStorage = saveInLocalStorage(actionBlocks);
@@ -921,6 +1169,8 @@ class ActionBlockModel {
 
     deleteActionBlockMapByTitle(title) {
         const is_deleted = this.#actionBlocks_map.delete(title);
+        console.log('Deleted ' + title);
+        console.log('this.#actionBlocks_map', this.#actionBlocks_map)
     
         return is_deleted;
     }
@@ -954,10 +1204,10 @@ class ActionBlockModel {
     #onUpdate() {
         const that = this;
 
-        this.saveAsync(this.actionBlocks, this.onSaved);
+        this.saveAsync(this.actionBlocks);
         this.#updateTagsIndexes();
         this.#updateTitleIndexes();
-        this.#updateActionBlocksMap();
+        //this.#updateActionBlocksMap();
     }
 
     #updateTagsIndexes() {
@@ -1052,6 +1302,7 @@ class ActionBlockModel {
         }
     }
 
+    /*
     #updateActionBlocksMap(actionBlocks) {
         if (actionBlocks === undefined) actionBlocks = this.getActionBlocks();
 
@@ -1062,8 +1313,9 @@ class ActionBlockModel {
             actionBlocks_map.set(actionBlock.title, actionBlock);
         }
 
-        console.log('actionBlocks_map', actionBlocks_map);
+        console.log('actionBlocks_map update', actionBlocks_map);
     }
+    */
 
     #getNormalizedTags(tags) {
         let normalizedTags;

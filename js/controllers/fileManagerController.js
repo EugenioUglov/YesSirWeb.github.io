@@ -1,5 +1,4 @@
-
-
+/*
 class FileManagerController {
   constructor() {
     this.setListeners();
@@ -48,9 +47,6 @@ class FileManagerController {
       btn_upload_commands.value = '';
     });
   }
-
 }
 
-
-
-
+*/

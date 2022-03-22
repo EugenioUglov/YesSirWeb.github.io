@@ -19,7 +19,6 @@ class AutocompleteController {
         }
 
         const indexes_actionBlocks_by_tag = JSON.parse(localStorage['indexes_actionBlocks_by_tag']);
-
         const tags = Object.keys(indexes_actionBlocks_by_tag);
         
         this.view.bindApplyTags(applyTagsAutocompleteForInputFields);

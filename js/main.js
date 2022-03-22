@@ -10,7 +10,6 @@ let logsController;
 
 (function(){
     window.addEventListener('load', function () {
-
         onPageLoaded();
     });
 
@@ -38,7 +37,8 @@ let logsController;
         dataStorageController = new DataStorageController(observable);
         dbManager = new DBManager();
         speakerController = new SpeakerController(observable);
-        actionBlockController = new ActionBlockController(dbManager, observable, fileManager, textManager, dropdownManager, dataStorageController);
+        actionBlockController = new ActionBlockController(dbManager, observable, fileManager, textManager, 
+            dropdownManager, dataStorageController, mapDataStructure, logsController);
         autocompleteController = new AutocompleteController(textManager);
         searchController = new SearchController(observable, textManager);
         versionController = new VersionController();
@@ -56,14 +56,6 @@ let logsController;
             actionBlockController.showActionBlocksByTags(user_plus_tags, user_minus_tags);
         }
         */
-
-        actionBlockController.onStartSave = function() {
-            logsController.showLog('Data is saving... Don\'t close a tab or browser');
-        }
-
-        actionBlockController.onSaved = function() {
-            updateLogMessage();
-        }
 
 
         observable.listen('continuosVoiceRecognition', function(observable, eventType, data){
@@ -91,7 +83,7 @@ let logsController;
         
         searchController.onClickBtnSearchByTags(onClickBtnSearchByTags);
         dataStorageController.onClickBtnRewriteOnDialogDatabaseManger(onClickBtnRewriteOnDialogDatabaseManger);
-        autocompleteController.bindApplyTags(onAutocompleteItemSelect);
+        autocompleteController.bindApplyTags(onAutocompleteItemSelected);
         dataStorageController.bindClickRbLocalStorage(onClickRbLocalStorage);
         actionBlockController.showActionBlocksFromStorage();
 
@@ -101,7 +93,6 @@ let logsController;
         }
 
         function onClickBtnRewriteOnDialogDatabaseManger() {
-            alert('click btn rewrite');
             $(".black_background").hide();
             actionBlockController.onClickBtnRewriteActionBlocks();
         }
@@ -110,9 +101,13 @@ let logsController;
             updateLogMessage();
         }
 
-        function onAutocompleteItemSelect() {
-            const actionBlocks = actionBlockController.getActionBlocksByPhrase($('#input_field_request').val());
-            actionBlockController.showActionBlocks(actionBlocks);
+        function onAutocompleteItemSelected() {
+            console.log('curent page name', pageController.getCurrentPageName());
+            
+            if (pageController.getCurrentPageName() === pageController.getPageNameOptions().main) {
+                const actionBlocks = actionBlockController.getActionBlocksByPhrase($('#input_field_request').val());
+                actionBlockController.showActionBlocks(actionBlocks);
+            }
         }
 
         function updateLogMessage() {

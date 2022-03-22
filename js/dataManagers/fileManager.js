@@ -1,7 +1,7 @@
+/*
 const fileManager = {};
 
 fileManager.saveFile = function(content, file_name, extension = '.txt') {
-    console.log(content);
     // Encode spec symbols.
     const encoded_content = encodeURIComponent(content);
 
@@ -41,3 +41,4 @@ fileManager.uploadFile = function(onFileLoadedCallback) {
         onFileLoadedCallback(decoded_text_from_file);
     }
 }
+*/

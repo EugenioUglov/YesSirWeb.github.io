@@ -1,75 +1,3 @@
-const infoBlocks_area = {};
-
-infoBlocks_area.infoBlocks = {};
-infoBlocks_area.page_with_infoBlocks_current = 1;
-
-infoBlocks_area.arrow_left = {};
-infoBlocks_area.arrow_right = {};
-infoBlocks_area.dots_container = $('.dots');
-
-
-// .START (Arrows event handler)
-infoBlocks_area.arrow_left.onClick = function() {
-    const infoBlocks_length = Object.keys(infoBlockModel.infoBlocks_on_page).length;
-
-    infoBlocks_area.page_with_infoBlocks_current--;
-
-    // IF it is the first page THEN go to the last page.
-    if (infoBlocks_area.page_with_infoBlocks_current < 1) {
-        infoBlocks_area.page_with_infoBlocks_current = infoBlocks_length;
-        // console.log(infoBlocks_area.page_with_infoBlocks_current)
-    }
-
-    setPage(infoBlocks_area.page_with_infoBlocks_current);
-}  
-
-
-infoBlocks_area.arrow_right.onClick = function() {
-    const infoBlocks_length = Object.keys(infoBlockModel.infoBlocks_on_page).length
-
-    infoBlocks_area.page_with_infoBlocks_current++;
-
-    // IF it is the last page THEN go to first page.
-    if (infoBlocks_area.page_with_infoBlocks_current > infoBlocks_length) {
-        infoBlocks_area.page_with_infoBlocks_current = 1;
-        // console.log(infoBlocks_area.page_with_infoBlocks_current)
-    }
-
-    setPage(infoBlocks_area.page_with_infoBlocks_current);
-}  
-
-function setPage(n) {
-    return;
-    infoBlocks_area.page_with_infoBlocks_current = n;
-    const i_page = n - 1;
-    const infoBlocks_to_show = infoBlockModel.infoBlocks_on_page[i_page];
-    actionBlockController.showActionBlocks(infoBlocks_to_show);
-
-
-    /*
-    // .START (Update styles for dots)
-    let dots_length = $(".dots")[0].children.length;
-    
-    for (let i_dot = 0; i_dot < dots_length; i_dot++) {
-        let dot = $(".dots")[0].children[i_dot];
-        dot.className = dot.className.replace(" active", "");
-    }
-
-    let dot_to_active = $(".dots")[0].children[i_page];
-    dot_to_active.className += " active";
-    // .END (Update styles for dots)
-    */
-
-    const count_pages = Object.keys(infoBlockModel.infoBlocks_on_page).length;    
-    const current_page = n;
-
-    // Set text which page (example: 1 / 3).
-    setNumberPage(current_page, count_pages);
-}
-
-
-
-
 infoBlocks_area.addInfoObjects = function() {
     infoBlockModel.new_infoObjects_to_add = '';
 
@@ -144,6 +72,77 @@ infoBlocks_area.rewriteInfoObjects = function() {
 }
 
 
+/*
+
+const infoBlocks_area = {};
+
+infoBlocks_area.infoBlocks = {};
+infoBlocks_area.page_with_infoBlocks_current = 1;
+
+infoBlocks_area.arrow_left = {};
+infoBlocks_area.arrow_right = {};
+infoBlocks_area.dots_container = $('.dots');
+
+
+// .START (Arrows event handler)
+infoBlocks_area.arrow_left.onClick = function() {
+    const infoBlocks_length = Object.keys(infoBlockModel.infoBlocks_on_page).length;
+
+    infoBlocks_area.page_with_infoBlocks_current--;
+
+    // IF it is the first page THEN go to the last page.
+    if (infoBlocks_area.page_with_infoBlocks_current < 1) {
+        infoBlocks_area.page_with_infoBlocks_current = infoBlocks_length;
+        // console.log(infoBlocks_area.page_with_infoBlocks_current)
+    }
+
+    setPage(infoBlocks_area.page_with_infoBlocks_current);
+}  
+
+
+infoBlocks_area.arrow_right.onClick = function() {
+    const infoBlocks_length = Object.keys(infoBlockModel.infoBlocks_on_page).length
+
+    infoBlocks_area.page_with_infoBlocks_current++;
+
+    // IF it is the last page THEN go to first page.
+    if (infoBlocks_area.page_with_infoBlocks_current > infoBlocks_length) {
+        infoBlocks_area.page_with_infoBlocks_current = 1;
+        // console.log(infoBlocks_area.page_with_infoBlocks_current)
+    }
+
+    setPage(infoBlocks_area.page_with_infoBlocks_current);
+}  
+
+function setPage(n) {
+    return;
+    infoBlocks_area.page_with_infoBlocks_current = n;
+    const i_page = n - 1;
+    const infoBlocks_to_show = infoBlockModel.infoBlocks_on_page[i_page];
+    actionBlockController.showActionBlocks(infoBlocks_to_show);
+
+
+    // .START (Update styles for dots)
+    let dots_length = $(".dots")[0].children.length;
+    
+    for (let i_dot = 0; i_dot < dots_length; i_dot++) {
+        let dot = $(".dots")[0].children[i_dot];
+        dot.className = dot.className.replace(" active", "");
+    }
+
+    let dot_to_active = $(".dots")[0].children[i_page];
+    dot_to_active.className += " active";
+    // .END (Update styles for dots)
+
+
+    const count_pages = Object.keys(infoBlockModel.infoBlocks_on_page).length;    
+    const current_page = n;
+
+    // Set text which page (example: 1 / 3).
+    setNumberPage(current_page, count_pages);
+}
+
+
 // Buttons change page with actionBlocks.
 $('.page_control_elements').children('.prev').on('click', infoBlocks_area.arrow_left.onClick);
 $('.page_control_elements').children('.next').on('click', infoBlocks_area.arrow_right.onClick);
@@ -163,3 +162,4 @@ function showPageDots(page) {
     // Hide dots container.
     $('.dots').hide();
 }
+*/

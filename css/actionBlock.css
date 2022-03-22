@@ -46,7 +46,11 @@
    -o-transition: transform 0.5s;
    *//**/
 
+   /*
    box-shadow: 0 0 0.1pt 0.23pt #6495ed45;
+   */
+   
+   box-shadow: 5px 5px 15px rgb(0 0 0 / 90%);
 }
 
 .infoBlock img {
@@ -287,7 +291,7 @@
    }
 
    .actionBlocks_container .title {
-      font-size: 13px;
+      font-size: 12px;
       display: inline-block;
       padding: 15px 10px;
    }

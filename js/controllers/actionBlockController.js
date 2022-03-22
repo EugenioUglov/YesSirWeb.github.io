@@ -1,12 +1,13 @@
 class ActionBlockController {
-    constructor(dbManager, observable, fileManager, textAlgorithm, dropdownManager, dataStorageController) {
+    constructor(dbManager, observable, fileManager, textAlgorithm, dropdownManager, dataStorageController, mapDataStructure, logsController) {
         this.fileManager = fileManager;
         this.observable = observable;
         this.textAlgorithm = textAlgorithm;
+        this.dataStorageController = dataStorageController;
         this.is_settings_to_update_actionBlock_opened = false;
         this.is_actionBlock_executed = false;
-        this.is_result_voice_search = false; 
-        this.model = new ActionBlockModel(dbManager, textAlgorithm, observable, dataStorageController);
+        this.is_result_voice_search = false;
+        this.model = new ActionBlockModel(dbManager, textAlgorithm, observable, dataStorageController, mapDataStructure, logsController);
         this.view = new ActionBlockView(fileManager, textAlgorithm, dropdownManager);
         this.#setListeners();
         this.#bindViewEvenets();
@@ -16,41 +17,11 @@ class ActionBlockController {
     #actionBlocks_to_show = [];
     index_last_showed_actionBlock = 0;
 
+
     #init() {
         const that = this;
-
-        this.model.onStartSave = function() {
-            that.onStartSave();
-        }
-
-        this.model.onSaved = function() {
-            that.onSaved();
-        }
     }
 
-    onStartSave() {
-        
-    }
-
-    onSaved() {
-
-    }
-
-    
-
-    
-    #onClickBtnFixedPlus = () => {
-        this.view.onClickBtnFixedPlus();
-
-        if (this.model.is_menu_create_type_actionBlock_open) {
-            this.view.hideListOfTypeActionBlocksToCreate();
-        }
-        else {
-            this.view.showListOfTypeActionBlocksToCreate();
-        }
-
-        this.model.is_menu_create_type_actionBlock_open = ! this.model.is_menu_create_type_actionBlock_open;
-    }
 
     showByRequest = (request, is_execute_actionBlock_by_title = true) => {
         const that = this;
@@ -93,13 +64,14 @@ class ActionBlockController {
             // Show Action-Blocks separated by pages.
             infoBlockModel.infoBlocks_on_page = that.showActionBlocks(actionBlocks_to_show);
             
-            console.log('+++++++++++A');
             console.log('is_execute_actionBlock_by_title', is_execute_actionBlock_by_title);
+
             if (is_execute_actionBlock_by_title) {
                 // IF ActionBlock has been found with the same title THEN execute action.
                 for (const actionBlock of actionBlocks_to_show) {
                     console.log('actionBlock', actionBlock.title + ' is same to_');
                     console.log('request', request);
+
                     if (that.textAlgorithm.isSame(actionBlock.title, request)) {
                         const i_actionBlock = that.model.getIndexActionBlockByTitle(actionBlock.title);
                         console.log('execute', i_actionBlock);
@@ -109,7 +81,6 @@ class ActionBlockController {
                     }
                 }
             }
-            console.log('+++++++++++A');
     
             // IF has been found just one infoObject THEN execute action.
             /*
@@ -169,7 +140,6 @@ class ActionBlockController {
     getIndexesActionBlocksByTag() {
         return this.model.getIndexesActionBlocksByTag();
     }
-    
 
     createActionBlock(title, tags, action, content, image_URL, is_editable = true) {
         const action_block =
@@ -182,7 +152,8 @@ class ActionBlockController {
             is_editable: is_editable
         };
     
-        const is_created = this.model.add(action_block);
+        let is_created = this.model.add(action_block);
+        //is_created = this.model.addActionBlockMap(action_block);
 
         if ( ! is_created) {
             return false;
@@ -203,6 +174,7 @@ class ActionBlockController {
         for (const actionBlock_to_delete of actionBlocks_to_create) {
             // Update site.
             this.model.deleteActionBlockByTitle(actionBlock_to_delete.title, isShowAlertOnError);
+            this.model.deleteActionBlockMapByTitle(actionBlock_to_delete.title, isShowAlertOnError);
         }
         
         // Create default Action-Blocks.
@@ -367,8 +339,6 @@ class ActionBlockController {
 
         that.observable.dispatchEvent(event_actionBlock_executed.name, event_actionBlock_executed.data);
     }
-    
-
 
     showActionBlocks = (actionBlocks_to_show) => {
         if (window.location.hash.includes('#indexActionBlock')) return;
@@ -501,8 +471,22 @@ class ActionBlockController {
         
         console.log('====');
 
-        return infoBlocks_on_page;
+        
+        updateLogMessage();
+
+        function updateLogMessage() {
+            const data_storage = storage_name[that.dataStorageController.getUserStorage()];
+            const storage_for_log = {};
+            storage_for_log[storage_name.database] = 'database';
+            storage_for_log[storage_name.localStorage] = 'browser';
     
+            const log = 'Found ' + actionBlocks_to_show.length + ' results | ' + 
+                'Saved in ' + storage_for_log[data_storage] + ' storage';
+    
+            logsController.showLog(log);
+        }
+
+        return infoBlocks_on_page;
     }
 
     showActionBlock(actionBlock) {
@@ -511,23 +495,27 @@ class ActionBlockController {
 
     showActionBlocksFromStorage = () => {
         const that = this;
-        console.log("1");
-        console.log(this.model.getActionBlocks());
         this.view.hideActionBlocksContainer();
 
         this.model.getActionBlocksFromStorageAsync(onGetActionBlocksCallback);
+        this.model.getActionBlocksMapFromStorageAsync(onGetActionBlocksMapCallback);
 
-        function onGetActionBlocksCallback(actionBlocks) {
+        function onGetActionBlocksMapCallback(actionBlokcs_from_user_storage) {
+            console.log('actionBlokcs_from_user_storage', actionBlokcs_from_user_storage);
+        }
+
+
+        function onGetActionBlocksCallback(actionBlokcs_from_user_storage) {
             const actionBlocks_from_localStorage = that.model.getActionBlocksFromLocalStorageAsync();
-            const actionBlokcs_from_user_storage = actionBlocks;
             console.log('actionBlocks_from_localStorage', actionBlocks_from_localStorage);
             console.log('actionBlokcs_from_user_storage', actionBlokcs_from_user_storage);
 
             // IF data is equal to data from localStorage THEN show Action-Blocks. 
             // ELSE open dialog database.
             if (JSON.stringify(actionBlokcs_from_user_storage) === JSON.stringify(actionBlocks_from_localStorage)) {
-                that.model.setActionBlocks(actionBlocks);
-                that.showActionBlocks(actionBlocks);
+                that.model.setActionBlocks(actionBlokcs_from_user_storage);
+                that.model.setActionBlocksMap(actionBlokcs_from_user_storage);
+                that.showActionBlocks(actionBlokcs_from_user_storage);
             }
             else {
                 that.downloadFileWithActionBlocks(actionBlocks_from_localStorage);
@@ -595,14 +583,10 @@ class ActionBlockController {
         this.view.bindClickActionBlock(this.#onClickActionBlock, this.#onClickSettingsActionBlock);
     }
 
-
-
     getActionBlocksByPhrase(phrase) {
         return this.model.getByPhrase(phrase);
     }
     
-
-
     openFolder(i_actionBlock) {
         const actionBlocks = this.model.getActionBlocks();
         const actionBlock = actionBlocks[i_actionBlock];
@@ -748,6 +732,8 @@ class ActionBlockController {
     }
 
     onClickBtnUpdateActionBlock = (title, tags, selected_action, content, image_url) => {
+        console.log('onClickBtnUpdateActionBlock');
+
         const event_new_settings_for_actionBlocks_applied = {
             name: 'new_settings_for_actionBlocks_applied',
             data: {
@@ -763,11 +749,11 @@ class ActionBlockController {
 
         const that = this;
         const original_title = this.model.title_actionBlock_before_update;
-
   
         // Check new title validation.
         if (original_title != title) {
-            const is_new_title_valid = checkNewTitleValidation();
+            console.log('original_title != title');
+            const is_new_title_valid = isActionBlockExistsByTitle(title);
 
             if (is_new_title_valid == false) {
                 return false;
@@ -778,26 +764,29 @@ class ActionBlockController {
 
         //const is_deleted = this.model.deleteActionBlockByTitle(original_title);
         const is_deleted = this.model.deleteCurrentActionBlock();
+        console.log('is deleted Action-Block ' + is_deleted);
+
         if ( ! is_deleted) {
             alert('ERROR! Action-Block hasn\'t been deleted');
             return;
         }
+
+        console.log('Action-Blocks', this.getActionBlocks());
         
-    
         const isActionBlockCreated = this.createActionBlock(title, tags, selected_action, content, image_url);
+        console.log('isActionBlockCreated', isActionBlockCreated);
     
         if ( ! isActionBlockCreated) {
             alert('ERROR! Action-Bclok hasn\'t been created.');
             return;
         }
     
-    
-    
         this.onUpdate();
+
         return true;
         
 
-        function checkNewTitleValidation() {
+        function isActionBlockExistsByTitle(title) {
             const index_of_title = that.model.getIndexActionBlockByTitle(title);
             let is_actionBlock_aleready_exists = false;
     
@@ -826,7 +815,6 @@ class ActionBlockController {
         }
     }
     
-
     onUpdate() {
         this.view.onUpdate();
         
@@ -883,7 +871,6 @@ class ActionBlockController {
         this.observable.dispatchEvent(event_file_actionBlocks_uploaded.name, event_file_actionBlocks_uploaded.data);
     }
 
-
     showElementsForVoiceRecognitionManager() {
         this.view.showElementsForVoiceRecognitionManager();
     }
@@ -895,6 +882,8 @@ class ActionBlockController {
     showElementsToCreateActionBlock() {
         this.view.showElementsToCreateActionBlock();
     }
+
+
 
     
     #onClickActionBlock = (i_actionBlock) => {
@@ -970,9 +959,6 @@ class ActionBlockController {
         this.view.bindClickBtnCancelSettings(this.#onClickBtnCancelSettings);
     }
 
-   
-    
-    
     #showSettingsToCreateActionBlock = (action_name) => {
         infoBlockModel.action_for_new_actionBlock = action_name;
 
@@ -989,6 +975,19 @@ class ActionBlockController {
         };
 
         this.observable.dispatchEvent(event_settings_actionBlock.name, event_settings_actionBlock.data);
+    }
+
+    #onClickBtnFixedPlus = () => {
+        this.view.onClickBtnFixedPlus();
+
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.view.hideListOfTypeActionBlocksToCreate();
+        }
+        else {
+            this.view.showListOfTypeActionBlocksToCreate();
+        }
+
+        this.model.is_menu_create_type_actionBlock_open = ! this.model.is_menu_create_type_actionBlock_open;
     }
 
     #setListeners() {
@@ -1079,6 +1078,8 @@ class ActionBlockController {
                 console.log('databaseDialogCanceled');
                 const actionBlocks_from_localStorage = that.model.getActionBlocksFromLocalStorageAsync();
                 that.model.setActionBlocks(actionBlocks_from_localStorage);
+                that.model.setActionBlocksMap(actionBlocks_from_localStorage);
+                
                 that.showActionBlocks();
             });
 
@@ -1098,11 +1099,13 @@ class ActionBlockController {
             
             that.observable.listen('clickBtnRewrite', function(observable, eventType, data) {
                 that.model.setActionBlocks(that.model.actionBlocks_from_database);
+                that.model.setActionBlocksMap(that.model.actionBlocks_from_database);
                 that.showActionBlocks();
             });
     
             that.observable.listen('fileActionBlocksUploaded', function(observable, eventType, data) {
                 that.model.setActionBlocks(data.actionBlocks);
+                that.model.setActionBlocksMap(data.actionBlocks);
                 that.showActionBlocks();
             });
     

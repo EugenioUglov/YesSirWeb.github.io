@@ -22,8 +22,9 @@ class DataStorageController {
     onRbLocalStorageClicked() {
         $('#autorization_log').text('');
         this.setUserStorage(storage_name.localStorage);
+        this.updateLogMessage();
         $('#authorization_form').hide();
-    
+
         observable.dispatchEvent('rbLocalStorageClicked', 'rbLocalStorageClicked');
     }
 
@@ -57,6 +58,18 @@ class DataStorageController {
             that.onRbLocalStorageClicked();
             handler();
         });
+    }
+
+    updateLogMessage() {
+        const data_storage = storage_name[this.getUserStorage()];
+        const storage_for_log = {};
+        storage_for_log[storage_name.database] = 'database';
+        storage_for_log[storage_name.localStorage] = 'browser';
+
+        const log = 'Found ' + actionBlockController.getActionBlocks().length + ' results | ' + 
+            'Saved in ' + storage_for_log[data_storage] + ' storage';
+
+        logsController.showLog(log);
     }
 
     #setListeners() {
@@ -119,4 +132,6 @@ class DataStorageController {
 
         return this.#user_storage;
     }
+
+
 }

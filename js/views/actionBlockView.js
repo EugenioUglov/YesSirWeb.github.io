@@ -127,7 +127,7 @@ class ActionBlockView {
         }
 
         
-        const titles_elements = $('.title_infoBlock');
+        const titles_elements = $('.title_actionBlock');
 
         for (const title_elem of titles_elements) {
             title_elem.innerText = actionBlock.title;
@@ -521,7 +521,7 @@ class ActionBlockView {
 
     bindDeleteActionBlock(handler) {
         $('#btn_delete_action-block').on('click', () => {
-            const title = $('#elements_to_update_actionBlock').find('.title_infoBlock')[0].innerText;
+            const title = $('#elements_to_update_actionBlock').find('.title_actionBlock')[0].innerText;
             handler(title);
         });
     }

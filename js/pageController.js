@@ -42,9 +42,6 @@ class PageController {
                 }
                 */
     
-
-    
-    
                 that.observable.listen('keyUpOnRequestFieldPressed', function(observable, eventType, data){
                     const clicked_keyCode = data.keyCode;
                     let is_execute_actionBlock_by_title = false;
@@ -168,7 +165,7 @@ class PageController {
 
 
 
-
+/*
 const infoBlocks_area = {};
 
 infoBlocks_area.infoBlocks = {};
@@ -217,7 +214,6 @@ function setPage(n) {
     actionBlockController.showActionBlocks(infoBlocks_to_show);
 
 
-    /*
     // .START (Update styles for dots)
     let dots_length = $(".dots")[0].children.length;
     
@@ -229,7 +225,7 @@ function setPage(n) {
     let dot_to_active = $(".dots")[0].children[i_page];
     dot_to_active.className += " active";
     // .END (Update styles for dots)
-    */
+
 
     const count_pages = Object.keys(infoBlockModel.infoBlocks_on_page).length;    
     const current_page = n;
@@ -262,3 +258,5 @@ function showPageDots(page) {
     // Hide dots container.
     $('.dots').hide();
 }
+
+*/
