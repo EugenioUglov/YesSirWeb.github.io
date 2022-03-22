@@ -4,8 +4,7 @@
 
 <h2>Algorithm</h2>
 <p>When the user enters commands through a space into the search bar and clicks the find button -
-the algorithm takes as input each set of characters (word) of the user and displays Action-Blocks on the page, which correspond to the input of the users. Tags are stored in an object, where the key is the tag and the value is an array of Action-Blocks indexes containing the tag. This approach makes it approximately one O (1) operation to find a tag.
-OLD: Comparison is done by binary search, so information retrieval is relatively fast (O (log (n))).</p>
+the algorithm takes as input each set of characters (word) of the user and displays Action-Blocks on the page, which correspond to the input of the users. Tags are stored in an object, where the key is the tag and the value is an array of Action-Blocks indexes containing the tag. This approach makes it approximately one operation to find a tag - O(1).
 
 <b>For instance:</b>
 <ul>
