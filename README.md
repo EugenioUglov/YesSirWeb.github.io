@@ -25,6 +25,6 @@ Action-Block object:
 
 
 <h2>Used technologies</h2>
-Languages: JS, HTML, CSS. <br>
+Languages: JS, PHP, HTML, CSS. <br>
 Design pattern: MVP. <br>
 Libraries: Jquery. <br>
