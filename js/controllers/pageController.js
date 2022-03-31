@@ -1,7 +1,10 @@
 class PageController {
-    constructor(observable, keyCodeByKeyName) {
+    constructor(noteController, textManager, observable, keyCodeByKeyName) {
+        this.noteController = noteController;
+        this.textManager = textManager;
         this.observable = observable;
         this.keyCodeByKeyName = keyCodeByKeyName;
+
 
         this.hash_previous;
 
@@ -96,11 +99,30 @@ class PageController {
                         let new_hash = '#main';
                         
                         if (that.hash_previous) {
-                            if (that.hash_previous.includes('#request')) {
-                                new_hash = that.hash_previous;
+                            new_hash = that.hash_previous;
+
+                            if (new_hash.includes('#request')) {
+                                if (new_hash.includes('executebytitle=true')) {
+                                    console.log('new_hash has executebytitle=true');
+                                    const text_to_cut = new_hash;
+                                    const from_character_hash = null;
+                                    const to_character_hash = '&executebytitle';
+
+                                    const hash_previous_without_execute_param = that.textManager.getCuttedText(text_to_cut, from_character_hash, to_character_hash);
+                                    new_hash = hash_previous_without_execute_param + '&executebytitle=false';
+                                    console.log('new_hash', new_hash);
+                                    if (that.noteController.is_note_opened) {
+                                        that.noteController.close();
+                                    }
+                                }
+                                else {
+                                    
+                                }
                             }
                         }
                         
+
+
                         window.location.hash = new_hash;
                         
                         console.log('event called', event);
@@ -111,6 +133,7 @@ class PageController {
     
                 for (const event of events_to_open_main_page) {
                     that.observable.listen(event, function(observable, eventType, data){
+                        console.log('event to open main page');
                         that.openMainPage();
                     });
                 }
@@ -130,11 +153,8 @@ class PageController {
                     that.setPageName('settingsActionBlock');
                 });
     
-    
-                
                 for (const event of events_to_execute_actionBlock) {
                     that.observable.listen(event, function(observable, eventType, data){
-                        // !!!
                         if ($('#input_field_request').val() === '') {
                             that.hash_previous = window.location.hash;
                         }
@@ -142,8 +162,8 @@ class PageController {
                             that.hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
                         }
         
-                        const index = data.index;
-                        window.location.hash = '#indexActionBlock=' + index;
+                        const title = data.title;
+                        window.location.hash = '#request=' + title + '&executebytitle=true';
                         
                         that.setPageName('contentActionBlock');
                     });
@@ -171,6 +191,12 @@ class PageController {
         sendEventHashChanged();
 
         function sendEventHashChanged () {
+            if (window.location.hash.includes('executebytitle=true') === false) {
+                if (that.noteController.is_note_opened) {
+                    that.noteController.close();
+                }
+            }
+            
             const event = {
                 name: 'hashChanged',
                 data: {

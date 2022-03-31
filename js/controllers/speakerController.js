@@ -1,43 +1,46 @@
 class SpeakerController {
-    constructor(observable) {
+    constructor(speakerService, observable) {
         this.view = new SpeakerView(this);
-        this.model =  new SpeakerModel();
         this.observable = observable;
+        this.speakerService = speakerService;
 
         this.#setListeners();
         this.#bindViewEvents();
     }
     
+    #is_speaking_now = false;
+    #text_to_speak = false;
 
     speak(text_to_speak, onEndSpeak) {
-        this.model.is_speaking_now = true;
-        this.model.text_to_speak = text_to_speak;
+        const that = this;
+        this.#is_speaking_now = true;
 
-        const speak_bot = this.view.speak(text_to_speak);
+        this.speakerService.speak(text_to_speak, onEndSpeak);
+        that.view.changeTextForSpeakButton('Stop speak');
 
-        speak_bot.onend = () => {
-            this.view.changeTextForSpeakButton('Speak');
-            this.model.is_speaking_now = false;
-            if (onEndSpeak) onEndSpeak();
+        function onEndSpeak() {
+            that.view.changeTextForSpeakButton('Speak');
+            that.#is_speaking_now = false;
         }
     }
 
     stopSpeak() {
-        this.view.stop();
-        this.model.is_speaking_now = false;
+        window.speechSynthesis.cancel();
+        this.view.changeTextForSpeakButton('Speak');
+        this.#is_speaking_now = false;
     }
 
     onClickBtnSpeak = () => {
-        if (this.model.is_speaking_now) {
+        if (this.#is_speaking_now) {
             this.stopSpeak();
         }
         else {
-            this.speak(this.model.text_to_speak);
+            this.speak();
         }
     }
 
     setTextForSpeech(text) {
-        this.model.text_to_speak = text;
+        this.speakerService.setTextToSpeak(text);
     }
 
     #setListeners() {

@@ -1,9 +1,9 @@
 class SearchController {
-    constructor(observable, textAlgorithm) {
+    constructor(observable, textManager) {
         this.observable = observable;
-        this.textAlgorithm = textAlgorithm;
+        this.textManager = textManager;
 
-        this.view = new SearchView(this, textAlgorithm);
+        this.view = new SearchView(this, textManager);
 
         this.view.onStart();
 
@@ -81,13 +81,13 @@ class SearchController {
                     if (window.location.hash.includes('&executebytitle')) {
                         is_execute_actionBlock_by_title = false;
                         const to_character_request = '&executebytitle';
-                        request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request, to_character_request);
+                        request = that.textManager.getCuttedText(text_to_cut, from_character_request, to_character_request);
                     }
                     else {
-                        request = that.textAlgorithm.getCuttedText(text_to_cut, from_character_request);
+                        request = that.textManager.getCuttedText(text_to_cut, from_character_request);
                     }
 
-                    request = that.textAlgorithm.replaceSymbols(request, '%20', ' ');
+                    request = that.textManager.replaceSymbols(request, '%20', ' ');
 
                     return request;
                 }

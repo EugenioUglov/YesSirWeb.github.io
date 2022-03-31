@@ -1,5 +1,6 @@
 class DataStorageView {
-    constructor () {
+    constructor (dialogWindow) {
+        this.dialogWindow = dialogWindow;
         this.#init();
     }
 
@@ -43,7 +44,7 @@ class DataStorageView {
                 $(".black_background").hide();
             }
         
-            dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+            this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
         });
         
         dialog_database_manager.btn_cancel.addEventListener('click', function() {

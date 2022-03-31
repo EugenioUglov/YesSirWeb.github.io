@@ -1,7 +1,7 @@
 class ActionBlockView {
-    constructor(fileManager, textAlgorithm, dropdownManager) {
+    constructor(fileManager, textManager, dropdownManager) {
         this.fileManager = fileManager;
-        this.textAlgorithm = textAlgorithm; 
+        this.textManager = textManager; 
         this.dropdownManager = dropdownManager;
         this.init();
         this.setEventListeners();
@@ -16,6 +16,7 @@ class ActionBlockView {
     }
 
     addOnPage(id, actionBlock, parent_element = $('.actionBlocks_container').first(), isEditable = true) {
+        if ( ! id) id = 'n';
         const actionBlock_html = this.#createHTMLContainerActionBlock(id, actionBlock, isEditable);
 
         // Add ActionBlock to parent element.
@@ -157,14 +158,12 @@ class ActionBlockView {
     }
 
     onOpenMainPageWithoutActionBlocks() {
-        console.log("$('#main_page_container').hide();");
         $('#main_page_container').hide();
         $('#welcome_page').show();
     }
 
     onOpenMainPageWithActionBlocks() {
         $('#welcome_page').hide();
-        console.log("$('#main_page_container').show();");
         // Show search area with Info-Blocks.
         $('#main_page_container').show();
     }
@@ -251,8 +250,8 @@ class ActionBlockView {
             settings_container.on('click', onClickBtnSettings);
 
             function onClickBtnSettings(e) {
-                var i_actionBlock = $(this).closest('.infoBlock').attr('value');
-                settingsActionBlockClickHandler(i_actionBlock);
+                var title = $(this).closest('.infoBlock').attr('value');
+                settingsActionBlockClickHandler(title);
             }
         }
         
@@ -260,8 +259,8 @@ class ActionBlockView {
         // On click Action-Block.
         $('.infoBlock').on('click', function() {
             if (is_mouse_enter_settings) return false;
-            const i_actionBlock = $(this).attr('value');
-            actionBlockClickHandler(i_actionBlock);
+            const title = $(this).attr('value');
+            actionBlockClickHandler(title);
         });
     }
 
@@ -369,7 +368,7 @@ class ActionBlockView {
 
             // Get title value.
             const input_field_title = settings_action_block_container.find('.input_field_title');
-            const title = this.textAlgorithm.getTextInOneLine(input_field_title.val());
+            const title = this.textManager.getTextInOneLine(input_field_title.val());
             
             
             if ( ! title) {
@@ -473,7 +472,7 @@ class ActionBlockView {
             // Change all new lines to symbol ","
             let tags_without_new_line = tags_with_title.replaceAll('\n', ',');
             tags_without_new_line = tags_without_new_line.toLowerCase();
-            tags = textAlgorithm.getArrayByText(tags_without_new_line);
+            tags = textManager.getArrayByText(tags_without_new_line);
             
         
             // Delete empty symbols from sides in text.
@@ -564,6 +563,7 @@ class ActionBlockView {
     }
 
     #createHTMLContainerActionBlock = function(id, actionBlock, isEditable = true) {
+        console.log('#createHTMLContainerActionBlock()', actionBlock);
         const title = actionBlock.title;
         const is_folder = actionBlock.action === action_name.openFolder;
         let imageURL = actionBlock.imageURL;
@@ -695,10 +695,6 @@ class ActionBlockView {
     }
     
 
-
-
-
-
     #showContentOnPage(content, isHTML = false) {
         $('#btn_close').show();
         $('#content_executed_from_actionBlock').show();
@@ -717,7 +713,7 @@ class ActionBlockView {
         }
         else {
             $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap')
-            // this.textAlgorithm.getConvertedTextToHTML(content);
+            // this.textManager.getConvertedTextToHTML(content);
             $('#content_executed_from_actionBlock').find('.content').text(content);
         }
     

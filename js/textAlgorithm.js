@@ -1,3 +1,4 @@
+/*
 const textAlgorithm = {};
 
 
@@ -53,3 +54,4 @@ textAlgorithm.getLastWord = function(text, symol_before_word = ' ') {
     var separated_words = text.split(symol_before_word);
     return separated_words[separated_words.length - 1];
 }
+*/

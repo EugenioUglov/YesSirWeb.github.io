@@ -1,9 +1,8 @@
 class DataStorageController {
-    constructor(observable) {
-        this.view = new DataStorageView();
+    constructor(observable, dialogWindow) {
+        this.view = new DataStorageView(dialogWindow);
 
         this.observable = observable;
-
         this.#setListeners();
         this.#getFromLocalStorage();
     }

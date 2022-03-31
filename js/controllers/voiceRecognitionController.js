@@ -1,18 +1,19 @@
 class VoiceRecognitionController {
-    constructor(observable) {
+    constructor(voiceRecognitionService, observable) {
         this.model = new VoiceRecognitionModel();
         this.view = new VoiceRecognitionView();
         this.observable = observable;
         this.event = this.model.getEvent();
+        this.voiceRecognitionService = voiceRecognitionService;
         this.recognizer;
-        this.isRecognizing = false;
         //this.initOld();
-        this.#init();
+        //this.#init();
         this.#bindViewEvenets();
     }
 
     #init() {
         const that = this;
+        
 
         if ('webkitSpeechRecognition' in window) {
             // Создаем распознаватель
@@ -68,7 +69,7 @@ class VoiceRecognitionController {
             }
 
             this.recognizer.onend = function() {
-                if (isFinalResult === false && this.isRecognizing) that.startRecognizing();
+                if (isFinalResult === false && that.voiceRecognitionService.isRecognizing()) that.voiceRecognitionService.startRecognizing();
                 else {
                     this.isRecognizing = false;
                 }
@@ -84,16 +85,49 @@ class VoiceRecognitionController {
 
 
     onClickBtnVoiceRecognition = () => {
-        console.log('this.isRecognizing', this.isRecognizing);
-        if (this.isRecognizing) {
-            this.stopRecognizing();
+        const that = this;
+        
+        if (this.voiceRecognitionService.isRecognizing) {
+            this.voiceRecognitionService.stopRecognizing();
         }
         else {
-            this.startRecognizing();
+            this.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript);
+
+            function onInterimTranscript(interim_transcript) {
+                const event_continuos_speech = {
+                    name: 'continuosVoiceRecognition',
+                    data: {
+                        transcript: interim_transcript,
+                        log: 'Continuous Voice Recognition transcript: ' + interim_transcript
+                    }
+                }
+
+                that.observable.dispatchEvent(event_continuos_speech.name, event_continuos_speech.data);
+            }
+
+            function onFinalTranscript(final_transcript) {                   
+                input_field_request.style.color = 'black';
+                const last_character_final_transcript = final_transcript[final_transcript.length - 1];
+
+                if (last_character_final_transcript === '.') {
+                    final_transcript = final_transcript.substr(0, final_transcript.length - 1);
+                }
+                
+                const event_resultSpeech = {
+                    name: 'resultVoiceRecognition',
+                    data: {
+                        transcript: final_transcript,
+                        log: 'Result Voice Recognition transcript: ' + final_transcript
+                    } 
+                }
+
+                that.observable.dispatchEvent(event_resultSpeech.name, event_resultSpeech.data);
+            }
         }
 
     }
 
+    /*
     startRecognizing = (event) => {
         if (this.isRecognizing) return;
         
@@ -109,6 +143,7 @@ class VoiceRecognitionController {
         this.recognizer.stop();
         this.isRecognizing = false;
     }
+    */
  
 
     initOld() {

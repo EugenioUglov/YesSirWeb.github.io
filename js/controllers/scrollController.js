@@ -6,7 +6,7 @@ class ScrollController {
         this.#bindViewEvents();
     }
 
-    scrollTo = (toObj, speed = 1000) =>  {
+    #scrollTo = (toObj, speed = 1000) =>  {
         if(toObj === undefined || toObj === null) {
             // IF scroll on the top THEN return. 
             if (window.pageYOffset == 0) return;
@@ -24,11 +24,11 @@ class ScrollController {
         speed); 
     }
 
-    scrollTop = () => {
-        this.scrollTo();
+    #scrollTop = () => {
+        this.#scrollTo();
     }
 
-    setPosition = (pageX, pageY) => {
+    #setPosition = (pageX, pageY) => {
         window.scrollTo(pageX, pageY);
     }
 
@@ -120,32 +120,29 @@ class ScrollController {
                     }, timeout);
                 }
             }
-
-
-            
         }
 
         function setObservableListeners() {
             that.observable.listen('actionBlocksUpdated', function(observable, eventType, data) {
                 // Scroll top.
-                that.scrollTo();
+                that.#scrollTo();
             });
 
             that.observable.listen('actionBlocksStartShow', function(observable, eventType, data) {
                 // Scroll top.
-                that.scrollTo();
+                that.#scrollTo();
                 
                 $('#btn_scroll_up').hide();
             });
 
             that.observable.listen('actionBlockContentExecuted', function(observable, eventType, data) {
                 // Set position top.
-                that.setPosition(0, 0);
+                that.#setPosition(0, 0);
             });
         }
     }
 
     #bindViewEvents() {
-        this.view.bindClickBtnScrollUp(this.scrollTop);
+        this.view.bindClickBtnScrollUp(this.#scrollTop);
     }
 }

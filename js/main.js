@@ -6,6 +6,11 @@ let dbManager;
 let observable;
 let actionBlockController; 
 let logsController; 
+let speakerController;
+
+let speakerService;
+let voiceRecognitionService;
+let autocompleteService;
 
 
 (function(){
@@ -14,7 +19,6 @@ let logsController;
     });
 
     function onPageLoaded() {
-        let speakerController;
         let autocompleteController;
         let searchController;
         let versionController;
@@ -27,25 +31,30 @@ let logsController;
 
         const textManager = new TextManager();
 
+        const dialogWindow = new DialogWindow();
         observable = new Observable();
         fileManager = new FileManager(textManager);
         dropdownManager = new DropdownManager();
         mapDataStructure = new MapDataStructure();
 
         logsController = new LogsController(fileManager, observable);
-        pageController = new PageController(observable, keyCodeByKeyName);
-        dataStorageController = new DataStorageController(observable);
+        dataStorageController = new DataStorageController(observable, dialogWindow);
         dbManager = new DBManager();
-        speakerController = new SpeakerController(observable);
+        speakerService = new SpeakerService();
+        speakerController = new SpeakerController(speakerService, observable);
         actionBlockController = new ActionBlockController(dbManager, observable, fileManager, textManager, 
-            dropdownManager, dataStorageController, mapDataStructure, logsController);
-        autocompleteController = new AutocompleteController(textManager);
+            dropdownManager, dataStorageController, mapDataStructure, logsController,
+            dialogWindow);
+        autocompleteService = new AutocompleteService(textManager);
+        autocompleteController = new AutocompleteController(autocompleteService, textManager);
         searchController = new SearchController(observable, textManager);
         versionController = new VersionController();
-        voiceRecognitionController = new VoiceRecognitionController(observable);
+        voiceRecognitionService = new VoiceRecognitionService();
+        voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable);
         noteController = new NoteController(observable);
         scrollController = new ScrollController(observable);
         loadingController = new LoadingController(observable);
+        pageController = new PageController(noteController, textManager, observable, keyCodeByKeyName);
 
         // Events.
 

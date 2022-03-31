@@ -15,7 +15,7 @@ class MapDataStructure {
     }
 
     
-    #replacer (key, value) {
+    #replacer(key, value) {
         if (value instanceof Map) {
             return {
                 _type: "map",
@@ -24,7 +24,7 @@ class MapDataStructure {
         } else return value;
     }
     
-    #reviver (key, value) {
+    #reviver(key, value) {
         if (value._type == "map") return new Map(value.map);
         else return value;
     }

@@ -12,6 +12,7 @@ class NoteController {
     }
 
     close = () => {
+        console.log('noteClosed');
         this.is_note_opened = false;
         this.view.close(); 
 
@@ -28,7 +29,7 @@ class NoteController {
 
         that.observable.listen('hashChanged', function(observable, eventType, data) {
             if (window.location.hash.includes('#indexActionBlock') === false && that.is_note_opened) {
-                that.close();
+                //that.close();
             } 
         });
 
