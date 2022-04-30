@@ -1,4 +1,4 @@
-class VersionView {
+class NoteSpeakerModel {
     constructor() {
         
     }

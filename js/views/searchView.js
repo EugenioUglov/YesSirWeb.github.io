@@ -4,11 +4,12 @@ class SearchView {
         this.controller = controller;
         
         this.#setEventListeners();
+        this.#init();
     }
 
 
 
-    onStart() {
+    #init() {
         // Set text gray in input field command.
         $('#input_field_request')[0].style.color = 'gray';
     }
@@ -22,27 +23,19 @@ class SearchView {
         $('#input_field_request')[0].value = text;
     }
 
-    searchByTags() {
+    getPlusTags() {
         const input_field_plus_tags = $("#search_by_tags_container").find(".input_field_plus_tags");
         const user_plus_tags = input_field_plus_tags.val();
 
+        return user_plus_tags;
+    }
+
+    getMinusTags() {
         const input_field_minus_tags = $("#search_by_tags_container").find(".input_field_minus_tags");
         const user_minus_tags = input_field_minus_tags.val();
 
-        if ( ! user_plus_tags) return;
-
-        // Show Action-Blocks by tags.
-
-        //this.onClickBtnSearchByTags(user_plus_tags, user_minus_tags);
-
-        return [user_plus_tags, user_minus_tags]
+        return user_minus_tags;
     }
-
-    /*
-    onClickBtnSearchByTags(user_plus_tags, user_minus_tags) {
-        
-    }
-    */
 
     onEnter() {
         // Set color of text in input field command to black.
@@ -54,6 +47,7 @@ class SearchView {
     }
 
     bindClickBtnEnterRequest(handler) {
+        console.log('bindClickBtnEnterRequest');
         const that = this;
         $('#btn_accept_input_field_request')[0].addEventListener('click', () => { 
             that.onEnter(); 
@@ -78,8 +72,15 @@ class SearchView {
 
     bindClickBtnSearchByTags(handler) {
         $('#btn_search_by_tags').click(() => {
-            const user_tags = this.searchByTags();
-            handler(user_tags[0], user_tags[1]);
+            handler(this.getPlusTags(), this.getMinusTags());
+        });
+
+        $('.input_field_minus_tags').keypress((event) => {
+            // Enter.
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                handler(this.getPlusTags(), this.getMinusTags());
+            }
         });
     }
 
@@ -94,12 +95,15 @@ class SearchView {
             return;
         });
         
-
-        
-
         $('#btn_advanced_settings_for_search').click(function() {
-            if ($('#advanced_settings').is(':visible')) $('#advanced_settings').hide();
-            else $('#advanced_settings').show();
+            if ($('#advanced_settings').is(':visible')) {
+                console.log('#advanced_settings hide');
+                $('#advanced_settings').hide();
+            }
+            else {
+                console.log('#advanced_settings show');
+                $('#advanced_settings').show();
+            }
         });
 
         $("#rb_search_by_request").on("click", function() {
@@ -112,8 +116,6 @@ class SearchView {
             $("#search_by_tags_container").show();
         });
 
-
-
         $('.input_field_plus_tags').keypress(function(event) {
             // Enter.
             if (event.keyCode == 13)  {
@@ -122,13 +124,7 @@ class SearchView {
             }
         });
     
-        $('.input_field_minus_tags').keypress((event) => {
-            // Enter.
-            if (event.keyCode == 13) {
-                event.preventDefault();
-                that.searchByTags();
-            }
-        });
+
 
         $("#input_field_request")[0].onfocus = () => {
             $("#autocomplete")[0].style.boxShadow = "0px 0px 5px 1px #4285f4"; 
@@ -141,10 +137,10 @@ class SearchView {
             $("#autocomplete")[0].webkitBoxShadow =  null;
             $("#autocomplete")[0].mozBoxShadow =  null;
         });
+
         $("#btn_accept_input_field_request").click(function(){
             $("#input_field_request")[0].focus();
         });
-        
         
         $("#btn_voice_recognition").click(function(){
             $("#input_field_request")[0].focus();
@@ -157,10 +153,6 @@ class SearchView {
         });
         */
     }
-
-    
-
-
 
     focus() {
         // Focus on input field command.

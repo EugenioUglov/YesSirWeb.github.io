@@ -1,29 +1,23 @@
 class ActionBlockModel {
-    constructor(dbManager, textManager, observable, dataStorageController, mapDataStructure, logsController) {
-        this.textManager = textManager;
+    #textManager;
+    #dateManager
+
+    constructor(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, dateManager) {
+        this.#textManager = textManager;
         this.title_actionBlock_before_update = '';
         this.dbManager = dbManager;
-        this.dataStorageController = dataStorageController;
+        this.dataStorageService = dataStorageService;
         this.mapDataStructure = mapDataStructure;
-        this.logsController = logsController;
+        this.fileManager = fileManager;
+
+        this.#dateManager = dateManager;
+
         this.actionBlocks = [];
         this.actionBlocks_from_database = [];
-        this.indexes_actionBlocks_by_tag = [];
+        // this.indexes_actionBlocks_by_tag = [];
         this.infoBlocks_on_page = '';
-        this.i_actionBlock_opened_settings;
         this.is_menu_create_type_actionBlock_open = false;
-    
-        this.action_name = {
-            openURL: 'openURL',
-            showInfo: 'showInfo',
-            openFolder: 'openFolder',
-            showHTML: 'showHTML',
-            createActionBlock: 'createActionBlock',
-            showFileManager: 'showFileManager',
-            showDataStorageManager: 'showDataStorageManager',
-            showElementsForVoiceRecognitionManager: 'showElementsForVoiceRecognitionManager',
-            showLogs: 'showLogs',
-        };
+        // this.actionBlocks_to_show = [];
     
         this.action_description_by_action_name = {
             openURL: 'Open URL',
@@ -31,248 +25,60 @@ class ActionBlockModel {
             openFolder: 'Create folder (Search info by tags)',
             showHTML: 'Show info in HTML mode'
         };
-    
-        // Titles for input field info of action.
-        this.content_type_description_by_action = {
-            openURL: 'URL',
-            showInfo: 'Description',
-            openFolder: 'Tags to search',
-            showHTML: 'HTML code'
-        };
-
-        this.observable = observable;
 
         this.#init();
     }
     
 
+
     #actionBlocks_map;
-    #index_actionBlock_by_title = {};
+    //#index_actionBlock_by_title = {};
     #titles_actionBlocksMap_by_tag = {};
     
     #init() {
         this.#actionBlocks_map = new Map();
     }
 
-    /* OLD
-    getActionBlocks() {
-        return this.actionBlocks;
-    }
-    */
 
-    // NEW
-    getActionBlocks() {
-        return this.getActionBlocksMap();
-    }
 
-    getActionBlocksMap() {
+    getActionBlocks() {
         return this.#actionBlocks_map;
     }
-
-
-
-
-    /* OLD
-    getActionBlocksFromStorageAsync(onGetCallback) {
-        let that = this;
-
-
-        if (this.dataStorageController.getUserStorage() === storage_name.database) {
-            getActionBlocksFromDatabase(onGetCallback, onFail);
-
-            function onFail() {
-                alert('Data synchronization error! Action-Blocks will be saved in the browser storage');
-
-                $('#autorization_log').text('ERROR! Connection to database is failed');
-                $('#autorization_log').css('color', 'red');
-
-                localStorage.removeItem('authorization');
-                that.dataStorageController.setUserStorage(storage_name.localStorage);
-                that.getActionBlocksFromLocalStorageAsync(onGetCallback);
-            }
-        }
-        else if (this.dataStorageController.getUserStorage() === storage_name.localStorage) {
-            that.getActionBlocksFromLocalStorageAsync(onGetCallback);
-        }
-
-        function getActionBlocksFromDatabase(onGetCallback, failCallback) {
-            //console.log('dataFromDatabaseLoading');
-            const event_data_from_database_loading = {
-                name: 'dataFromDatabaseLoading',
-                data: {
-                    log: 'Loading data from database'
-                }
-            };
-
-            that.observable.dispatchEvent(event_data_from_database_loading.name, event_data_from_database_loading.data);
-         
-
-
-            let authorizationData;
-            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
-
-            if (authorizationData) {
-                const nickname = authorizationData.nickname;
-                const password = authorizationData.password;
-                
-                $('#input_field_nickname')[0].value = nickname;
-                $('#input_field_password')[0].value = password;
-
-                $('#autorization_log').text('Connecting to database..');
-                
-                
-                that.dbManager.authorization(nickname, password, onAuthorization, failCallback);
-
-                function onAuthorization(DB_responce) {
-                    $('#autorization_log').text('Waiting for responce from database..');
-                    $('#autorization_log').css('color', 'gray');
-
-                    if (DB_responce) {
-                        if (DB_responce.access) {
-                            // Set text: authorization completed successfully.
-                            $('#autorization_log').text('Authorization completed successfully for user: ' + nickname);
-                            $('#autorization_log').css('color', 'green');
-
-                            // Set authorization data to localStorage.
-                            authorizationData = {
-                                id: DB_responce.id,
-                                nickname: nickname,
-                                password: password
-                            };
-
-
-                            localStorage['authorization'] = JSON.stringify(authorizationData);
-
-                            const event_database_connection_success = {
-                                name: 'databaseConnectionSuccess',
-                                data: {
-                                    log: 'Database connection is completed successfully for user: ' + nickname
-                                }
-                            };
-
-                            that.observable.dispatchEvent(event_database_connection_success.name, event_database_connection_success.data);
-
-                            // Get data from DB.
-                            if ( ! authorizationData) {
-                                alert('Error authorization');
-                                return false;
-                            }
-
-                            const user_id = authorizationData.id;
-                            that.dbManager.getUserData(user_id, onGetUserDataFromDB);
-
-                            $('#btn_authorization')[0].disabled = false;
-                            window.scrollTo(pageXOffset, 0);
-
-                            return;
-
-                            function onGetUserDataFromDB(DB_responce) {
-                                console.log('onGetUserDataFromDB', DB_responce);
-                                // Get user_data from DB field.
-
-                                // is_possible_get_actionBlocks_from_database.
-                                if (DB_responce) {
-                                    if (DB_responce['user_data']) {
-                                        let userDataFromDB;
-                                        let actionBlocks_from_database;
-                                        
-                                        // IF data from DB parsed successfully THEN go next.
-                                        try {
-                                            userDataFromDB = JSON.parse(DB_responce['user_data']);
-                                            actionBlocks_from_database = JSON.parse(userDataFromDB['actionBlocks']);
-                                        }
-                                        catch {
-                                            alert('ERROR! Action-Blocks have not been loaded from database. \nProbably data is broken.');
-
-                                            failCallback();
-                                            return;
-                                        }
-                                        that.actionBlocks_from_database = [].concat(actionBlocks_from_database);
-                                        console.log('data from DB', that.actionBlocks_from_database);
-                                        onGetCallback(that.actionBlocks_from_database);
-                                        
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    onGetCallback(null);
-
-                    const event_database_connection_failed = {
-                        name: 'databaseConnectionFailed',
-                        data: {
-                            log: 'Database connection is failed for user: ' + nickname
-                        }
-                    };
-                    
-                    that.observable.dispatchEvent(event_database_connection_failed.name, event_database_connection_failed.data);
-
-                    $('#autorization_log').text('ERROR! Connection to database is failed');
-                    $('#autorization_log').css('color', 'red');
-                    $('#btn_authorization')[0].disabled = false;
-                }
-            }
-            else {
-                alert('Error on authorization to database! Data is out of sync.\n\n\
-                    Data will be updated in the browser storage.\nLog in again to sync your data.');
-
-                $('#autorization_log').text('ERROR! Connection to database is failed');
-                $('#autorization_log').css('color', 'red');
-                failCallback();
-            }
-
-        }
-    }
-    */
-
-    // NEW
+    
     getActionBlocksFromStorageAsync(onGetCallback) {
         return this.getActionBlocksMapFromStorageAsync(onGetCallback);
     }
 
     getActionBlocksMapFromStorageAsync(onGetCallback) {
-        let that = this;
+        const that = this;
 
-
-        if (this.dataStorageController.getUserStorage() === storage_name.database) {
+        if (this.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().database) {
             getActionBlocksFromDatabase(onGetCallback, onFail);
 
             function onFail() {
-                alert('Data synchronization error! Action-Blocks will be saved in the browser storage');
+                alert('Current Action-Blocks will be synchronized');
 
-                $('#autorization_log').text('ERROR! Connection to database is failed');
+                $('#autorization_log').text('ERROR! Data loading is failed');
                 $('#autorization_log').css('color', 'red');
 
-                localStorage.removeItem('authorization');
-                that.dataStorageController.setUserStorage(storage_name.localStorage);
+                // localStorage.removeItem('authorization');
+                that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().localStorage);
                 that.getActionBlocksFromLocalStorageAsync(onGetCallback);
+                that.saveInDatabase();
             }
         }
-        else if (this.dataStorageController.getUserStorage() === storage_name.localStorage) {
+        else if (this.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().localStorage) {
             that.getActionBlocksFromLocalStorageAsync(onGetCallback);
         }
 
         function getActionBlocksFromDatabase(onGetCallback, failCallback) {
-            //console.log('dataFromDatabaseLoading');
-            const event_data_from_database_loading = {
-                name: 'dataFromDatabaseLoading',
-                data: {
-                    log: 'Loading data from database'
-                }
-            };
+            let authorization_data;
+            if (localStorage['authorization']) authorization_data = JSON.parse(localStorage['authorization']);
+            console.log('authorization data', localStorage['authorization']);
 
-            that.observable.dispatchEvent(event_data_from_database_loading.name, event_data_from_database_loading.data);
-         
-
-
-            let authorizationData;
-            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
-
-            if (authorizationData) {
-                const nickname = authorizationData.nickname;
-                const password = authorizationData.password;
+            if (authorization_data) {
+                const nickname = authorization_data.nickname;
+                const password = authorization_data.password;
                 
                 $('#input_field_nickname')[0].value = nickname;
                 $('#input_field_password')[0].value = password;
@@ -280,7 +86,19 @@ class ActionBlockModel {
                 $('#autorization_log').text('Connecting to database..');
                 
                 
-                that.dbManager.authorization(nickname, password, onAuthorization, failCallback);
+                that.dbManager.authorization(nickname, password, onAuthorization, onAuthorizationFail);
+
+                function onAuthorizationFail() {
+                    console.log('fail storage');
+                    alert('Data synchronization error! Current Action-Blocks will be saved in the browser storage');
+
+                    $('#autorization_log').text('ERROR! Connection to database is failed');
+                    $('#autorization_log').css('color', 'red');
+    
+                    localStorage.removeItem('authorization');
+                    that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().localStorage);
+                    that.getActionBlocksFromLocalStorageAsync(onGetCallback);
+                }
 
                 function onAuthorization(DB_responce) {
                     $('#autorization_log').text('Waiting for responce from database..');
@@ -293,37 +111,40 @@ class ActionBlockModel {
                             $('#autorization_log').css('color', 'green');
 
                             // Set authorization data to localStorage.
-                            authorizationData = {
+                            authorization_data = {
                                 id: DB_responce.id,
                                 nickname: nickname,
                                 password: password
                             };
 
 
-                            localStorage['authorization'] = JSON.stringify(authorizationData);
+                            localStorage['authorization'] = JSON.stringify(authorization_data);
 
-                            const event_database_connection_success = {
-                                name: 'databaseConnectionSuccess',
-                                data: {
-                                    log: 'Database connection is completed successfully for user: ' + nickname
-                                }
-                            };
+                            // !!!
+                            // const event_database_connection_success = {
+                            //     name: 'databaseConnectionSuccess',
+                            //     data: {
+                            //         log: 'Database connection is completed successfully for user: ' + nickname
+                            //     }
+                            // };
 
-                            that.observable.dispatchEvent(event_database_connection_success.name, event_database_connection_success.data);
+                            // that.observable.dispatchEvent(event_database_connection_success.name, event_database_connection_success.data);
+                            that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().database);
 
                             // Get data from DB.
-                            if ( ! authorizationData) {
+                            if ( ! authorization_data) {
                                 alert('Error authorization');
                                 return false;
                             }
 
-                            const user_id = authorizationData.id;
+                            const user_id = authorization_data.id;
                             that.dbManager.getUserData(user_id, onGetUserDataFromDB);
 
                             $('#btn_authorization')[0].disabled = false;
                             window.scrollTo(pageXOffset, 0);
 
                             return;
+
 
                             function onGetUserDataFromDB(DB_responce) {
                                 console.log('onGetUserDataFromDB', DB_responce);
@@ -341,14 +162,36 @@ class ActionBlockModel {
                                             actionBlocks_from_database = that.mapDataStructure.getParsed(userDataFromDB['actionBlocks']);
                                         }
                                         catch {
-                                            alert('ERROR! Action-Blocks have not been loaded from database. \nProbably data is broken.');
+                                            onGetActionBlocksFailed();
 
-                                            failCallback();
                                             return;
                                         }
 
+                                        if (that.mapDataStructure.isMap(actionBlocks_from_database) === false) {
+                                            onGetActionBlocksFailed();
+                                            
+                                            return;
+                                        }
+
+                                        function onGetActionBlocksFailed() {
+                                            const date_text = that.#dateManager.getDateNow() + '-' + that.#dateManager.getTimeNow();
+                                            
+
+                                            const content = DB_responce['user_data'];
+                                            const file_name = 'Broken Action-Blocks from database ' + date_text;
+                                            const extension = '.json';
+                                    
+                                            that.fileManager.downloadFile(content, file_name, extension);
+
+                                            alert('ERROR! Action-Blocks have not been loaded from database. \nProbably data is broken.');
+
+                                            failCallback();
+                                        }
+
                                         that.actionBlocks_from_database = actionBlocks_from_database;
+
                                         console.log('data from DB', that.actionBlocks_from_database);
+
                                         onGetCallback(that.actionBlocks_from_database);
                                         
                                         return;
@@ -356,18 +199,13 @@ class ActionBlockModel {
                                 }
                             }
                         }
+                        else {
+                            console.log('fail access');
+                            onAuthorizationFail();  
+                        }
                     }
 
                     onGetCallback(null);
-
-                    const event_database_connection_failed = {
-                        name: 'databaseConnectionFailed',
-                        data: {
-                            log: 'Database connection is failed for user: ' + nickname
-                        }
-                    };
-                    
-                    that.observable.dispatchEvent(event_database_connection_failed.name, event_database_connection_failed.data);
 
                     $('#autorization_log').text('ERROR! Connection to database is failed');
                     $('#autorization_log').css('color', 'red');
@@ -386,150 +224,23 @@ class ActionBlockModel {
         }
     }
 
-    getActionBlockFromMapByTitle(title) {
-        return this.getActionBlocksMap().get(title);
+    getActionBlockByTitle(title) {
+        return this.getActionBlocks().get(title);
     }
-    /* OLD
-    getActionBlocksFromLocalStorageAsync(onGetCallback) {
-        let actionBlocks = [];
-        const key = 'actionBlocks';
-        
-        if (localStorage.getItem(key)) {
-            const actionBlocks_from_localStorage = JSON.parse(localStorage.getItem(key));
-    
-            // Make array even if in localStorage just one Action-Block.
-            actionBlocks = actionBlocks.concat(actionBlocks_from_localStorage);
-        }
 
-        //this.setActionBlocks(actionBlocks);
-
-        if (onGetCallback) onGetCallback(actionBlocks);
-
-        return actionBlocks;
-    }
-    */
-
-    // NEW
     getActionBlocksFromLocalStorageAsync(onGetCallback) {
         let actionBlocks_from_localStorage = new Map;
         const key = 'actionBlocks';
         
         if (localStorage.getItem(key)) {
             actionBlocks_from_localStorage = this.mapDataStructure.getParsed(localStorage.getItem(key));
-    
-            // Make array even if in localStorage just one Action-Block.
-            //actionBlocks = actionBlocks.concat(actionBlocks_from_localStorage);
         }
-
-        //this.setActionBlocks(actionBlocks);
-
+        
         if (onGetCallback) onGetCallback(actionBlocks_from_localStorage);
 
         return actionBlocks_from_localStorage;
     }
 
-
-    getIndexesActionBlocksByTag() {
-        const key = 'indexes_actionBlocks_by_tag';
-    
-        if (localStorage.getItem(key)) return JSON.parse(localStorage[key]);
-    
-        return {};
-    }
-
-    getIndexActionBlockByTitle(title) {
-        title = title.toLowerCase();
-        return this.#index_actionBlock_by_title[title];
-    }
-
-    /* OLD
-    getByPhrase(user_phrase) {
-        const that = this;
-
-        console.log('this', this);
-        // Delete characters "," from phrase.
-        user_phrase = user_phrase.replaceAll(',', '');
-    
-        // If phrase doesn't exist.
-        if ( ! user_phrase) {
-            console.log('Action-Blocks don\'t exist with tags: ' + user_phrase);
-            return;
-        }
-    
-        if (user_phrase === undefined || user_phrase === null) {
-            let error_text = 'user_phrase not defined during information searching';
-            console.log(error_text);
-        }
-    
-        // Here all objects from a storage which info can to be looking by user.
-        let found_actionBlocks = [];
-        
-        const actionBlocks = this.getActionBlocks();
-        
-        user_phrase = user_phrase.toLowerCase();
-        const user_words = this.textManager.splitText(user_phrase, ' ');
-        
-        
-        const indexes_actionBlocks_by_tag = this.getIndexesActionBlocksByTag();
-        const indexes_infoObjects_to_show = getIndexesInfoObjectsToShowByPhrase(user_words); 
-    
-    
-    
-        // Create an array with actionBlocks and priority value to show.
-        for (const i_obj of indexes_infoObjects_to_show) {
-            let actionBlock = actionBlocks[i_obj];
-    
-            let priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
-            actionBlock.priority = priority_actionBlock;
-            // console.log(actionBlock, priority_actionBlock);
-    
-            if (priority_actionBlock > 0) {
-                // Push current obj.
-                found_actionBlocks.push(actionBlock);
-            }
-        }
-    
-        const property_in_actionBlock_for_sort = 'priority';
-        let is_sort_from_A_to_Z = false;
-    
-        // Sort by priority.
-        found_actionBlocks = sort.getSortedActionBlocksByProperty(found_actionBlocks, property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
-    
-        return found_actionBlocks;
-    
-        function getIndexesInfoObjectsToShowByPhrase(user_words) {
-            const indexes_infoObjects_to_show = [];
-            
-            // Push index of infoObj by user phrase if it doesn't exist yet in array. 
-            for (const i_user_word in user_words) {
-                // One user word of phrase.
-                const user_word = user_words[i_user_word];
-                // Indexes of current tag.
-                const indexes_infoObjects_curr = indexes_actionBlocks_by_tag[user_word];
-    
-                // For each index of infoObject for current tag.
-                for (const i_index_infoObj_to_show in indexes_infoObjects_curr) {
-                    let i_infoObj_to_show = indexes_infoObjects_curr[i_index_infoObj_to_show];
-    
-                    let index_exist_in_indexes_infoObjects = arrayManager.isValueExistsInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
-    
-                    if (index_exist_in_indexes_infoObjects) {
-                        continue;
-                    }
-    
-                    indexes_infoObjects_to_show.push(i_infoObj_to_show);
-                }
-            }
-    
-            return indexes_infoObjects_to_show;
-        }
-
-                
-        
-    }
-    */
-
-    // NEW
     getByPhrase(user_phrase) {
         const that = this;
         
@@ -553,32 +264,33 @@ class ActionBlockModel {
         const actionBlocks = this.getActionBlocks();
         
         user_phrase = user_phrase.toLowerCase();
-        const user_words = this.textManager.splitText(user_phrase, ' ');
+        const user_words = this.#textManager.splitText(user_phrase, ' ');
         
         const titles_actionBlocks_to_show = getTitlesActionBlocksByTags(user_words);
         
             
         // Create an array with actionBlocks and priority value to show.
         for (const title_actionBlock of titles_actionBlocks_to_show) {
-            let actionBlock = this.getActionBlockFromMapByTitle(title_actionBlock);
+            let actionBlock = this.getActionBlockByTitle(title_actionBlock);
             const priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
 
             actionBlock.priority = priority_actionBlock;
-            console.log(actionBlock, priority_actionBlock);
     
             if (priority_actionBlock > 0) {
                 // Push current obj.
                 found_actionBlocks.push(actionBlock);
             }
         }
+
+        found_actionBlocks = Array.from(found_actionBlocks).reverse();
         
         const property_in_actionBlock_for_sort = 'priority';
-        let is_sort_from_A_to_Z = false;
+        const is_sort_from_A_to_Z = false;
     
         // Sort by priority.
-        found_actionBlocks = sort.getSortedActionBlocksByProperty(found_actionBlocks, property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
+        const actionBlocks_sorted_by_priority = this.#getSortedActionBlocksByProperty(found_actionBlocks, property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
     
-        return found_actionBlocks;
+        return actionBlocks_sorted_by_priority;
     
         function getTitlesActionBlocksByTags(user_words) {
             const indexes_infoObjects_to_show = [];
@@ -607,133 +319,8 @@ class ActionBlockModel {
             return indexes_infoObjects_to_show;
         }
     }
-    
 
-    /* OLD
     getActionBlocksByTags(user_phrase, minus_tags) {
-        // Delete characters ',' from phrase.
-        user_phrase = user_phrase.replaceAll(',', ' ');
-        minus_tags = minus_tags.replaceAll(',', ' ');
-    
-        // If phrase doesn't exist.
-        if ( ! user_phrase) {
-            console.log('Action-Blocks don\'t exist with tags: ' + user_phrase);
-            return;
-        }
-    
-        if (user_phrase === undefined || user_phrase === null) {
-            let error_text = 'user_phrase not defined during information searching';
-            console.log(error_text);
-        }
-    
-        // Here all objects from a storage which info can to be looking by user.
-        let searched_infoObjects = [];
-        let actionBlocks = this.getActionBlocks();
-        
-        user_phrase = user_phrase.toLowerCase();
-        minus_tags = minus_tags.toLowerCase();
-    
-        const user_tags = this.textManager.splitText(user_phrase, ' ');
-        const user_minus_tags = this.textManager.splitText(minus_tags, ' ');
-        
-        const indexes_actionBlocks_by_tag = this.getIndexesActionBlocksByTag();
-    
-    
-        const indexes_infoObjects_to_show = getIndexesActionBlocksToShowByTags(user_tags, user_minus_tags); 
-    
-        // Create an array with actionBlocks and priority value to show.
-        for (let i_obj of indexes_infoObjects_to_show) {
-            let infoObj_curr = actionBlocks[i_obj];
-    
-            let priority_infoObj_curr = this.#getPriorityActionBlockByPhrase(infoObj_curr, user_phrase);
-            infoObj_curr.priority = priority_infoObj_curr;
-            console.log(infoObj_curr, priority_infoObj_curr);
-    
-            if (priority_infoObj_curr > 0) {
-                // Push current obj
-                searched_infoObjects.push(infoObj_curr);
-            }
-        }
-    
-        const property_in_actionBlock_for_sort = 'priority';
-        let is_sort_from_A_to_Z = false;
-    
-        // Sort by priority.
-        searched_infoObjects = sort.getSortedActionBlocksByProperty(searched_infoObjects, 
-            property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
-    
-        return searched_infoObjects;
-    
-    
-        function getIndexesActionBlocksToShowByTags(tags, minus_tags) {
-            let indexes_actionBlocks_to_show = [];
-    
-            // Push index of Action-blocks by user phrase if it doesn't exist yet in array. 
-            for (let i_tag in tags) {
-                // One user word of phrase.
-                let tag = tags[i_tag];
-    
-                if (indexes_actionBlocks_by_tag[tag] === undefined) {
-                    return [];
-                }
-                
-                // If array with indexes to show is empty. 
-                if (indexes_actionBlocks_to_show.length < 1) {
-                    // Add all Action-Blocks indexes of tag to array.
-                    indexes_actionBlocks_to_show = indexes_actionBlocks_to_show.concat(indexes_actionBlocks_by_tag[tag]);
-                }
-                else {
-                    indexes_actionBlocks_to_show = arrayManager.getSameElementsFromArrays
-                    (
-                        indexes_actionBlocks_to_show, indexes_actionBlocks_by_tag[tag]
-                    );
-    
-                    if (indexes_actionBlocks_to_show.length < 1) {
-                        // No same indexes in tags after comparation.
-    
-                        return []; 
-                    }
-                }
-            }
-    
-            indexes_actionBlocks_to_show = getIndexesActionBlocksWithoutMinusTags(indexes_actionBlocks_to_show, minus_tags);
-    
-            return indexes_actionBlocks_to_show;
-    
-    
-            function getIndexesActionBlocksWithoutMinusTags(indexes_actionBlocks_to_show, minus_tags) {
-                // Delete items with minus tags.
-                for (const minus_tag of minus_tags) {
-                    for (const i_index_infoObj_to_show in indexes_actionBlocks_to_show) {
-                        const i_infoObj_to_show = indexes_actionBlocks_to_show[i_index_infoObj_to_show];
-    
-                        // Compare minus tag with each Action-Block that has this tag.
-                        for (const index_actionBlock_with_minus_tag of indexes_actionBlocks_by_tag[minus_tag]) {
-                            if (index_actionBlock_with_minus_tag === i_infoObj_to_show) {
-                                indexes_actionBlocks_to_show[i_index_infoObj_to_show] = undefined;
-                            }
-                        }
-                    }
-                }
-    
-                // Delete all undefined elements from array.
-                indexes_actionBlocks_to_show = indexes_actionBlocks_to_show.filter(function(x) {
-                    return x !== undefined;
-                });
-    
-    
-                return indexes_actionBlocks_to_show;
-            }
-        }
-    }
-    */
-
-    // NEW
-    getActionBlocksByTags(user_phrase, minus_tags) {
-        return this.getActionBlocksFromMapByTags(user_phrase, minus_tags);
-    }
-
-    getActionBlocksFromMapByTags(user_phrase, minus_tags) {
         const that = this;
 
         // Delete characters ',' from phrase.
@@ -757,19 +344,18 @@ class ActionBlockModel {
         user_phrase = user_phrase.toLowerCase();
         minus_tags = minus_tags.toLowerCase();
 
-        const user_tags = this.textManager.splitText(user_phrase, ' ');
-        const user_minus_tags = this.textManager.splitText(minus_tags, ' ');
+        const user_tags = this.#textManager.splitText(user_phrase, ' ');
+        const user_minus_tags = this.#textManager.splitText(minus_tags, ' ');
         
         const titles_actionBlocks_to_show = getTitlesActionBlocksByTags(user_tags, user_minus_tags);
         
             
         // Create an array with actionBlocks and priority value to show.
         for (let title_actionBlock of titles_actionBlocks_to_show) {
-            let actionBlock = this.getActionBlockFromMapByTitle(title_actionBlock);
+            let actionBlock = this.getActionBlockByTitle(title_actionBlock);
             const priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
 
             actionBlock.priority = priority_actionBlock;
-            console.log(actionBlock, priority_actionBlock);
     
             if (priority_actionBlock > 0) {
                 // Push current obj
@@ -781,7 +367,7 @@ class ActionBlockModel {
         let is_sort_from_A_to_Z = false;
     
         // Sort by priority.
-        searched_infoObjects = sort.getSortedActionBlocksByProperty(searched_infoObjects, 
+        searched_infoObjects = this.#getSortedActionBlocksByProperty(searched_infoObjects, 
             property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
     
         return searched_infoObjects;
@@ -804,7 +390,7 @@ class ActionBlockModel {
                     titles_actionBlocks_to_show = titles_actionBlocks_to_show.concat(that.#titles_actionBlocksMap_by_tag[tag]);
                 }
                 else {
-                    titles_actionBlocks_to_show = arrayManager.getSameElementsFromArrays
+                    titles_actionBlocks_to_show = arrayManager.getSameItemsFromArrays
                     (
                         titles_actionBlocks_to_show, that.#titles_actionBlocksMap_by_tag[tag]
                     );
@@ -848,7 +434,6 @@ class ActionBlockModel {
         }
     }
 
-
     getDefaultActionBlocks = function() {
         const actionBlock_create = {
             title: 'Create Action-Block',
@@ -859,7 +444,7 @@ class ActionBlockModel {
         };
 
         const actionBlock_create_note = {
-            title: 'Create a note',
+            title: 'Create a note by voice',
             tags: 'create note, voice recognition, default',
             action: 'showHTML',
             content: getContentActionBlockCreateNote(),
@@ -882,7 +467,6 @@ class ActionBlockModel {
             imageURL: 'https://www.sostechgroup.com/wp-content/uploads/2016/08/ThinkstockPhotos-176551504.jpg'
         };
     
-    
         const actionBlock_facebook_of_developer = {
             title: 'Open Facebook page of developer',
             tags: 'facebook, account, developer, contact, message, default',
@@ -903,7 +487,7 @@ class ActionBlockModel {
             title: 'Show logs',
             tags: 'logs, default',
             action: 'showHTML',
-            content: '<script>logsController.showLogs()</script>',
+            content: '<script>logsService.showContainerWithLogs()</script>',
             imageURL: 'https://pbs.twimg.com/profile_banners/240696823/1528203940/1500x500'
         };
     
@@ -911,13 +495,10 @@ class ActionBlockModel {
             title: 'Open voice recognition settings',
             tags: 'voice recognition, default',
             action: 'showHTML',
-            content: '<script>actionBlockController.showElementsForVoiceRecognitionManager()</script>',
+            content: '<script>voiceRecognitionService.show()</script>',
             imageURL: 'https://walkthechat.com/wp-content/uploads/2015/02/voice-recognition.jpg'
         };
 
-
-        
-    
         const default_actionBlocks = [
             actionBlock_create,
             actionBlock_create_note,
@@ -952,77 +533,21 @@ class ActionBlockModel {
             </div>
             
             <script>
-            
             $('.btn_upload_actionBlocks').on('change', (event) => {
-            fileManager.uploadFile(onFileLoaded);
-            
-            function onFileLoaded(content_of_file) {
-            if (content_of_file === undefined) {
-                alert('Error! Data from the file has not been loaded');
-                return;
-            }
-            
-            // Get actionBlocks from the file.
-            let actionBlocks_from_file;
-            
-            console.log(content_of_file);
-            
-            try {
-                // actionBlocks_from_file = JSON.parse(content_of_file);
-                actionBlocks_from_file = mapDataStructure.getParsed(content_of_file);
-            }
-            catch(error) {
-                alert('Content of file is not correct. File must contain an Action-Blocks data.');
-                console.log(error);
-                return;
-            }
-            
-            $('#btn_close').click();
-            
-            const event_file_actionBlocks_uploaded = {
-            name: 'fileActionBlocksUploaded',
-            data: {
-            log: 'fileActionBlocksUploaded',
-            actionBlocks: actionBlocks_from_file
-            }
-            };
-            
-            observable.dispatchEvent(event_file_actionBlocks_uploaded.name, event_file_actionBlocks_uploaded.data);
-            }
-            
-            
-            
-            // Give possibility to load the same file again.
-            $('.btn_upload_actionBlocks').value = '';
+                fileManager.uploadFile(onFileLoaded);
+        
+                function onFileLoaded(content_of_file) {
+                    actionBlockService.saveActionBlocksFromFile(content_of_file);
+        
+                    // Give possibility to load the same file again.
+                    $('.btn_upload_actionBlocks').value = '';
+        
+                    window.location.hash = "main";
+                }
             });
-            
-            
-            downloadFileWithActionBlocks = () => {
-                const content = mapDataStructure.getParsed(actionBlockController.getActionBlocks());
-                
-                const date_obj = new Date();
-                // Get date in format day.month.year hours.minutes.seconds.
-                // const date_text = date_obj.today() + '  ' + date_obj.timeNow();
-                
-                //months from 1-12
-                const month = date_obj.getUTCMonth() + 1;
-                const day = date_obj.getUTCDate();
-                const year = date_obj.getUTCFullYear();
-                const hours = date_obj.getHours();
-                const minutes = date_obj.getMinutes();
-                const seconds = date_obj.getSeconds();
-                
-                const date_text = '' + year + month + day + '_' + hours + minutes + seconds;
-                
-                // Set variable for name of the saving file with date and time. 
-                const file_name = 'Action-Blocks ' + date_text;
-                const extension = '.json';
-                
-                fileManager.downloadFile(content, file_name, extension);
-            }
-            
+        
             $('.btn_download_actionBlocks')[0].addEventListener('click', () => {
-                downloadFileWithActionBlocks();
+                actionBlockService.downloadFileWithActionBlocks();
             });
             </script>`;
         }
@@ -1032,7 +557,7 @@ class ActionBlockModel {
             actionBlockController.showElementsToCreateActionBlock('showInfo');
 
             $('#settings_action_block_container').find('.dropdown_select_action').val('showInfo');
-            $('#title_action_descritption').text(content_type_description_by_action['showInfo']);
+            $('#title_action_descritption').text(actionBlockService.model.getContentTypeDescriptionByActionEnum['showInfo']);
 
   
             /*
@@ -1237,10 +762,6 @@ class ActionBlockModel {
                         console.log('end');
                     }
                 }
-
-                observable.listen('noteClosed', function(observable, eventType, data) {
-                    voiceRecognitionService.stopRecognizing();
-                });
             }
                 </script>`;
         }
@@ -1248,25 +769,36 @@ class ActionBlockModel {
         return default_actionBlocks;
     }
 
+    getActionNameEnum() {
+        const ACTION_NAME_ENUM = {
+            openURL: 'openURL',
+            showInfo: 'showInfo',
+            openFolder: 'openFolder',
+            showHTML: 'showHTML',
+            // createActionBlock: 'createActionBlock',
+            //showFileManager: 'showFileManager',
+            //showDataStorageManager: 'showDataStorageManager',
+            //showLogs: 'showLogs',
+        };
 
+        return ACTION_NAME_ENUM;
+    }
 
-
-    /* OLD
-    setActionBlocks(actionBlocks_to_save) {
-        this.actionBlocks = [].concat(actionBlocks_to_save);
-        this.#onUpdate();
+    getContentTypeDescriptionByActionEnum() {
+        // Titles for input field info of action.
+        const CONTENT_TYPE_DESCRIPTION_BY_ACTION_ENUM = {
+            openURL: 'URL',
+            showInfo: 'Description',
+            openFolder: 'Tags to search',
+            showHTML: 'HTML code'
+        };
         
-        return this.actionBlocks;
-    }
-    */
-
-    // NEW
-    setActionBlocks(actionBlocks_to_save) {
-        return this.setActionBlocksMap(actionBlocks_to_save);
+        return CONTENT_TYPE_DESCRIPTION_BY_ACTION_ENUM;
     }
 
-    setActionBlocksMap(actionBlocks_map_new) {
-        console.log('set actionBlocks_map_new', actionBlocks_map_new);
+    setActionBlocks(actionBlocks_map_new) {
+        this.#actionBlocks_map.clear()
+
         if ( ! actionBlocks_map_new) actionBlocks_map_new = new Map();
         else {
             actionBlocks_map_new.forEach(actionBlock => {
@@ -1274,50 +806,47 @@ class ActionBlockModel {
             });
         }
 
-        this.#onUpdate();
+        this.#onUpdateVarialbeWithActionBlocks();
 
         return this.#actionBlocks_map;
     }
 
+    setActionBlocksFromUserStorageAssync(callbackSetActionBlocks, callbackUserStorageDifferentFromLocal) {
+        const that = this;
 
-    /* OLD
-    add(actionBlock_to_add, is_show_alert_on_error = true) {
-        let actionBlocks = this.getActionBlocks();
-        console.log('!!!', actionBlock_to_add.tags);
-        actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
-        
-        const indexActionBlockByTitle = this.getIndexActionBlockByTitle(actionBlock_to_add.title);
+        this.getActionBlocksFromStorageAsync(onGetActionBlocks);
 
-        // If Action-Block not found in current Action-Blocks array.
-        if (indexActionBlockByTitle === undefined) {
-            // Add new Action-Block to the beginning of array.
-            actionBlocks.unshift(actionBlock_to_add);
-            console.log('ActionBlock created', actionBlock_to_add.title);
-            //this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
-        }
-        else {
-            if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
+        function onGetActionBlocks(actionBlocks_from_user_storage) {
+            const actionBlocks_from_localStorage = that.getActionBlocksFromLocalStorageAsync();
+
+            // IF data is equal to data from localStorage THEN show Action-Blocks
+            // ELSE open dialog database.
+            if (that.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().localStorage) {
+                that.setActionBlocks(actionBlocks_from_user_storage);
+                if (callbackSetActionBlocks) callbackSetActionBlocks();
+                // that.showActionBlocks();
+            }
             else {
-                console.log('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
+                if (that.mapDataStructure.getStringified(actionBlocks_from_user_storage) === that.mapDataStructure.getStringified(actionBlocks_from_localStorage)) {
+                    that.setActionBlocks(actionBlocks_from_user_storage);
+                    if (callbackSetActionBlocks) callbackSetActionBlocks();
+                    // that.showActionBlocks();
+                }
+                else {
+                   // that.downloadFileWithActionBlocks(actionBlocks_from_localStorage);
+                    that.dataStorageService.view.showDatabaseDialog();
+                    if (callbackUserStorageDifferentFromLocal) callbackUserStorageDifferentFromLocal();
+                }
             }
 
-            return false;
+            // that.pageService.setHashChangeListenerActiveState(true);
         }
 
-        this.setActionBlocks(actionBlocks);
-    
-        return true;
+        return this.#actionBlocks_map;
     }
-    */
 
-    // NEW
     add(actionBlock_to_add, is_show_alert_on_error = true) {
-        return this.addActionBlockMap(actionBlock_to_add, is_show_alert_on_error);
-    }
-
-    addActionBlockMap(actionBlock_to_add, is_show_alert_on_error = true) {
         actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
-        
 
         if (this.#actionBlocks_map.has(actionBlock_to_add.title)) {
             if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
@@ -1330,11 +859,11 @@ class ActionBlockModel {
 
         this.#actionBlocks_map.set(actionBlock_to_add.title, actionBlock_to_add);
         
-        this.#onUpdate();
+        this.#onUpdateVarialbeWithActionBlocks();
     
         return true;
     }
- 
+    
     /* OLD
     saveAsync(actionBlocks, callBackSavedSuccessfully, callBackError) {
         const that = this;
@@ -1344,10 +873,10 @@ class ActionBlockModel {
 
         let isSavedInLocalStorage = saveInLocalStorage(actionBlocks);
     
-        if (this.dataStorageController.getUserStorage() === storage_name.database)
+        if (this.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().database)
         {
             // Send to DB.
-            saveToDatabase(onUpdatedUserData, onDatabaseError);
+            saveInDatabase(onUpdatedUserData, onDatabaseError);
             
             function onUpdatedUserData() {
                 that.observable.dispatchEvent('userDataUpdated', 'userDataUpdated');
@@ -1366,8 +895,8 @@ class ActionBlockModel {
     
     
 
-        function saveToDatabase(callBackUpdatedUserData, callBackDatabaseError) {
-            console.log("saveToDatabase");
+        function saveInDatabase(callBackUpdatedUserData, callBackDatabaseError) {
+            console.log("saveInDatabase");
             const actionBlocks_to_DB_string = JSON.stringify(that.getActionBlocks());
 
             let authorizationData;
@@ -1419,151 +948,150 @@ class ActionBlockModel {
 
     // NEW
     saveAsync(actionBlocks, callBackSavedSuccessfully, callBackError) {
-        this.saveActionBlocksMapAsync(actionBlocks, callBackSavedSuccessfully, callBackError);
-    }
-
-    saveActionBlocksMapAsync(actionBlocks, callBackSavedSuccessfully, callBackError) {
         const that = this;
+
         if ( ! actionBlocks) {
             actionBlocks = this.#actionBlocks_map;
         }
 
-        this.logsController.showLog('Data is saving... Don\'t close this tab');
+        logsService.showLog('Data is saving... Don\'t close this tab');
         
 
-        let isSavedInLocalStorage = saveInLocalStorage(actionBlocks);
+        let isSavedInLocalStorage = this.saveInLocalStorage(actionBlocks);
     
-        if (this.dataStorageController.getUserStorage() === storage_name.database)
+        if (this.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().database)
         {
             // Send to DB.
-            saveToDatabase(onUpdatedUserData, onDatabaseError);
-            
-            function onUpdatedUserData() {
-                that.observable.dispatchEvent('userDataUpdated', 'userDataUpdated');
-                
-                if (callBackSavedSuccessfully) callBackSavedSuccessfully();
-            }
-
-            function onDatabaseError() {
-                that.observable.dispatchEvent('databaseOperationFailed', 'databaseOperationFailed');
-                if (callBackError) callBackError();
-            }
+            that.saveInDatabase();
         }
         else {
             if (callBackSavedSuccessfully) callBackSavedSuccessfully();
         }
-    
-    
+    }
 
-        function saveToDatabase(callBackUpdatedUserData, callBackDatabaseError) {
-            console.log("saveToDatabase");
-            const actionBlocks_to_DB_string = this.mapDataStructure.getStringified(that.getActionBlocks());
+    saveInDatabase() {
+        const that = this;
 
-            let authorizationData;
-            if (localStorage['authorization']) authorizationData = JSON.parse(localStorage['authorization']);
+        const actionBlocks_to_DB_string = this.mapDataStructure.getStringified(this.getActionBlocks());
 
-            if ( ! authorizationData) {
-                alert('ERROR! Not saved in database. Authorization error.');
-                callBackDatabaseError();
-                return false; 
-            }
-            /*
-            if 
-            (
-                JSON.stringify(that.actionBlocks_from_database) === actionBlocks_to_DB_string
-            ) {
-                console.log('that.actionBlocks_from_database', that.actionBlocks_from_database);
-                console.log('actionBlocks_to_DB_string', actionBlocks_to_DB_string);
-                console.log('Not saved in database. Data the same.');
-                callBackDatabaseError();
-                return false;    
-            }
-            */
-            
-            // Set object to save in DB
-            const userData_to_DB_obj = {
-                actionBlocks: actionBlocks_to_DB_string
-            };
-            // Stringify object for DB
-            const userData_to_DB_string = JSON.stringify(userData_to_DB_obj);
+        let authorization_data;
+        if (localStorage['authorization']) authorization_data = JSON.parse(localStorage['authorization']);
 
-            // Upload data to user field
-            const user_id = authorizationData.id;
-            const data_to_send = userData_to_DB_string;
-            that.dbManager.setUserData(user_id, data_to_send, callBackUpdatedUserData, onFailSaveUserData);
-            console.log('Send data to DB', data_to_send);
-            
-            function onFailSaveUserData() {
-                return false;
-            }
-
-            return true;
+        if ( ! authorization_data) {
+            alert('ERROR! Data has not been saved in database. Authorization error.');
+            onDatabaseError();
+            return false; 
         }
-    
-        function saveInLocalStorage(actionBlocks) {
-            const key = 'actionBlocks';
-            localStorage.setItem(key, mapDataStructure.getStringified(actionBlocks));
+        
+        // Set object to save in DB
+        const userData_to_DB_obj = {
+            actionBlocks: actionBlocks_to_DB_string
+        };
 
-            return true;
-        }
-    }
+        // Stringify object for DB
+        const userData_to_DB_string = JSON.stringify(userData_to_DB_obj);
 
-
-
-    /* OLD
-    deleteActionBlockByTitle(title, is_show_alert_on_error = true) {
-        let i_actionBlock = this.getIndexActionBlockByTitle(title);
-        const is_deleted = this.deleteActionBlockByIndex(i_actionBlock, is_show_alert_on_error);
-    
-        return is_deleted;
-    }
-    */
-
-    // NEW
-    deleteActionBlockByTitle(title, is_show_alert_on_error = true) {
-        return this.deleteActionBlockMapByTitle(title, is_show_alert_on_error);
-    }
-
-    deleteActionBlockMapByTitle(title) {
-        const is_deleted = this.#actionBlocks_map.delete(title);
-
-        this.#onUpdate();
-        console.log('Deleted ' + title);
-        console.log('this.#actionBlocks_map', this.#actionBlocks_map)
-    
-        return is_deleted;
-    }
-
-    deleteActionBlockByIndex(i_actionBlock, is_show_alert_on_error = true) {
-        alert("Function not support anymore deleteActionBlockByIndex()");
-        return;
-        if (i_actionBlock < 0 || i_actionBlock >= this.actionBlocks.length || i_actionBlock === undefined) {
-            if (is_show_alert_on_error) alert('Data doesn\'t exist for Action-Block with index: ' + i_actionBlock);
+        // Upload data to user field
+        const user_id = authorization_data.id;
+        const data_to_send = userData_to_DB_string;
+        that.dbManager.setUserData(user_id, data_to_send, onUpdatedUserData, onFailSaveUserData);
+        //console.log('Send data to DB', data_to_send);
+        
+        function onFailSaveUserData() {
             return false;
         }
 
-        // Delete infoObject from array.
-        this.actionBlocks.splice(i_actionBlock, 1);
+        return true;
 
-        this.setActionBlocks(this.actionBlocks);
-    
+        function onUpdatedUserData() {
+            // that.observable.dispatchEvent('userDataUpdated', 'userDataUpdated');
+        }
+
+        
+        function onDatabaseError() {
+            // that.observable.dispatchEvent('databaseOperationFailed', 'databaseOperationFailed');
+            that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().localStorage);
+        }
+    }
+
+    saveInLocalStorage(actionBlocks) {
+        //console.log('Before Save in localstorage', actionBlocks);
+        const actionBlocks_to_save = this.mapDataStructure.getStringified(actionBlocks);
+        //console.log('Save in localstorage stringified', actionBlocks_to_save);
+        const key = 'actionBlocks';
+        localStorage.setItem(key, actionBlocks_to_save);
+
         return true;
     }
 
-    deleteCurrentActionBlock(is_show_alert_on_error = true) {
-        alert("Function not support anymore deleteCurrentActionBlock()");
+    updateActionBlock(title, tags, action, content, image_URL) {
+        const original_title = this.title_actionBlock_before_update;
+  
+        // Check new title validation.
+        if (original_title != title) {
+            console.log('original_title != title');
+            const is_actionBlock_exists_by_title = this.getActionBlockByTitle(title);
+            
+            if (is_actionBlock_exists_by_title) {
+                return false;
+            }
 
-        return;
-        return this.deleteActionBlockByIndex(this.i_actionBlock_opened_settings, is_show_alert_on_error);
+            addTitleToTags();
+        }
+
+        const is_deleted = this.deleteActionBlockByTitle(original_title);
+
+        if ( ! is_deleted) {
+            alert('ERROR! Action-Block hasn\'t been deleted');
+            return;
+        }
+        
+        const action_block =
+        {
+            title: title,
+            tags: tags,
+            action: action,
+            content: content,
+            imageURL: image_URL
+        };
+
+        const is_created = this.add(action_block);
+    
+        if (! is_created) {
+            alert('ERROR! Action-Bclok hasn\'t been created.');
+            return false;
+        }
+
+        return true;
+        
+
+        function addTitleToTags() {
+            // Add new tag getting text from title.
+    
+            const title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, '');
+            
+            if (tags) tags = tags + ", ";
+            
+            // Add new tag getting text from title.
+            tags += title + ", " + title_without_symbols;
+        }
+    }
+
+    deleteActionBlockByTitle(title, is_show_alert_on_error = true) {
+        const is_deleted = this.#actionBlocks_map.delete(title);
+
+        this.#onUpdateVarialbeWithActionBlocks();
+    
+        return is_deleted;
     }
 
 
-    #onUpdate() {
+
+    #onUpdateVarialbeWithActionBlocks() {
         this.saveAsync(this.getActionBlocks());
-        this.#updateTagsIndexes();
+        //this.#updateTagsIndexes();
         this.#updateTagsIndexesForMap();
-        this.#updateTitleIndexes();
-        //this.#updateActionBlocksMap();
+        // this.#updateTitleIndexes();
     }
 
     #updateTagsIndexes() {
@@ -1602,7 +1130,7 @@ class ActionBlockModel {
                     while (tag[0] === ' ') tag = tag.replace(tag[0], '');
     
                     // Separated words of tag.
-                    let tag_words = that.textManager.splitText(tag, ' ');
+                    let tag_words = that.#textManager.splitText(tag, ' ');
                     
                     // For each word in tag.
                     for (const i_wordTag in tag_words) {
@@ -1641,7 +1169,7 @@ class ActionBlockModel {
     
         // Example: indexes_actionBlocks_by_tag['hello'] = [1, 2];
         function createIndexes() {
-            const actionBlocksMap = that.getActionBlocksMap();
+            const actionBlocksMap = that.getActionBlocks();
             let indexes_actionBlocks_by_tag = {};
 
             actionBlocksMap.forEach((actionBlock, i_actionBlock) => {
@@ -1658,7 +1186,7 @@ class ActionBlockModel {
                     while (tag_lower_case[0] === ' ') tag_lower_case = tag_lower_case.replace(tag_lower_case[0], '');
 
                     // Separated words of tag_lower_case.
-                    let tag_words = that.textManager.splitText(tag_lower_case, ' ');
+                    let tag_words = that.#textManager.splitText(tag_lower_case, ' ');
 
                     // For each word in tag_lower_case.
                     for (const tag_word of tag_words) {
@@ -1683,50 +1211,35 @@ class ActionBlockModel {
         }
     }
 
-    #updateTitleIndexes() {
-        const that = this;
-        this.#index_actionBlock_by_title = createIndexes();
-        const key = 'index_actionBlock_by_title';
+    // #updateTitleIndexes() {
+    //     const that = this;
+    //     this.#index_actionBlock_by_title = createIndexes();
+    //     const key = 'index_actionBlock_by_title';
     
-        localStorage[key] = JSON.stringify(this.#index_actionBlock_by_title);
+    //     localStorage[key] = JSON.stringify(this.#index_actionBlock_by_title);
     
-        console.log('Update indexes', this.#index_actionBlock_by_title);
+    //     console.log('Update indexes', this.#index_actionBlock_by_title);
     
-        return this.#index_actionBlock_by_title;
+    //     return this.#index_actionBlock_by_title;
     
-        // Example: index_actionBlock_by_title['my targets'] = 0;
-        function createIndexes(actionBlocks) {
-            if ( ! actionBlocks) actionBlocks = that.getActionBlocks();
+    //     // Example: index_actionBlock_by_title['my targets'] = 0;
+    //     function createIndexes(actionBlocks) {
+    //         if ( ! actionBlocks) actionBlocks = that.getActionBlocks();
     
-            let index_actionBlock_by_title = {};
+    //         let index_actionBlock_by_title = {};
     
     
-            // For all actionBlocks.
-            for (const i_actionBlock in actionBlocks) {
-                const actionBlock = actionBlocks[i_actionBlock];
-                const title = actionBlock.title.toLowerCase();
+    //         // For all actionBlocks.
+    //         for (const i_actionBlock in actionBlocks) {
+    //             const actionBlock = actionBlocks[i_actionBlock];
+    //             const title = actionBlock.title.toLowerCase();
     
-                index_actionBlock_by_title[title] = i_actionBlock;
-            }
+    //             index_actionBlock_by_title[title] = i_actionBlock;
+    //         }
     
-            return index_actionBlock_by_title;
-        }
-    }
-
-    /*
-    #updateActionBlocksMap(actionBlocks) {
-        if (actionBlocks === undefined) actionBlocks = this.getActionBlocks();
-
-        const actionBlocks_map = new Map();
-
-        for (let i = actionBlocks.length - 1; i >= 0; i--) {
-            const actionBlock = actionBlocks[i]; 
-            actionBlocks_map.set(actionBlock.title, actionBlock);
-        }
-
-        console.log('actionBlocks_map update', actionBlocks_map);
-    }
-    */
+    //         return index_actionBlock_by_title;
+    //     }
+    // }
 
     #getNormalizedTags(tags) {
         let normalizedTags;
@@ -1735,7 +1248,7 @@ class ActionBlockModel {
         const tags_without_new_line = tags.replaceAll('\n', ',');
         //tags_lower_case = tags_without_new_line.toLowerCase();
     
-        let tags_array = this.textManager.getArrayByText(tags_without_new_line);
+        let tags_array = this.#textManager.getArrayByText(tags_without_new_line);
         
         // Delete empty symbols from sides in text.
         for (const i_tag in tags_array) {
@@ -1766,7 +1279,7 @@ class ActionBlockModel {
 
 
         // Separated words of user phrase.
-        const user_words = this.textManager.splitText(user_phrase, ' ');
+        const user_words = this.#textManager.splitText(user_phrase, ' ');
         // All tags.
         let tags = [];
 
@@ -1775,7 +1288,7 @@ class ActionBlockModel {
             // for each tags phrases separated by ','.
             for (const i_inTags in tags_phrases) {
                 const tag = tags_phrases[i_inTags];
-                const tag_words = this.textManager.splitText(tag, ' ');
+                const tag_words = this.#textManager.splitText(tag, ' ');
                 tags = tags.concat(tag_words);
                 //console.log('tag_words', tags);
             }
@@ -1784,11 +1297,9 @@ class ActionBlockModel {
             for (let i_wordTag in tags) {
                 let user_word = user_words[i_wordUser];
                 let tag_word = tags[i_wordTag];
-                
-                //console.log(tag_word + ' == '+ user_words[i_wordUser] );
 
                 // If in tag exist user word THEN add priority for this info object.
-                if (this.textManager.isSame(user_word, tag_word)) {
+                if (this.#textManager.isSame(user_word, tag_word)) {
                     priority++;
                     /*
                     console.log('====== GROWUP PRIORITY =======');
@@ -1804,17 +1315,35 @@ class ActionBlockModel {
         
         return priority;
     }
-
-    #deleteAllIndexes() {
-        const key = 'indexes_actionBlocks_by_tag';
-        localStorage[key] = '';
     
-        return true;
+    // Bubble sort O(n^2).
+    // Get sorted actionBlocks by property.
+    #getSortedActionBlocksByProperty = function(actionBlocks, property = "priority") {
+        let is_sorting = true;
+        while (is_sorting) {
+            is_sorting = false;
+            for (let i = 0; i < actionBlocks.length - 1; i++) {
+                let infoObj_curr = actionBlocks[i];
+                let infoObj_next = actionBlocks[i + 1];
+                if (infoObj_curr[property] < infoObj_next[property]) {
+                    actionBlocks[i] = infoObj_next;
+                    actionBlocks[i + 1] = infoObj_curr;
+                    is_sorting = true;
+                }
+            }
+        }
+        //console.log("sorted actionBlocks:.");
+        //console.log(actionBlocks);
+        return actionBlocks;
     }
+
+    // #deleteAllIndexes() {
+    //     const key = 'indexes_actionBlocks_by_tag';
+    //     localStorage[key] = '';
+    
+    //     return true;
+    // }
 }
 
 
-const infoBlockModel = {};
-
-infoBlockModel.infoBlocks_on_page = '';
-
+// const infoBlockModel = {};

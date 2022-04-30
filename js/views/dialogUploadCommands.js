@@ -1,7 +1,7 @@
 const dialogUploadCommands = {};
 
 dialogUploadCommands.show = function(title_text) {
-    blackBackgroundView.enable();
+    $(".black_background").show();
 
     // .START (Set text for title)
     let dialog_upload_InfoBloks_from_file = {};

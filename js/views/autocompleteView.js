@@ -1,5 +1,6 @@
 class AutocompleteView {
     constructor() {
+        
     }
 
     bindApplyTags(handler) {

@@ -6,7 +6,7 @@ class VoiceRecognitionModel {
     #event = {
         start: 'startVoiceRecognition',
         continuos: 'continuosVoiceRecognition',
-        result: 'resultVoiceRecognition',
+        //result: 'resultVoiceRecognition',
         speech_denied: 'speechDeniedVoiceRecognition',
         error: {
             no_speech: 'noSpeechVoiceRecognition',

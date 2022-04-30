@@ -1,0 +1,572 @@
+class ActionBlockService {
+    #dateManager;
+
+    constructor(dbManager, observable, fileManager, textManager, 
+        dropdownManager, dataStorageService, mapDataStructure, logsService, dialogWindow, 
+        keyCodeByKeyName, scrollService, searchService, loadingService, pageService, noteService, dateManager
+    ) {
+        this.fileManager = fileManager;
+        this.observable = observable;
+        this.textManager = textManager;
+        this.dataStorageService = dataStorageService;
+        this.logsService = logsService;
+        this.dialogWindow = dialogWindow;
+        this.keyCodeByKeyName = keyCodeByKeyName;
+        this.mapDataStructure = mapDataStructure;
+        this.scrollService = scrollService;
+        this.searchService = searchService;
+        this.loadingService = loadingService;
+        this.pageService = pageService;
+        this.noteService = noteService;
+
+        this.#dateManager = dateManager;
+        
+        this.model = new ActionBlockModel(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, this.#dateManager);
+        this.view = new ActionBlockView(this.model.getActionNameEnum(), this.model.getContentTypeDescriptionByActionEnum(), this.model.action_description_by_action_name, fileManager, textManager, dropdownManager);
+        
+        this.is_result_voice_search = false;
+        this.index_last_showed_actionBlock = 0;
+
+        this.init();
+    }
+
+    init() {
+        this.pageService.setActionBlockService(this);
+    }
+
+    createActionBlock(title, tags, action, content, image_URL) {
+        const actionBlock =
+        {
+            title: title,
+            tags: tags,
+            action: action,
+            content: content,
+            imageURL: image_URL
+        };
+
+        const is_created = this.model.add(actionBlock);
+
+        if ( ! is_created) {
+            return false;
+        }
+
+        this.updatePage();
+    
+        return true;
+    }
+
+    setDefaultValuesForSettingsElementsActionBlock() {
+        this.view.setDefaultValuesForSettingsElementsActionBlock();
+    }
+
+    showSettingsToCreateNote = () => {
+        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().showInfo);
+        
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.switchStateMenuTypeActionBlocksToCreate();
+        }
+    }
+
+    showSettingsToCreateLink = () => {
+        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().openURL);
+
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.switchStateMenuTypeActionBlocksToCreate();
+        }
+    }
+
+    showSettingsToCreateFolder = () => {
+        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().openFolder);
+
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.switchStateMenuTypeActionBlocksToCreate();
+        }
+    }
+
+    showSettingsToCreateAdvancedActionBlock = () => {
+        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().openURL);
+
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.switchStateMenuTypeActionBlocksToCreate();
+        }
+    }
+
+    setActionBlocks(new_actionBlocks) {
+        this.model.setActionBlocks(new_actionBlocks);
+    }
+    
+    getActionBlocksByPhrase(phrase) {
+        return this.model.getByPhrase(phrase);
+    }
+
+    showActionBlocks(actionBlocks_to_show, count_actionBlocks_to_show_at_time = 50) {
+        const that = this;
+
+        // Scroll top.
+        this.scrollService.scrollTo();
+        this.loadingService.startLoading();
+        
+        this.view.hideActionBlocksContainer();
+
+        
+        this.index_last_showed_actionBlock = 0;
+
+        
+        if (actionBlocks_to_show === undefined) {
+            actionBlocks_to_show = [];
+            const actionBlocks_to_show_map = this.model.getActionBlocks();
+
+            for(const [key, value] of actionBlocks_to_show_map) {
+                actionBlocks_to_show.push(value);
+            }
+
+            // Reverse array without rewriting variable.
+            actionBlocks_to_show = Array.from(actionBlocks_to_show).reverse();
+        }
+        
+        if ( ! actionBlocks_to_show || actionBlocks_to_show.size === 0) {
+            this.view.onOpenMainPageWithoutActionBlocks();
+        }
+        else {
+            this.view.onOpenMainPageWithActionBlocks();
+        }
+
+        this.view.onShowMainPage();
+        
+        that.model.actionBlocks_to_show = actionBlocks_to_show;
+    
+        this.view.clear();
+
+        let i = 0;
+        
+        for (const [key, actionBlock] of that.model.actionBlocks_to_show.entries()) {
+            if (i >= count_actionBlocks_to_show_at_time - 1) {
+                break;
+            }
+
+            that.showActionBlock(actionBlock);
+
+            i++;
+        }
+
+        that.index_last_showed_actionBlock = i;
+
+        this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickSettingsActionBlock);
+        
+
+        this.loadingService.stopLoading();
+        that.view.showActionBlocksContainer();
+        
+
+        updateLogMessage();
+
+        function updateLogMessage() {
+            const data_storage = that.dataStorageService.getStorageNameEnum()[that.dataStorageService.getUserStorage()];
+            const storage_for_log = {};
+            storage_for_log[that.dataStorageService.getStorageNameEnum().database] = 'database';
+            storage_for_log[that.dataStorageService.getStorageNameEnum().localStorage] = 'browser';
+    
+            const log = 'Found ' + actionBlocks_to_show.length + ' results | ' + 
+                'Saved in ' + storage_for_log[data_storage] + ' storage';
+    
+            that.logsService.showLog(log);
+        }
+    }
+
+    showActionBlocksByTags(user_plus_tags, user_minus_tags) {
+        // Get command text from input field and find possible search data.
+        let actionBlocks_to_show = this.model.getActionBlocksByTags(user_plus_tags, user_minus_tags);
+
+        if ( ! actionBlocks_to_show) {
+            actionBlocks_to_show = [];
+        }
+
+        // Show Action-Blocks separated by pages.
+        this.showActionBlocks(actionBlocks_to_show);
+    }
+
+    showActionBlocksFromStorage = () => {
+        const that = this;
+
+        this.model.setActionBlocksFromUserStorageAssync(onSetActionBlocks, onUserStorageDifferentFromLocal);
+
+        function onSetActionBlocks() {
+            that.pageService.init();
+            // that.observable.dispatchEvent('actionBlocksLoaded', 'Action-Blocks loaded');
+        }
+
+        function onUserStorageDifferentFromLocal() {
+            that.downloadFileWithActionBlocks(that.model.getActionBlocksFromLocalStorageAsync());
+            that.pageService.init();
+            // that.observable.dispatchEvent('actionBlocksLoaded', 'Action-Blocks loaded');
+        }
+
+        // 
+        // this.view.hideActionBlocksContainer();
+
+        // this.model.getActionBlocksFromStorageAsync(onGetActionBlocks);
+
+        // function onGetActionBlocks(actionBlocks_from_user_storage) {
+        //     const actionBlocks_from_localStorage = that.model.getActionBlocksFromLocalStorageAsync();
+        //     // IF data is equal to data from localStorage THEN show Action-Blocks. 
+        //     // ELSE open dialog database.
+        //     if (that.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().localStorage) {
+        //         that.model.setActionBlocks(actionBlocks_from_user_storage);
+        //         that.showActionBlocks();
+        //     }
+        //     else {
+        //         console.log('data from userstorage', actionBlocks_from_user_storage);
+        //         if (that.mapDataStructure.getStringified(actionBlocks_from_user_storage) === that.mapDataStructure.getStringified(actionBlocks_from_localStorage)) {
+        //             that.model.setActionBlocks(actionBlocks_from_user_storage);
+        //             that.showActionBlocks();
+        //         }
+        //         else {
+        //             console.log('is not the same with current data', actionBlocks_from_localStorage);
+        //             that.downloadFileWithActionBlocks(actionBlocks_from_localStorage);
+    
+        //             that.dataStorageService.view.showDatabaseDialog();
+        //         }
+        //     }
+        //     that.pageService.setHashChangeListenerActiveState(true);
+        //     // that.observable.dispatchEvent('actionBlocksLoaded', 'Action-Blocks loaded');
+        // }
+    }
+
+    showActionBlocksByRequest(request, is_execute_actionBlock_by_title = true) {
+        const that = this;
+
+        this.index_last_showed_actionBlock = 0;
+
+        let actionBlocks_to_show;
+
+        if (request === '') {
+            // Show data in images.
+            that.showActionBlocks();
+
+            return;
+        }
+
+        // Get request text from input field and find possible search data.
+        actionBlocks_to_show = this.model.getByPhrase(request);
+    
+        if ( ! actionBlocks_to_show) {
+            actionBlocks_to_show = [];
+        }
+
+        // Show Action-Blocks separated by pages.
+        this.showActionBlocks(actionBlocks_to_show);
+
+        if (is_execute_actionBlock_by_title) {
+            // IF ActionBlock has been found with the same title THEN execute action.
+            for (const actionBlock of actionBlocks_to_show) {
+                if (that.textManager.isSame(actionBlock.title, request)) {
+                    that.executeActionBlockByTitle(actionBlock.title);
+                    that.view.hidePage();
+                    break;
+                }
+            }
+        }
+
+        // IF has been found just one infoObject THEN execute action.
+        /*
+        if (actionBlocks_to_show.length === 1) {
+            let infoObj = actionBlocks_to_show[0];
+            actionBlockController.executeActionBlock(infoObj);
+        }
+        */
+    }
+
+    showActionBlock(actionBlock) {
+        const actionBlock_html = this.view.addOnPage(actionBlock.title, actionBlock);
+    }
+
+    
+    // showElementsForVoiceRecognitionManager() {
+    //     this.view.showElementsForVoiceRecognitionManager();
+    // }
+
+    
+    executeActionBlockByTitle(title) {
+        const that = this;
+        
+
+        // if (this.is_actionBlock_executed) return;
+        
+        const actionBlock = this.model.getActionBlockByTitle(title);
+        
+        let action_name_of_actionBlock = actionBlock.action;
+   
+        let content = actionBlock.content;
+
+        if (content === undefined) { 
+            console.log('Warning! Something wrong with contant. ' +
+                'Maybe you use "content" instead "info" for ' +
+                'Action-Blocks or content is undefined');
+            content = actionBlock.info;
+        }
+    
+        // Support old version with old action names.
+        if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = this.model.getActionNameEnum().showInfo;
+        else if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = this.model.getActionNameEnum().openURL;
+        
+    
+        if (
+            action_name_of_actionBlock === this.model.getActionNameEnum().openURL || 
+            action_name_of_actionBlock === this.model.getActionNameEnum().openUrl
+        ) {
+            const url = getValidURL(content);
+            // open in new tab.
+            let new_tab = window.open(url, '_blank');
+
+            this.pageService.openMainPage();
+
+            function getValidURL(url) {
+                let valid_url = url;
+
+                if (url.toLowerCase().includes('http') === false) {
+                    valid_url = 'http://'+ url;
+                }
+
+                return valid_url;
+            }
+
+            return;
+        }
+        // Action alertInfo must to include info option.
+        else if (action_name_of_actionBlock === this.model.getActionNameEnum().showInfo) {
+            this.view.onPageContentChange();
+            this.view.onNoteExecuted();
+
+            const isHTML = false;
+            this.noteService.openNote(content, actionBlock.title, isHTML);
+
+            this.view.hidePage();
+        }
+        else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
+            this.view.onPageContentChange();
+            const isHTML = true;
+            this.noteService.openNote(content, actionBlock.title, isHTML);
+            $('#content_executed_from_actionBlock').show();
+
+            that.noteService.is_note_opened = true;
+            // Set position top.
+            that.scrollService.setPosition(0, 0);
+
+        }
+        else if (action_name_of_actionBlock === this.model.getActionNameEnum().openFolder) {
+            //console.log('open folder from actionblock');
+            this.openFolder(i_actionBlock);
+
+            this.searchService.setTextToInputField(content);
+            this.searchService.focusInputField();
+        }
+        /*
+        else if (action_name_of_actionBlock === this.model.getActionNameEnum().showFileManager) {
+            this.view.onPageContentChange();
+            this.view.showElementsForFileManager();
+        }
+        */
+        else {
+            console.log('ERROR! Action of Action-Block doesn\'t exist. action_name: ', action_name_of_actionBlock);
+            return;
+        }
+    }
+
+    addOnPageNextActionBlocks() {
+        if (this.model.actionBlocks_to_show === undefined) {
+            return;
+        }
+
+        let count_actionBlocks_curr = 0;
+        const max_count_actionBlocks_to_add_on_page = 50;
+
+        const actionBlocks = this.model.actionBlocks_to_show;
+        
+        let i;
+
+        for (i = this.index_last_showed_actionBlock; i < actionBlocks.length; i++) {
+            if (count_actionBlocks_curr >= max_count_actionBlocks_to_add_on_page) {
+                break;
+            }
+
+            this.showActionBlock(actionBlocks[i]);
+            count_actionBlocks_curr++;
+        }
+        
+        this.index_last_showed_actionBlock = i;
+
+        this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickSettingsActionBlock);
+    }
+
+
+    updatePage() {
+        this.view.updatePage();
+        
+        // Refresh Action-Blocks on page.
+        this.showActionBlocks();
+    
+        // Scroll top.
+        this.scrollService.scrollTo();
+    }
+
+    save(actionBlocks) {
+        this.model.saveAsync(actionBlocks);
+    }
+
+    saveActionBlocksFromFile(content_of_file) {
+        let actionBlocks_from_file;
+
+        if (content_of_file === undefined) {
+            alert('Error! Data from the file has not been loaded');
+            return;
+        }
+
+        try {
+            actionBlocks_from_file = this.mapDataStructure.getParsed(content_of_file);
+        }
+        catch(error) {
+            alert('Content of file is not correct. File must contain an Action-Blocks data.');
+            console.log(error);
+            return;
+        }
+        
+        this.model.setActionBlocks(actionBlocks_from_file);
+    }
+
+
+    deleteAll() {
+        const text_confirm_window = 'Are you sure you want to delete ALL commands?' + '\n' +
+        '* It\'s recommended to download the commands first to save all created information';
+
+        function onClickOkConfirm() {
+            // Clear model variable with Action-Blocks and show it.
+
+            return;
+        }
+
+        function onClickCancelConfirm() {
+            return;
+        }
+    
+        this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    }
+
+    downloadFileWithActionBlocks = (actionBlocks) => {
+        if ( ! actionBlocks) actionBlocks = this.model.getActionBlocks();
+        const content = this.mapDataStructure.getStringified(actionBlocks);
+        console.log('download', content);
+
+        const date = new Date();
+
+        //months from 1-12
+        const month = date.getUTCMonth() + 1;
+        const day = date.getUTCDate();
+        const year = date.getUTCFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+
+        const date_text = '' + year + month + day + '_' + hours + minutes + seconds;
+
+        // Set variable for name of the saving file with date and time. 
+        const file_name = 'Action-Blocks ' + date_text;
+        const extension = '.json';
+
+        this.fileManager.downloadFile(content, file_name, extension);
+    }
+
+    uploadFileWithActionBlocks = (content_of_file) => {
+        if (content_of_file === undefined) {
+            alert('Error! Data from the file has not been loaded');
+            return;
+        }
+
+        // Get actionBlocks from the file.
+        let actionBlocks_from_file;
+        
+        try {
+            // OLD
+            // actionBlocks_from_file = JSON.parse(content_of_file);
+            // NEW
+            actionBlocks_from_file = this.mapDataStructure.getParsed(content_of_file);
+        }
+        catch(error) {
+            alert('Content of file is not correct. File must contain an Action-Blocks data.');
+            console.log(error);
+            return;
+        }
+
+        this.view.closeSettings();
+        this.model.setActionBlocks(actionBlocks_from_file);
+        this.showActionBlocks();
+        this.searchService.clearInputField();
+    }
+
+    switchStateMenuTypeActionBlocksToCreate() {
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.view.hideListOfTypeActionBlocksToCreate();
+        }
+        else {
+            this.view.showListOfTypeActionBlocksToCreate();
+        }
+
+        this.view.rotateFixedBtnPlus();
+
+        this.model.is_menu_create_type_actionBlock_open = ! this.model.is_menu_create_type_actionBlock_open;
+    }
+
+    bindClickActionBlock(clickActionBlockHandler, clickSettingsActionBlockHandler) {
+        this.view.bindClickActionBlock(clickActionBlockHandler, clickSettingsActionBlockHandler);
+    }
+
+    isActionBlocksPageActive() {
+        return this.view.isActionBlocksPageActive;
+    }
+
+    onClickBtnRewriteActionBlocks = function() {
+        const that = this;
+        const text_confirm_window = 'All current Action-Blocks will be deleted ' +
+            'and replaced with Action-Blocks retrieved from the database.' +
+            '\n' + 'Are you sure you want to replace it now?';
+    
+        this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    
+        function onClickOkConfirm() {
+            $('#dialog_database_manager')[0].close();
+           // observable.dispatchEvent('clickBtnRewrite', 'Click button Rewrite');
+            that.model.setActionBlocks(that.model.actionBlocks_from_database);
+            that.showActionBlocks();
+
+            return;
+        }
+    
+        function onClickCancelConfirm() {
+            return;
+        }
+    }
+
+
+    #onClickActionBlock = (title) => {
+        this.pageService.openActionBlockPage(title);
+        
+        if (this.model.is_menu_create_type_actionBlock_open) this.switchStateMenuTypeActionBlocksToCreate();
+    }
+
+    #onClickSettingsActionBlock = (title) => {
+        const actionBlocks = this.model.getActionBlocks();
+        const actionBlock = actionBlocks.get(title);
+
+        this.pageService.openSettingsActionBlockPage();
+        this.model.title_actionBlock_before_update = title;
+        this.view.onPageContentChange();
+        this.view.showElementsToUpdateActionBlock(actionBlock);
+    }
+
+    #showSettingsToCreateActionBlock = (action_name) => {
+        this.model.action_for_new_actionBlock = action_name;
+
+        this.view.showElementsToCreateActionBlock(action_name);
+        this.view.onPageContentChange();
+        this.pageService.openSettingsActionBlockPage();
+    }
+}

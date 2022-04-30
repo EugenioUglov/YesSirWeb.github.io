@@ -42,7 +42,7 @@
 			<!--Make sure the form has the autocomplete function switched off:-->
 			<!--<form autocomplete="off" action="/action_page.php">	</form>-->
 		
-			<div id="main_page_container" style="margin-top: 20px">
+			<div id="actionBlocks_page" style="margin-top: 20px">
 				<div id="autocomplete">
 					<div id="request_container">
 						<div id="input_field_request_container">
@@ -183,8 +183,6 @@
 					<a class="next">&#10095;</a>
 				</div>
 				
-				<!-- Dots -->
-				<div class="dots" style="display: none;"></div>
 		
 				<br><br>
 						
@@ -213,6 +211,11 @@
 						</button>
 						
 						<button class="btn_content_speaker btn btn_right" type="button" style="display: none;">Speak</button>
+
+						<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
+							<b></b><div class="title center" style="font-size:30px"></div></b>
+							<div class="content"></div>
+						</div>
 				</div>
 
 				<div id="elements_to_create_action-block" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
@@ -229,12 +232,12 @@
 
 				</div>
 
-				<div id="elements_to_update_actionBlock" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
+				<div id="elements_to_update_actionBlock" class="elements_for_executed_actionBlock" style="display: none; padding-top: 80px;" disabled>
 					<div style="font-size:30px"><b> Update Action-Block </b></div>
 					<div class="title_actionBlock" style="font-size:30px"></div>
 				</div>
 
-				<div id="settings_action_block_container" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
+				<div id="settings_action_block_container" class="elements_for_executed_actionBlock" style="display: none; padding-top: 80px;" disabled>
 					<div style="outline: 1px solid gray; padding: 10px; border-radius: 10px;">
 						<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title / Command</div> 
 						<div><textarea class="input_field_title interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px" required></textarea> </div>
@@ -280,7 +283,7 @@
 						<h2>Preview</h2>
 						<div class="actionBlocks_container">
 							<div class="infoBlock_preview_container">
-								<div id="infoBlockPreview" class="infoBlock">
+								<div id="actionBlock-preview" class="infoBlock">
 									<div class="settings">
 										<div class="icon"></div>
 									</div>
@@ -293,8 +296,6 @@
 
 					
 					<div class="bottom_buttons" style="margin-top: 50px; margin-bottom: 180px;">
-						
-						
 						<button id="btn_create_action-block" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
 						<button id="btn_update_action-block" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
 						<button id="btn_create_default_ActionBlocks" class="btn btn_right" style="margin-top: 10px; margin-left: 20px; display: none;" type="button">Create default Action-Blocks</button>
@@ -309,7 +310,9 @@
 					<!--<button class="btn_back btn btn_right" type="button">Back</button>-->
 				</div>
 
-				<div id="elements_for_data_storage" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;">
+
+
+				<div id="elements_for_data_storage" class="elements_for_executed_actionBlock" style="display: none; padding-top: 80px;">
 					<div class="center">
 						<div class="data_storage_container">
 							<div class="forms">
@@ -317,7 +320,7 @@
 								<br>
 
 								<span class="rb_container" id="rb_storage_localStorage_container">
-									<label for="rb_storage_localStorage" title = "Save and load data from the current browser">
+									<label for="rb_storage_localStorage" title = "Hold data in the current browser">
 										<input type="radio" id="rb_storage_localStorage" name="radio" checked>
 										<span class="rdo"></span>
 										<span class="text">LocalStorage</span>
@@ -325,7 +328,7 @@
 								</span>
 				
 								<span class="rb_container" id="rb_storage_database_conainer">
-									<label for="rb_storage_database" title = "Save and load data from any browser and device">
+									<label for="rb_storage_database" title = "Use data from any browser and device for current user">
 										<input type="radio" id="rb_storage_database" name="radio">
 										<span class="rdo"></span>
 										<span class="text">Database</span>
@@ -419,14 +422,11 @@
 					</div>
 				</div>
 
-				<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
-					<b></b><div class="title center" style="font-size:30px"></div></b>
-					<div class="content"></div>
-				</div>
+
 				
 
 				
-				<button id="btn_back_main" class="btn_back btn btn_right" type="button" style="margin-bottom: 50px; display: none;">Back</button>
+				<button id="btn_back" class="btn_back btn btn_right" type="button" style="margin-bottom: 50px; display: none;">Back</button>
 				
 				<div class="modal_container"></div>
 		</div>
@@ -472,7 +472,7 @@
 			</div>
 			<br>
 			<div class="center">
-				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default" style="display: none;">Add</button>
+				<button class="btn_add_actionBlocks btn_in_dialog_container" value="default" style="display: none;">Add</button>
 				<button class="btn_rewrite_actionBlocks btn_in_dialog_container" value="default">Rewrite</button>
 				<button class="btn_cancel btn_in_dialog_container" value="cancel">Cancel</button>
 			</div>
@@ -488,7 +488,7 @@
 			</div>
 			<br>
 			<div class="center">
-				<button class="btn_add_infoBlocks btn_in_dialog_container" value="default" style="display: none;" 
+				<button class="btn_add_actionBlocks btn_in_dialog_container" value="default" style="display: none;" 
 					title="Add Action-Blocks from the loading source to current and skip all Action-Blocks with the same titles">Add</button>
 				<button class="btn_rewrite_actionBlocks btn_in_dialog_container" value="default" 
 					title="DELETE current Action-Blocks and get from the loading source">Get Action-Blocks from database</button>
@@ -528,39 +528,52 @@
 	<script src="./js/opensource/jquery-3.6.0.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+	<script src="./js/opensource/observable.js"></script>
 
-	<script src="./js/date.js"></script>
+	<script src="./js/libraries/dateManager.js"></script>
 	<script src="./js/keyName.js"></script>
 	<script src="./js/textareaResizer.js"></script>
-	<script src="./js/textManager.js"></script>
+	<script src="./js/libraries/textManager.js"></script>
 	<script src="./js/search.js"></script>
 	<script src="./js/sort.js"></script>
-	<script src="./js/dbManager.js"></script>
-	<script src="./js/fileManager.js"></script>
+	<script src="./js/libraries/dbManager.js"></script>
+	<script src="./js/libraries/fileManager.js"></script>
 	<script src="./js/storage.js"></script>
 	<script src="./js/actionName.js"></script>
 	<script src="./js/actionDescription.js"></script>
 	<script src="./js/contentTypeDescription.js"></script>
-	<!--<script src="./js/inputField.js"></script>-->
-	<script src="./js/dialogWindow.js"></script>
-	<script src="./js/dropdownManager.js"></script>
-	<script src="./js/radiobutton.js"></script>
-	<script src="./js/arrayManager.js"></script>
-	<script src="./js/observable.js"></script>
-	<script src="./js/mapDataStructure.js"></script>
+	<script src="./js/libraries/dialogWindow.js"></script>
+	<script src="./js/libraries/dropdownManager.js"></script>
+	<script src="./js/libraries/arrayManager.js"></script>
+	<script src="./js/libraries/inputDeviceManger.js"></script>
+	<script src="./js/libraries/mapDataStructure.js"></script>
 	
+	<script src="./js/services/actionBlockService.js"></script>
+	<script src="./js/services/searchSevice.js"></script>
 	<script src="./js/services/speakerService.js"></script>
 	<script src="./js/services/voiceRecognitionService.js"></script>
 	<script src="./js/services/autocompleteService.js"></script>
+	<script src="./js/services/pageService.js"></script>
+	<script src="./js/services/scrollService.js"></script>
+	<script src="./js/services/noteService.js"></script>
+	<script src="./js/services/logsService.js"></script>
+	<script src="./js/services/dataStorageService.js"></script>
+	<script src="./js/services/loadingService.js"></script>
+	<script src="./js/services/fileService.js"></script>
+	
 
 	<script src="./js/models/noteModel.js"></script>
+	<script src="./js/models/noteSpeakerModel.js"></script>
 	<script src="./js/models/actionBlockModel.js"></script>
 	<script src="./js/models/voiceRecognitionModel.js"></script>
 	<script src="./js/models/versionModel.js"></script>
 	<script src="./js/models/logsModel.js"></script>
 	<script src="./js/models/loadingModel.js"></script>
+	<script src="./js/models/speakerModel.js"></script>
+	
 	
 	<script src="./js/views/noteView.js"></script>
+	<script src="./js/views/noteSpeakerView.js"></script>
 	<script src="./js/views/scrollView.js"></script>
 	<script src="./js/views/speakerView.js"></script>
 	<script src="./js/views/voiceRecognitionView.js"></script>
@@ -576,7 +589,7 @@
 	<script src="./js/controllers/logsController.js"></script>
 	<script src="./js/controllers/pageController.js"></script>
 	<script src="./js/controllers/noteController.js"></script>
-	<script src="./js/controllers/versionController.js"></script>
+	<script src="./js/controllers/noteSpeakerController.js"></script>
 	<script src="./js/controllers/speakerController.js"></script>
 	<script src="./js/controllers/voiceRecognitionController.js"></script>
 	<script src="./js/controllers/scrollController.js"></script>

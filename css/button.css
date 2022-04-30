@@ -56,7 +56,7 @@ button {
 
 .fixed_elements #fixed_btn_plus {
     position: fixed;
-    bottom: 40px;
+    bottom: 80px;
     right: 40px;
     border-radius: 40px;
     width: 60px;

@@ -1,81 +1,50 @@
 class DataStorageController {
-    constructor(observable, dialogWindow) {
-        this.view = new DataStorageView(dialogWindow);
+    constructor(actionBlockService, dataStorageService, pageSerice, dialogWindow) {
+        this.actionBlockService = actionBlockService;
+        this.dataStorageService = dataStorageService;
+        this.pageSerice = pageSerice;
 
-        this.observable = observable;
         this.#setListeners();
-        this.#getFromLocalStorage();
     }
 
-    #user_storage;
-    
-    onChangeStorage() {
-        
+    // #user_storage = localStorage['storage'];
+
+    #onRbStorageDatabaseChecked() {
+        this.dataStorageService.setUserStorage(this.dataStorageService.getStorageNameEnum().database);
     }
 
-
-    onRbStorageDatabaseChecked() {
-        this.setUserStorage(storage_name.database);
-    }
-
-    onRbLocalStorageClicked() {
+    #onRbLocalStorageChoosed() {
         $('#autorization_log').text('');
-        this.setUserStorage(storage_name.localStorage);
-        this.updateLogMessage();
+        this.dataStorageService.setUserStorage(this.dataStorageService.getStorageNameEnum().localStorage);
         $('#authorization_form').hide();
-
-        observable.dispatchEvent('rbLocalStorageClicked', 'rbLocalStorageClicked');
     }
 
-    getUserStorage() {
-        if (this.#user_storage === undefined) {
-            this.#user_storage = storage_name.localStorage;
-        }
+    // getUserStorage() {
+    //     if (this.#user_storage === undefined) {
+    //         this.#user_storage = this.dataStorageService.getStorageNameEnum().localStorage;
+    //     }
         
-        return this.#user_storage;
-    }
+    //     return this.#user_storage;
+    // }
 
-    setUserStorage(storage) {
-        this.#user_storage = storage;
-        localStorage['storage'] = storage;
+    // setUserStorage(storage) {
+    //     this.#user_storage = storage;
+    //     localStorage['storage'] = storage;
 
-        if (storage === storage_name.database) {
-            $('#rb_storage_database')[0].checked = true;
-            $('#authorization_form').show();
-        }
-    }
+    //     if (storage === this.dataStorageService.getStorageNameEnum().database) {
+    //         $('#rb_storage_database')[0].checked = true;
+    //         $('#authorization_form').show();
+    //     }
+    // }
 
-    onClickBtnRewriteOnDialogDatabaseManger(handler) {
-        this.view.bindClickBtnRewriteOnDialogDatabaseManager(handler);
-    }
 
-    bindClickRbLocalStorage(handler) {
-        const that = this; 
-
-        // Selected radiobutton LocalStorage.
-        $('#rb_storage_localStorage')[0].addEventListener('change', () => {
-            that.onRbLocalStorageClicked();
-            handler();
-        });
-    }
-
-    updateLogMessage() {
-        const data_storage = storage_name[this.getUserStorage()];
-        const storage_for_log = {};
-        storage_for_log[storage_name.database] = 'database';
-        storage_for_log[storage_name.localStorage] = 'browser';
-
-        const log = 'Found ' + actionBlockController.getActionBlocks().length + ' results | ' + 
-            'Saved in ' + storage_for_log[data_storage] + ' storage';
-
-        logsController.showLog(log);
-    }
 
     #setListeners() {
         const that = this;
 
         // On click btn authorization.
         $('#btn_authorization')[0].addEventListener('click', function() {
+            console.log('btn_authorization click');
             const authorization_data = {
                 nickname: $('#input_field_nickname').val(),
                 password: $('#input_field_password').val()
@@ -84,53 +53,43 @@ class DataStorageController {
             localStorage['authorization'] = JSON.stringify(authorization_data);
 
             $('#autorization_log').text('');
-            $('#btn_authorization')[0].disabled = true;
-
-            const event_btn_authorization_clicked = {
-                name: 'btnAuthorizationClicked',
-                data: {
-                    log: 'btnAuthorizationClicked'
-                }
-            };
-            
-            observable.dispatchEvent(event_btn_authorization_clicked.name, event_btn_authorization_clicked.data);
+            // $('#btn_authorization')[0].disabled = true;
+            $('#authorization_form').hide();
+            that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().database);
+            that.actionBlockService.showActionBlocksFromStorage();
         });
-        
+
+        // Selected radiobutton LocalStorage.
+        $('#rb_storage_localStorage')[0].addEventListener('change', () => {
+            that.#onRbLocalStorageChoosed();
+        });
         
         // Selected radiobutton DB.
         $('#rb_storage_database_conainer')[0].addEventListener('change', function() {
-            that.onRbStorageDatabaseChecked();
+            $('#authorization_form').show();
+            //that.#onRbStorageDatabaseChecked();
         });
+
+        this.dataStorageService.view.bindClickBtnGetActionBlocksFromDatabase(onClickBtnRewriteOnDialogDatabaseManger);
+
+        function onClickBtnRewriteOnDialogDatabaseManger() {
+            $(".black_background").hide();
+            that.actionBlockService.onClickBtnRewriteActionBlocks();
+        }
+
+        this.dataStorageService.view.bindClickBtnUploadActionBlocksToDatabase(onClickBtnUploadActionBlocksToDatabase);
         
+        function onClickBtnUploadActionBlocksToDatabase() {
+            that.actionBlockService.save();
+        }
 
+        this.dataStorageService.view.bindClickBtnCancelGetActionBlocksFromDatabase(onClickBtnCancelDialogDatabase);
 
-
-
-        this.observable.listen('actionBlocksFromDatabaseNotEqualCurrentActionBlocksLoaded', function(observable, eventType, data) {
-            that.view.showDatabaseDialog();
-        });
-
-
-        this.observable.listen('databaseConnectionSuccess', function(observable, eventType, data) {
-            that.setUserStorage(storage_name.database);
-        });
-
-        this.observable.listen('databaseOperationFailed', function(observable, eventType, data) {
-            setUserStorage(storage_name.localStorage);
-        });
-        
-        this.observable.listen('databaseDialogCanceled', function(observable, eventType, data) {
+        function onClickBtnCancelDialogDatabase() {
             $('#rb_storage_localStorage')[0].checked = true;
-            that.onRbLocalStorageClicked();
-        });
+            that.#onRbLocalStorageChoosed();
+            that.actionBlockService.showActionBlocksFromStorage();
+            that.pageSerice.openMainPage();
+        }
     }
-
-
-    #getFromLocalStorage() {
-        this.#user_storage = localStorage['storage'];
-
-        return this.#user_storage;
-    }
-
-
 }

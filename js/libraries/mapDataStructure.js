@@ -6,6 +6,15 @@ class MapDataStructure {
 
     }
 
+    isMap(data_to_check) {
+        const getType = obj => Object.prototype.toString.call(obj).slice(8, -1);
+        const isDataHasTypeMap = obj => getType(obj) === 'Map';
+
+        const is_map = isDataHasTypeMap(data_to_check);
+
+        return is_map;
+    }
+
     getStringified(map) {
         return JSON.stringify(map, this.#replacer);
     }

@@ -75,10 +75,7 @@ let sel = $('#dropdown_select_language');
 sel.change(function(){ //inside the listener
 	// retrieve the value of the object firing the event (referenced by this)
 	let i_language = $(this).val();
-	// print it in the logs
-	console.log(i_language); // crashes in IE, if console not open
 	
-	console.log("SAVE to local storage: the last used language is: " + dropdown_select_language[i_language].text);
 	localStorage.setItem('i_language', i_language);
 }); // close the change listener
 
@@ -170,6 +167,7 @@ if (!('webkitSpeechRecognition' in window)) {
 	recognition.onresult = function(event) {
 		let input_field_request = document.getElementById("input_field_request");
 		let interim_transcript = '';
+		
 		for (let i = event.resultIndex; i < event.results.length; ++i) {
 			if (event.results[i].isFinal) {
 				final_transcript += event.results[i][0].transcript;
@@ -180,6 +178,7 @@ if (!('webkitSpeechRecognition' in window)) {
 				onContinousResult(interim_transcript);
 			}
 		}
+
 		final_transcript = capitalize(final_transcript);
 		//console.log("final_transcript: " + final_transcript);
 		

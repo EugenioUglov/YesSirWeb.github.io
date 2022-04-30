@@ -1,4 +1,4 @@
-const storage_name = {
-    localStorage : 'localStorage',
-    database : 'database'
-};
+// const storage_name = {
+//     localStorage : 'localStorage',
+//     database : 'database'
+// };

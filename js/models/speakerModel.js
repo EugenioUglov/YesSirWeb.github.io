@@ -1,12 +1,11 @@
-class SpeakerController {
-    constructor(speakerService) {
-        this.view = new SpeakerView();
-        this.speakerService = speakerService;
+class SpeakerModel {
+    constructor() {
 
-        this.#bindViewEvents();
     }
-    
+
     #is_speaking_now = false;
+    #language = 'en-US';
+    #text_to_speak = '';
 
     speak(text_to_speak, onEndSpeak) {
         const that = this;
@@ -27,15 +26,6 @@ class SpeakerController {
         this.#is_speaking_now = false;
     }
 
-    onClickBtnSpeak = () => {
-        if (this.#is_speaking_now) {
-            this.stopSpeak();
-        }
-        else {
-            this.speak();
-        }
-    }
-
     setTextForSpeech(text) {
         this.speakerService.setTextToSpeak(text);
     }
@@ -44,4 +34,5 @@ class SpeakerController {
     #bindViewEvents() {
         this.view.bindClickBtnSpeak(this.onClickBtnSpeak);
     }
+
 }

@@ -12,11 +12,11 @@ class DBManager {
     authorization(nickname, password, onAuthorization, onFailAuthorization) {
         const that = this;
 
-        const messageForPHP = "request=" + "login" + "&nickname=" + nickname + "&password=" + password;
+        const message_for_PHP = "request=" + "login" + "&nickname=" + nickname + "&password=" + password;
 
         console.log('auth');
     
-        this.#dbRequestPost(this.#phpAuthorizationPath, messageForPHP, onLogin, onFail);
+        this.#dbRequestPost(this.#phpAuthorizationPath, message_for_PHP, onLogin, onFail);
     
         function onLogin(request) {
             // Inforamtion about connection to DB. message(logabout db status), access(login success), id.
@@ -51,11 +51,11 @@ class DBManager {
             else {
                 // Registration.
     
-                let isUserChooseRegister = confirm("User with nickaname: " + nickname + " doesn't exist in DB.\nDo you want to register with current data?");
+                let is_user_choose_register = confirm("User with nickaname: " + nickname + " doesn't exist in DB.\nDo you want to register with current data?");
                 
-                if (isUserChooseRegister) {
-                    let messageForPHP = "request=" + "registration" + "&nickname=" + nickname + "&password=" + password;
-                    that.#dbRequestPost(that.#phpAuthorizationPath, messageForPHP, onRegistration);
+                if (is_user_choose_register) {
+                    let message_for_PHP = "request=" + "registration" + "&nickname=" + nickname + "&password=" + password;
+                    that.#dbRequestPost(that.#phpAuthorizationPath, message_for_PHP, onRegistration);
     
                     function onRegistration(request) {
                         data_from_DB = JSON.parse(request.responseText);
@@ -67,7 +67,7 @@ class DBManager {
                 }
                 // Cancel registration.
                 else {
-                    onAuthorization(null);
+                    onFailAuthorization();
                 }
             }
        
@@ -78,28 +78,26 @@ class DBManager {
         }
     }
 
-    getUserData(userId, onGetUserData) {
-        if ( ! userId || userId < 0) {
+    getUserData(user_id, onGetUserData) {
+        if ( ! user_id || user_id < 0) {
             alert('ERROR! Not possible get user data from database. User id is undefined');
             return false;
         }
     
-    
         let path = this.#phpGetUserDataPath;
-        const requestsForPHP = 'request=' + 'getUserData' + '&userId=' + userId;
+        const requests_for_PHP = 'request=' + 'getUserData' + '&userId=' + user_id;
         
-        if (requestsForPHP) { 
-            path += '?' + requestsForPHP;
+        if (requests_for_PHP) { 
+            path += '?' + requests_for_PHP;
         }
-    
     
         this.#dbRequestGet(path, onGetMessageFromPHP);
 
         function onGetMessageFromPHP(data_from_DB) {
-            let dbData;
+            let db_data;
 
             try {
-                dbData = JSON.parse(data_from_DB.responseText);
+                db_data = JSON.parse(data_from_DB.responseText);
             }
             catch (exception) {
                 alert('Error! Unable to retrieve data from the server');
@@ -107,21 +105,20 @@ class DBManager {
                 return;
             }
     
-            onGetUserData(dbData);
+            onGetUserData(db_data);
         }
     
         return true;
     }
 
-    setUserData(userId, dataToPost, onUpdatedUserData, callBackFail) {
-        if ( ! userId || userId < 0) {
+    setUserData(user_id, data_to_post, onUpdatedUserData, callBackFail) {
+        if ( ! user_id || user_id < 0) {
             alert('ERROR! Not possible sent user data to database. User id is undefined');
             
             return false;
         }
         
-        
-        const request = 'request=' + 'setUserData' + '&userId=' + userId + '&userDataToPost=' + encodeURIComponent(dataToPost);
+        const request = 'request=' + 'setUserData' + '&userId=' + user_id + '&userDataToPost=' + encodeURIComponent(data_to_post);
     
         console.log('setUserData');
         this.#dbRequestPost(this.#phpSetUserDataPath, request, onUpdatedUserData, callBackFail);
@@ -130,7 +127,7 @@ class DBManager {
     }
 
 
-    #dbRequestPost(path, dataToSend, callBackSuccess, callBackFail) {
+    #dbRequestPost(path, data_to_send, callBackSuccess, callBackFail) {
         const request = new XMLHttpRequest();
         console.log('post request')
 
@@ -158,7 +155,7 @@ class DBManager {
         }
         
         // Send data to PHP.
-        request.send(dataToSend);
+        request.send(data_to_send);
     }
 
     #dbRequestGet(path, callBackSuccess, callBackFail) {

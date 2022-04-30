@@ -1,5 +1,5 @@
 class AutocompleteController {
-    constructor(autocompleteService, textManager) {
+    constructor(pageService, actionBlockService, autocompleteService, textManager) {
         this.autocompleteService = autocompleteService;
         this.textManager = textManager;
         this.view = new AutocompleteView();
@@ -25,8 +25,18 @@ class AutocompleteController {
 
         function applyTagsAutocompleteForInputFields(input_fields_for_autocomplete) {
             for (const input_field of input_fields_for_autocomplete) {
-                that.applyTagsAutocomplete(input_field, tags, callbackSelect);
+                that.applyTagsAutocomplete(input_field, tags, onSelect);
             }
+        }
+
+        function onSelect() {
+            console.log('curent page name', that.pageService.getCurrentPageName());
+            
+            if (that.pageService.getCurrentPageName() === that.pageService.getPageNameOptions().main) {
+                const actionBlocks_to_show = that.actionBlockService.getActionBlocksByPhrase($('#input_field_request').val());
+                that.actionBlockService.showActionBlocks(actionBlocks_to_show);
+            }
+            
         }
     }
 

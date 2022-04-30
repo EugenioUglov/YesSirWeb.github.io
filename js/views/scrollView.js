@@ -3,6 +3,11 @@ class ScrollView {
         
     }
 
+
+    btnScrollUpShow() {
+        $('#btn_scroll_up').show();
+    }
+
     btnScrollUpHide() {
         $('#btn_scroll_up').hide();
     }

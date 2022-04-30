@@ -1,4 +1,4 @@
-class LoadingController {
+class ScrollModel {
     constructor() {
         
     }

@@ -23,6 +23,11 @@ class VoiceRecognitionService {
         }
     }
 
+
+    show() {
+        this.view.show();
+    }
+
     startRecognizing = (callbackInterimTranscript, callbackFinalTranscript, cllbackEnd) => {
         if (this.#is_recognizing) return;
         const that = this;
@@ -62,7 +67,6 @@ class VoiceRecognitionService {
     stopRecognizing = () => {
         if (this.#is_recognizing === false) return;
 
-        console.log('stop voice recognition');
         this.#recognizer.stop();
         this.#is_recognizing = false;
     }

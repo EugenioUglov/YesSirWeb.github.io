@@ -1,6 +1,5 @@
 class SpeakerView {
-    constructor(controller) {
-        this.controller = controller; 
+    constructor() {
         this.btn_speaker = $('.btn_content_speaker');
     }
 
@@ -15,6 +14,10 @@ class SpeakerView {
 
     bindClickBtnSpeak(handler) {
         this.btn_speaker.on('click', () => handler());
+    }
+
+    showBtnSpeakContent() {
+        $('.btn_content_speaker').show();
     }
 
     hideBtnSpeakContent() {

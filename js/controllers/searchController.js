@@ -1,11 +1,13 @@
 class SearchController {
-    constructor(observable, textManager) {
-        this.observable = observable;
+    constructor(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName) {
+        this.searchService = searchService;
+        this.actionBlockService = actionBlockService;
+        this.pageService = pageService;
         this.textManager = textManager;
+        this.keyCodeByKeyName = keyCodeByKeyName;
 
-        this.view = new SearchView(this, textManager);
+        //this.searchService.view = new SearchView(this, textManager);
 
-        this.view.onStart();
 
         this.#setEventListeners();
         this.#bindViewEvenets();
@@ -15,107 +17,61 @@ class SearchController {
 
     init() {
         const that = this;
-        this.view.bindKeyUpRequestField(that.#onKeyUpRequestField);
-    }
-
-    
-    onClickBtnSearchByTags(handler) {
-        this.view.bindClickBtnSearchByTags((user_plus_tags, user_minus_tags) => handler(user_plus_tags, user_minus_tags));
+        this.searchService.view.bindClickBtnSearchByTags((user_plus_tags, user_minus_tags) => onClickBtnSearchByTags(user_plus_tags, user_minus_tags));
+        
+        function onClickBtnSearchByTags(user_plus_tags, user_minus_tags) {
+            that.actionBlockService.showActionBlocksByTags(user_plus_tags, user_minus_tags);
+        }
     }
 
     // Show infoBlocks by user_phrase.
     onEnter = (is_execute_actionBlock_by_title = true) => {
-        const request = this.view.getUserRequest();
+        this.searchService.view.onEnter();
+        const request = this.searchService.view.getUserRequest();
 
-        const event = {
-            name: 'requestEntered',
-            data: {
-                request: request,
-                is_execute_actionBlock_by_title: is_execute_actionBlock_by_title
-            }
-        };
-
-        observable.dispatchEvent(event.name, event.data);
-    }
-
-    onClear = () => {
-        this.view.clear();
+        if (request === '') {
+            this.pageService.openMainPage();
+            return;
+        }
         
-        observable.dispatchEvent('btnClearRequestFieldClicked', 'Button Clear Request Field Clicked');
+        window.location.hash = '#request=' + $('#input_field_request').val() + '&executebytitle=true';
     }
 
-    focus() {
-        this.view.focus();
+    onClickBtnClear = () => {
+        this.searchService.view.clear();
+        this.pageService.openMainPage();
+        // observable.dispatchEvent('btnClearRequestFieldClicked', 'Button Clear Request Field Clicked');
+        // this.actionBlockService.showActionBlocks();
     }
+
 
     #setEventListeners() {
         const that = this;
 
-        setObservableListeners();
-      
-
-        function setObservableListeners() {
-            that.observable.listen('actionBlockFolderExecuted', function(observable, eventType, data) {
-                that.view.setTextToInputField(data.tags)
-                that.view.focus();
-            });
-
-            that.observable.listen('fileActionBlocksUploaded', function(observable, eventType, data) {
-                that.view.clear();
-            });
-
-            
-            that.observable.listen('hashChanged', function(observable, eventType, data){
-                let request = '';
-
-                if (window.location.hash.includes('#request')) {
-                    request = getRequestFromHash();
-                }
-
-                function getRequestFromHash() {
-                    const text_to_cut = window.location.hash;
-                    const from_character_request = '=';
-
-                    let is_execute_actionBlock_by_title = false;
-
-                    if (window.location.hash.includes('&executebytitle')) {
-                        is_execute_actionBlock_by_title = false;
-                        const to_character_request = '&executebytitle';
-                        request = that.textManager.getCuttedText(text_to_cut, from_character_request, to_character_request);
-                    }
-                    else {
-                        request = that.textManager.getCuttedText(text_to_cut, from_character_request);
-                    }
-
-                    request = that.textManager.replaceSymbols(request, '%20', ' ');
-
-                    return request;
-                }
-
-                $('#input_field_request').val(request);
-                
-            });
-        }
-    }
-
-    #onKeyUpRequestField = (request, clicked_keyCode) => {
-        const that = this;
-
-        const event = {
-            name: 'keyUpOnRequestFieldPressed',
-            data: {
-                request: request,
-                keyCode: clicked_keyCode,
-                log: 'Key Up On Request Field Pressed, keyCode' + clicked_keyCode
+        document.addEventListener('keyup', function(event) {
+            if (event.code == 'Slash') {
+                that.searchService.view.focus();
             }
-        };
-
-        that.observable.dispatchEvent(event.name, event.data);
+        });
     }
 
     #bindViewEvenets() {
-        this.view.bindClickBtnClearRequestField(this.onClear);
-        this.view.bindClickBtnEnterRequest(this.onEnter);
-        
+        const onKeyUpRequestField = (request, clicked_keyCode) => {
+            const that = this;
+
+            if (clicked_keyCode === that.keyCodeByKeyName.enter) {
+                const is_execute_actionBlock_by_title = true;
+    
+                window.location.hash = '#request=' + request + '&executebytitle=' + is_execute_actionBlock_by_title;
+            }
+            else {
+                const is_execute_actionBlock_by_title = false;
+                window.location.hash = '#request=' + request + '&executebytitle=' + is_execute_actionBlock_by_title;
+            }
+        }
+
+        this.searchService.view.bindClickBtnClearRequestField(this.onClickBtnClear);
+        this.searchService.view.bindClickBtnEnterRequest(this.onEnter);
+        this.searchService.view.bindKeyUpRequestField(onKeyUpRequestField);
     }
 }

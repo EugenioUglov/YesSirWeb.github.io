@@ -3,6 +3,9 @@ class TextManager {
 
     }
 
+    /** 
+     * Get array of splited string.
+     * */ 
     splitText = function(string_to_split, separator = ' ') {
         let array = [];
         let splited_text = string_to_split.split(separator);

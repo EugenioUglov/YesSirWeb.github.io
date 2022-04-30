@@ -1,18 +1,23 @@
 class ActionBlockView {
-    constructor(fileManager, textManager, dropdownManager) {
+    constructor(action_name_enum, content_type_description_by_action, action_description_by_action_name, fileManager, textManager, dropdownManager) {
+        this.action_name_enum = action_name_enum;
+        this.content_type_description_by_action = content_type_description_by_action;
+        this.action_description_by_action_name = action_description_by_action_name;
+
         this.fileManager = fileManager;
         this.textManager = textManager; 
         this.dropdownManager = dropdownManager;
-        this.init();
+        
+        this.#init();
         this.setEventListeners();
     }
 
-    init() {
+    #init() {
         const dropdown_select_action_for_create_container =  $('#settings_action_block_container').find('.dropdown_select_action')[0];
-        this.dropdownManager.setOptions(dropdown_select_action_for_create_container, action_description_by_action_name);
+        this.dropdownManager.setOptions(dropdown_select_action_for_create_container, this.action_description_by_action_name);
         let i_action = 0;
         const first_dropdown_item_text_for_create = dropdown_select_action_for_create_container[i_action].value;
-        const content_type_description = content_type_description_by_action[first_dropdown_item_text_for_create];
+        const content_type_description = this.content_type_description_by_action[first_dropdown_item_text_for_create];
     }
 
     addOnPage(id, actionBlock, parent_element = $('.actionBlocks_container').first(), isEditable = true) {
@@ -34,24 +39,21 @@ class ActionBlockView {
         };
         
         // Set default values.
-        $('#infoBlockPreview').find('.title')[0].innerText = '';
-        $('#infoBlockPreview').find('.img').removeAttr('src');
+        $('#actionBlock-preview').find('.title')[0].innerText = '';
+        $('#actionBlock-preview').find('.img').removeAttr('src');
 
 
-        $('#infoBlockPreview').find('.title')[0].innerText = actionBlock_preview.title;
+        $('#actionBlock-preview').find('.title')[0].innerText = actionBlock_preview.title;
         
         if (actionBlock_preview.imageURL)
-            $('#infoBlockPreview').find('.img').attr('src', actionBlock_preview.imageURL);
+            $('#actionBlock-preview').find('.img').attr('src', actionBlock_preview.imageURL);
     }
-
 
     showActionBlocksContainer() {
         $('.actionBlocks_container').show();
         $('#welcome_page').hide();
         // Show search area with Info-Blocks.
-        
-        console.log("$('#main_page_container').show();");
-        $('#main_page_container').show();
+        this.showPage();
         $('#fixed_btn_plus').css('visibility', 'visible');
     }
 
@@ -60,8 +62,6 @@ class ActionBlockView {
     }
 
     showElementsToCreateActionBlock(action_name) {
-        $('#list_of_type_action-blocks_to_create').hide();
-
         $('#btn_close').show();
         $('#elements_to_create_action-block').show();
         $('#settings_action_block_container').show();
@@ -69,12 +69,12 @@ class ActionBlockView {
         $('#btn_update_action-block').hide();
         $('#btn_delete_action-block').hide();
         $('#settings_action_block_container').find('.input_field_title')[0].focus();
-        $('#btn_back_main').show();
+        $('#btn_back').show();
         
         if (action_name) {
             const settings_action_block_container = $('#settings_action_block_container');
             settings_action_block_container.find('.dropdown_select_action').val(action_name);
-            $('#title_action_descritption').text(content_type_description_by_action[action_name]);
+            $('#title_action_descritption').text(this.content_type_description_by_action[action_name]);
         }
         
         this.updatePreview();
@@ -83,8 +83,8 @@ class ActionBlockView {
     showElementsToUpdateActionBlock(actionBlock) {
         const settings_action_block_container = $('#settings_action_block_container');
         let action_name_of_actionBlock = actionBlock.action;
-        if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = action_name.showInfo;
-        if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = action_name.openURL;
+        if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = this.action_name_enum.showInfo;
+        if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = this.action_name_enum.openURL;
 
         $('#btn_close').show();
         $('#elements_to_update_actionBlock').show();
@@ -127,7 +127,6 @@ class ActionBlockView {
             settings_action_block_container.find('.input_field_image_URL')[0].value = '';
         }
 
-        
         const titles_elements = $('.title_actionBlock');
 
         for (const title_elem of titles_elements) {
@@ -138,9 +137,9 @@ class ActionBlockView {
         this.#onDropdownActionValueChange();
     }
 
-    showElementsForVoiceRecognitionManager() {
-        $('#elements_for_voice_recognition_settings').show();
-    }
+    // showElementsForVoiceRecognitionManager() {
+    //     $('#elements_for_voice_recognition_settings').show();
+    // }
 
     showElementsForDataStorageManager() {
         $('#elements_for_data_storage').show();
@@ -150,7 +149,6 @@ class ActionBlockView {
         $('#elements_for_file_manager').show();
     }
 
-
     onShowMainPage() {
         // Show button to add ActionBlock.
         $('#fixed_btn_plus').css('visibility', 'visible');
@@ -158,21 +156,17 @@ class ActionBlockView {
     }
 
     onOpenMainPageWithoutActionBlocks() {
-        $('#main_page_container').hide();
+        this.hidePage();
         $('#welcome_page').show();
     }
 
     onOpenMainPageWithActionBlocks() {
         $('#welcome_page').hide();
         // Show search area with Info-Blocks.
-        $('#main_page_container').show();
+        this.showPage();
     }
 
-    onClickBtnFixedPlus() {
-        this.#fixed_btn_plus.rotateIcon();
-    }
-
-    onUpdate() {
+    updatePage() {
         $('#input_field_request')[0].value = '';
     }
 
@@ -181,43 +175,35 @@ class ActionBlockView {
 
         // Hide button to add ActionBlock.
         $('#fixed_btn_plus').css('visibility', 'hidden');
-        $('#list_of_type_action-blocks_to_create').hide();
-        console.log(" $('#main_page_container').hide();");
-        $('#main_page_container').hide();
-        $('#btn_back_main').show();
-        
-        if (icon_plus.classList.contains('is-active')) {
-            this.#fixed_btn_plus.rotateIcon();
-        }
+        this.hidePage();
+        $('#btn_back').show();
+    }
+
+    showFixedBtnPlus() {
+        $('#fixed_btn_plus').show();
+    }
+
+    hideFixedBtnPlus() {
+        $('#fixed_btn_plus').hide();
     }
 
     onNoteExecuted() {
-        $('.btn_content_speaker').show();
+        // this.hidePage();
         $('#content_executed_from_actionBlock').show();
     }
 
     clear() {
         // Clear infoblocks.
         $('.actionBlocks_container')[0].innerHTML = '';
-        // Clear dots container.
-        //$('.dots').empty();
-        //$('.dots').hide();
-        // Clear text page container.
-        this.#clearPageNumberText();
-        // Clear arrows container.
-        $('.page_control_elements').hide();
     }
 
     setEventListeners() {
         const that = this;
 
-
-
         $('#settings_action_block_container').find('.input_field_title').on('input', () => this.updatePreview());
         $('#settings_action_block_container').find('.input_field_image_URL').on('input', () => this.updatePreview());
 
-
-        $('.btn_save').on('click', () => { $('#btn_back_main').hide(); });
+        $('.btn_save').on('click', () => { $('#btn_back').hide(); });
 
         // On change value of dropdown to choose action.
         $('#settings_action_block_container').find('.dropdown_select_action')[0].onchange = function () {
@@ -233,7 +219,6 @@ class ActionBlockView {
         const btn_cancel_settings = $('#settings_action_block_container').find('#btn_cancel');
 
         btn_cancel_settings.on('click', () => { 
-            this.setDefaultValuesForSettingsElementsActionBlock(); 
             this.closeSettings();
             handler();
         });
@@ -255,11 +240,12 @@ class ActionBlockView {
             }
         }
         
-
         // On click Action-Block.
         $('.infoBlock').on('click', function() {
             if (is_mouse_enter_settings) return false;
-            const title = $(this).attr('value');
+            // const title = $(this).attr('value');
+            const title = $(this).text();
+            
             actionBlockClickHandler(title);
         });
     }
@@ -272,7 +258,6 @@ class ActionBlockView {
 
     bindClickBtnFixedPlus(handler) {
         $('#fixed_btn_plus').on('click', () => {
-            console.log('#fixed_btn_plus clicked');
             $('#welcome_page').hide();
             $('#btn_scroll_up').hide();
             handler(); 
@@ -326,7 +311,6 @@ class ActionBlockView {
     hideListOfTypeActionBlocksToCreate() {
         $('#list_of_type_action-blocks_to_create').hide();
     }
-
 
     bindClickBtnSettingsToCreateNote(handler) {
         $('#btn_settings_to_create_note').on('click', () => {
@@ -398,25 +382,24 @@ class ActionBlockView {
             //let selected_action = settings_action_block_container.find('.dropdown_select_action').find(':selected')[0];
             //let action_user_choose = selected_action.value;
     
-            infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
+            // infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
             
-            if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
-                console.log('infoBlockModel.action_for_new_actionBlock', infoBlockModel.action_for_new_actionBlock);
-                infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
+            // if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
+            //     infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
     
-                if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
-                    alert('Impossible to create command.\nProbably dropdown menu for action has been broken.');
-                }
+            //     if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
+            //         alert('Impossible to create command.\nProbably dropdown menu for action has been broken.');
+            //     }
     
-                return false;
-            }
+            //     return false;
+            // }
     
             // Get content of action.
             const input_field_info_container = settings_action_block_container.find('.input_field_content');
             let content = input_field_info_container.val();
     
             if (content === '') {
-                infoBlockModel.action_for_new_actionBlock = action_name.showInfo;
+                // infoBlockModel.action_for_new_actionBlock = action_name.showInfo;
                 content = title;
                 // alert('Impossible to create command. content field for action is empty');
                 // return false;
@@ -435,13 +418,16 @@ class ActionBlockView {
         });
     }
 
+    getUserAction() {
+        return $('.dropdown_select_action').find(':selected')[0].value;
+    }
+
     clearAllFields() {
         // Clear all fields.
         $('#settings_action_block_container').find('.resize_field').val('');
     }
 
-    bindClickBtnDefaultActionBlocks(handler) {
-        
+    bindClickBtnCreateDefaultActionBlocks(handler) {
         $('#btn_create_default_ActionBlocks').on('click', () =>{
             this.closeSettings();
             handler();
@@ -550,6 +536,7 @@ class ActionBlockView {
             elements_for_executed_actionBlock.style.display = 'none';
         }
     
+        this.setDefaultValuesForSettingsElementsActionBlock(); 
         // Clear executed content.
         $('#content_executed_from_actionBlock').hide();
 
@@ -559,13 +546,54 @@ class ActionBlockView {
         // Also close modal box (by standart logic of API).
 
         $('#btn_close').hide();
-        $('#btn_back_main').hide();
+        $('#btn_back').hide();
     }
 
+    isActionBlocksPageActive() {
+        return $("#actionBlocks_page").is(":visible");
+    }
+
+    showAlert(content, title) {
+        let dialog_info_elem = $('#dialog_info');
+        $(".black_background").show();
+        // Hide search area with Action-Blocks.
+        this.hidePage();
+    
+        if (typeof dialog_info_elem[0].showModal === 'function') {
+            dialog_info_elem[0].showModal();
+    
+            if (title) {
+                // Set title of infoBlock.
+                dialog_info_elem.find('.title')[0].innerText = title;
+            }
+    
+            // Set content.
+            dialog_info_elem.find('.text_info')[0].innerText = content;
+    
+            $(".black_background").show();
+        } else {
+            alert(content);
+            console.log('WARNING! The <dialog> API is not supported by this browser');
+        }
+    }
+
+    hidePage() {
+        $('#actionBlocks_page').hide();
+    }
+
+    showPage() {
+        $('#actionBlocks_page').show();
+    }
+
+    rotateFixedBtnPlus() {
+        const icon_plus = document.querySelector('.ico-btn');
+        icon_plus.classList.toggle('is-active');
+    }
+
+
     #createHTMLContainerActionBlock = function(id, actionBlock, isEditable = true) {
-        console.log('#createHTMLContainerActionBlock()', actionBlock);
         const title = actionBlock.title;
-        const is_folder = actionBlock.action === action_name.openFolder;
+        const is_folder = actionBlock.action === this.action_name_enum.openFolder;
         let imageURL = actionBlock.imageURL;
 
         this.infoBlock_container;
@@ -634,100 +662,9 @@ class ActionBlockView {
         return this.infoBlock_html;
     }
 
-    #onShowElementsToUpdateActionBlock() {
-        // Select first item in dropdown for choose action.
-        // $('#settings_action_block_container').find('.dropdown_select_action')[0].selectedIndex = 0;
-    }
-
     #onDropdownActionValueChange() {
         let dropdown = $('#settings_action_block_container').find('.dropdown_select_action'); 
         const selected_action = dropdown.find(':selected')[0];
-        $('#title_action_descritption').text(content_type_description_by_action[selected_action.value]);
-        console.log('selected_item', selected_action);
-        console.log('content_type_description_by_action', content_type_description_by_action);
-        console.log('content_type_description_by_action selected', content_type_description_by_action[selected_action.value]);
-    }
-
-    showInfo(content, title, isHTML) {
-        // Title text.
-        const titleHTML = '<div class="center" style="font-size: 30px"><b>' + title + '</div></b><br><br>';
-        $('#content_executed_from_actionBlock').find('.title').val(title);
-        // content text.
-        const contentHTML = '<div class="text_info"></div>';
-        // const contentHTML = '<div class="info">' + content + '</div>';
-        
-       // let content_to_show = '';
-       // content_to_show = titleHTML + contentHTML;
-        $('#content_executed_from_actionBlock').find('.title').html(title);
-    
-    
-        this.#showContentOnPage(content, isHTML);
-    }
-
-    showAlert(content, title) {
-        let dialog_info_elem = $('#dialog_info');
-        $(".black_background").show();
-        console.log(" $('#main_page_container').hide();");
-        // Hide search area with Action-Blocks.
-        $('#main_page_container').hide();
-    
-        if (typeof dialog_info_elem[0].showModal === 'function') {
-            dialog_info_elem[0].showModal();
-    
-            if (title) {
-                // Set title of infoBlock.
-                dialog_info_elem.find('.title')[0].innerText = title;
-            }
-    
-            // Set content.
-            dialog_info_elem.find('.text_info')[0].innerText = content;
-    
-            $(".black_background").show();
-        } else {
-            alert(content);
-            console.log('WARNING! The <dialog> API is not supported by this browser');
-        }
-    }
-
-    openURL(url) {
-        // open in new tab.
-        let new_tab = window.open(url, '_blank');
-    }
-    
-
-    #showContentOnPage(content, isHTML = false) {
-        $('#btn_close').show();
-        $('#content_executed_from_actionBlock').show();
-        
-        // Hide search area with Action-Blocks.
-        //document.getElementById('main_page_container').style.display = "none";
-        
-    
-        // Append title and html elements.
-        //document.getElementById('content_executed_from_actionBlock').innerHTML = content_to_show;
-        $('#content_executed_from_actionBlock').find('.content').show();
-    
-        if (isHTML) {
-            $('#content_executed_from_actionBlock').find('.content').css('white-space', '')
-            $('#content_executed_from_actionBlock').find('.content').html(content);
-        }
-        else {
-            $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap')
-            // this.textManager.getConvertedTextToHTML(content);
-            $('#content_executed_from_actionBlock').find('.content').text(content);
-        }
-    
-        $('#content_executed_from_actionBlock').find('.content').show();
-    }
-
-    #clearPageNumberText() {
-        if ($('.count_pages_actionBlocks')[0]) $('.count_pages_actionBlocks')[0].innerText = '';
-    }
-
-    #fixed_btn_plus = {
-        rotateIcon() {
-            const icon_plus = document.querySelector('.ico-btn');
-            icon_plus.classList.toggle('is-active');
-        }
+        $('#title_action_descritption').text(this.content_type_description_by_action[selected_action.value]);
     }
 }

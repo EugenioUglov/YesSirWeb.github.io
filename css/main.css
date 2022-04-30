@@ -82,8 +82,8 @@ a {
     padding-left: 300px;
     padding-right: 300px;
     */
-    padding-left: 400px;
-    padding-right: 400px;
+    padding-left: 100px;
+    padding-right: 100px;
     margin-bottom: 30px;
     text-align: center;
     word-wrap: break-word;
@@ -661,7 +661,7 @@ scroll-container {
 }
 
 .modal_header {
-  margin-bottom: 30px;
+  margin-top: 20px;
 }
 
 .inline {

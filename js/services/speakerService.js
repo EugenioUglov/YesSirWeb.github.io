@@ -1,6 +1,7 @@
 class SpeakerService {
     constructor() {
-        
+        this.model = new SpeakerModel();
+        this.view = new SpeakerView();
     }
 
     #language = 'en-US';

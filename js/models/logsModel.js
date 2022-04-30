@@ -1,5 +1,8 @@
 class LogsModel {
-    constructor() {
+    #dateManager;
+
+    constructor(dateManager) {
+        this.#dateManager = dateManager;
         this.logs = [];
     }
 
@@ -14,8 +17,7 @@ class LogsModel {
     getDataForFile() {
         const logs = this.getLogs();
 
-        const date = new Date();
-        const date_text = date.today() + '  ' + date.timeNow();
+        const date_text = this.#dateManager.getDateNow() + '-' + this.#dateManager.getTimeNow();
     
         // Set variable for name of the saving file with date and time. 
         const file_name = 'Logs_Action-Blocks ' + date_text;

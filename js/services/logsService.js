@@ -1,11 +1,11 @@
-class LogsController {
-    constructor(fileManager, dataStorageService) {
+class LogsService {
+    constructor(fileManager, dateManager) {
         this.fileManager = fileManager;
-        this.dataStorageService = dataStorageService;
 
-        this.model = new LogsModel();
+        this.model = new LogsModel(dateManager);
         this.view = new LogsView();
     }
+
 
     addLog(log) {
         this.model.addLog(log);
@@ -26,5 +26,9 @@ class LogsController {
 
     showLog(log) {
         this.view.setLogForLabelHelp(log);
+    }
+
+    showContainerWithLogs() {
+        this.view.showContainerWithLogs();
     }
 }
