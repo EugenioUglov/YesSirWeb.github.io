@@ -61,7 +61,7 @@ class ActionBlockView {
         $('.actionBlocks_container').hide();
     }
 
-    showElementsToCreateActionBlock(action_name) {
+    showSettingsToCreateActionBlock(action_name) {
         $('#btn_close').show();
         $('#elements_to_create_action-block').show();
         $('#settings_action_block_container').show();
@@ -137,11 +137,13 @@ class ActionBlockView {
         this.#onDropdownActionValueChange();
     }
 
+
+
     // showElementsForVoiceRecognitionManager() {
     //     $('#elements_for_voice_recognition_settings').show();
     // }
 
-    showElementsForDataStorageManager() {
+    showDataStorageSettings() {
         $('#elements_for_data_storage').show();
     }
 

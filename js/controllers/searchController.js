@@ -40,8 +40,6 @@ class SearchController {
     onClickBtnClear = () => {
         this.searchService.view.clear();
         this.pageService.openMainPage();
-        // observable.dispatchEvent('btnClearRequestFieldClicked', 'Button Clear Request Field Clicked');
-        // this.actionBlockService.showActionBlocks();
     }
 
 

@@ -105,13 +105,10 @@ class ActionBlockService {
         // Scroll top.
         this.scrollService.scrollTo();
         this.loadingService.startLoading();
-        
         this.view.hideActionBlocksContainer();
 
-        
         this.index_last_showed_actionBlock = 0;
 
-        
         if (actionBlocks_to_show === undefined) {
             actionBlocks_to_show = [];
             const actionBlocks_to_show_map = this.model.getActionBlocks();
@@ -192,13 +189,11 @@ class ActionBlockService {
 
         function onSetActionBlocks() {
             that.pageService.init();
-            // that.observable.dispatchEvent('actionBlocksLoaded', 'Action-Blocks loaded');
         }
 
         function onUserStorageDifferentFromLocal() {
             that.downloadFileWithActionBlocks(that.model.getActionBlocksFromLocalStorageAsync());
             that.pageService.init();
-            // that.observable.dispatchEvent('actionBlocksLoaded', 'Action-Blocks loaded');
         }
 
         // 
@@ -286,10 +281,17 @@ class ActionBlockService {
     // }
 
     
+    showDataStorageSettings() {
+        this.view.showDataStorageSettings();
+    }
+
+    showSettingsToCreateActionBlock() {
+        this.view.showSettingsToCreateActionBlock();
+    }
+    
     executeActionBlockByTitle(title) {
         const that = this;
         
-
         // if (this.is_actionBlock_executed) return;
         
         const actionBlock = this.model.getActionBlockByTitle(title);
@@ -318,7 +320,7 @@ class ActionBlockService {
             // open in new tab.
             let new_tab = window.open(url, '_blank');
 
-            this.pageService.openMainPage();
+            this.pageService.openPreviousPage();
 
             function getValidURL(url) {
                 let valid_url = url;
@@ -334,12 +336,11 @@ class ActionBlockService {
         }
         // Action alertInfo must to include info option.
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showInfo) {
+            const isHTML = false;
+
             this.view.onPageContentChange();
             this.view.onNoteExecuted();
-
-            const isHTML = false;
             this.noteService.openNote(content, actionBlock.title, isHTML);
-
             this.view.hidePage();
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
@@ -565,7 +566,7 @@ class ActionBlockService {
     #showSettingsToCreateActionBlock = (action_name) => {
         this.model.action_for_new_actionBlock = action_name;
 
-        this.view.showElementsToCreateActionBlock(action_name);
+        this.view.showSettingsToCreateActionBlock(action_name);
         this.view.onPageContentChange();
         this.pageService.openSettingsActionBlockPage();
     }

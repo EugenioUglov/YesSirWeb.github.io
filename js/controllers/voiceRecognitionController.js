@@ -42,21 +42,11 @@ class VoiceRecognitionController {
                         final_transcript = final_transcript.substr(0, final_transcript.length - 1);
                     }
                     
-                    window.location.hash = '#request=' + data.transcript + '&executebytitle=true';
+                    window.location.hash = '#request=' + final_transcript + '&executebytitle=true';
                 } else {
                     const interim_transcript = result[0].transcript;
 
-                    // const event_continuos_speech = {
-                    //     name: 'continuosVoiceRecognition',
-                    //     data: {
-                    //         transcript: interim_transcript,
-                    //         log: 'Continuous Voice Recognition transcript: ' + interim_transcript
-                    //     }
-                    // }
-
-                    // that.observable.dispatchEvent(event_continuos_speech.name, event_continuos_speech.data);
-
-                    window.location.hash = '#request=' + transcript + '&executebytitle=false';
+                    window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
                 }
             }
 
@@ -78,23 +68,17 @@ class VoiceRecognitionController {
 
     onClickBtnVoiceRecognition = () => {
         const that = this;
-        
-        if (this.voiceRecognitionService.isRecognizing) {
+        console.log('isrec', this.voiceRecognitionService.isRecognizing());
+
+        if (this.voiceRecognitionService.isRecognizing()) {
+            console.log('stopRecognizing');
             this.voiceRecognitionService.stopRecognizing();
         }
         else {
+            console.log('startRecognizing');
             this.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript);
 
             function onInterimTranscript(interim_transcript) {
-                // const event_continuos_speech = {
-                //     name: 'continuosVoiceRecognition',
-                //     data: {
-                //         transcript: interim_transcript,
-                //         log: 'Continuous Voice Recognition transcript: ' + interim_transcript
-                //     }
-                // }
-
-                // that.observable.dispatchEvent(event_continuos_speech.name, event_continuos_speech.data);
                 window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
             }
 
@@ -105,21 +89,10 @@ class VoiceRecognitionController {
                 if (last_character_final_transcript === '.') {
                     final_transcript = final_transcript.substr(0, final_transcript.length - 1);
                 }
-                
-                // const event_resultSpeech = {
-                //     name: 'resultVoiceRecognition',
-                //     data: {
-                //         transcript: final_transcript,
-                //         log: 'Result Voice Recognition transcript: ' + final_transcript
-                //     } 
-                // }
 
-                // that.observable.dispatchEvent(event_resultSpeech.name, event_resultSpeech.data);
-
-                window.location.hash = '#request=' + data.transcript + '&executebytitle=true';
+                window.location.hash = '#request=' + final_transcript + '&executebytitle=true';
             }
         }
-
     }
 
     /*
@@ -332,7 +305,6 @@ class VoiceRecognitionController {
                 }
 
                 final_transcript = capitalize(final_transcript);
-                //console.log("final_transcript: " + final_transcript);
                 
                 // Paste text to big speech field
                 //final_span.innerHTML = linebreak(final_transcript);
@@ -357,18 +329,8 @@ class VoiceRecognitionController {
                         recognition.stop();
                     }
 
-                    if (that.observable) {
-                        // const event_continuos_speech = {
-                        //     name: 'continuosVoiceRecognition',
-                        //     data: {
-                        //         transcript: interim_transcript,
-                        //         log: 'Continuous Voice Recognition transcript: ' + interim_transcript
-                        //     }
-                        // }
-
-                        // that.observable.dispatchEvent(event_continuos_speech.name, event_continuos_speech.data);
-                        window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
-                    }
+                    window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
+                    
                 }
                 // if finish speech.
                 else if (final_transcript) {
@@ -380,18 +342,7 @@ class VoiceRecognitionController {
                         final_transcript = final_transcript.substr(0, final_transcript.length - 1);
                     }
 
-                   
-                    // const event_resultSpeech = {
-                    //     name: 'resultVoiceRecognition',
-                    //     data: {
-                    //         transcript: final_transcript,
-                    //         log: 'Result Voice Recognition transcript: ' + final_transcript
-                    //     } 
-                    // }
-
-                    // that.observable.dispatchEvent(event_resultSpeech.name, event_resultSpeech.data);
-
-                    window.location.hash = '#request=' + data.transcript + '&executebytitle=true';
+                    window.location.hash = '#request=' + final_transcript + '&executebytitle=true';
 
                     final_transcript = '';
                 }
@@ -529,7 +480,3 @@ class VoiceRecognitionController {
         }
     }
 }
-
-
-
-

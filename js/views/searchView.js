@@ -1,8 +1,5 @@
 class SearchView {
-    constructor(controller, textManager) {
-        this.textManager = textManager;
-        this.controller = controller;
-        
+    constructor() {
         this.#setEventListeners();
         this.#init();
     }

@@ -18,7 +18,7 @@ class NoteController {
     #onClose = () => {
         this.noteService.close(); 
 
-        voiceRecognitionService.stopRecognizing();
+        yesSir.voiceRecognitionService.stopRecognizing();
         
         if (window.location.hash.includes('#settingsActionBlock')) {
             this.actionBlockService.setDefaultValuesForSettingsElementsActionBlock();

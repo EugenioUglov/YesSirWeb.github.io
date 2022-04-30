@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 "# Yes Sir - Web" 
+=======
+"# Yes Sir Web" 
+>>>>>>> 46df384039df281ca0b43a501b12aef20a419586
 
 <p>The idea is to quickly search for information by a phrase, as it is done in a google search engine, and tags. When you enter a phrase that matches the title Action-Block, it is activated instantly.</p>
 
@@ -25,6 +29,6 @@ Action-Block object:
 
 
 <h2>Used technologies</h2>
-Languages: JS, HTML, CSS. <br>
+Languages: JS, PHP, HTML, CSS. <br>
 Design pattern: MVP. <br>
 Libraries: Jquery. <br>

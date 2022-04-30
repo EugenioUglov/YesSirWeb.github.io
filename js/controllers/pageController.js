@@ -1,10 +1,9 @@
 class PageController {
-    constructor(pageService, actionBlockController, actionBlockService, textManager, observable) {
+    constructor(pageService, actionBlockController, actionBlockService, textManager) {
         this.pageService = pageService;
         this.actionBlockController = actionBlockController;
         this.actionBlockService = actionBlockService;
         this.textManager = textManager;
-        this.observable = observable;
 
         this.#setListeners();
     }
@@ -38,7 +37,6 @@ class PageController {
         const that = this;
 
         if (this.pageService.getHashChangeListenerActiveState() === false) return;
-        console.log('onHashChanged()');
         this.pageService.handleHash();
 
         // that.actionBlockService.view.clear();

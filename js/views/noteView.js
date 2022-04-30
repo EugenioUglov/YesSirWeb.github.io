@@ -2,6 +2,7 @@ class NoteView {
     constructor() {
 
     }
+    
 
     showInfo(content, title, isHTML) {
         // Title text.

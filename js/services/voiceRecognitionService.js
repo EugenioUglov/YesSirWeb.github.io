@@ -8,6 +8,7 @@ class VoiceRecognitionService {
 
 
     #init() {
+        console.log('VoiceRecognitionService init', this.#is_recognizing);
         if ('webkitSpeechRecognition' in window) {
             // Создаем распознаватель
             this.#recognizer = new webkitSpeechRecognition();

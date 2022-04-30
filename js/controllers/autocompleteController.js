@@ -1,13 +1,7 @@
 class AutocompleteController {
-    constructor(pageService, actionBlockService, autocompleteService, textManager) {
+    constructor(pageService, actionBlockService, autocompleteService) {
         this.autocompleteService = autocompleteService;
-        this.textManager = textManager;
         this.view = new AutocompleteView();
-        this.#init();
-    }
-
-    #init() {
-
     }
 
     bindApplyTags(callbackSelect) {
@@ -32,7 +26,7 @@ class AutocompleteController {
         function onSelect() {
             console.log('curent page name', that.pageService.getCurrentPageName());
             
-            if (that.pageService.getCurrentPageName() === that.pageService.getPageNameOptions().main) {
+            if (that.pageService.getCurrentPageName() === that.pageService.getPageNameEnum().main) {
                 const actionBlocks_to_show = that.actionBlockService.getActionBlocksByPhrase($('#input_field_request').val());
                 that.actionBlockService.showActionBlocks(actionBlocks_to_show);
             }

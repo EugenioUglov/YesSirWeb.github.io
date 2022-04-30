@@ -1,15 +1,17 @@
 class PageService {
+    #hash_previous;
+
     constructor(textManager) {
         this.textManager = textManager;
 
-        this.hash_previous;
+        this.#hash_previous;
     }
 
     #actionBlockService;
     #is_hash_change_listener_active_state_enabled = false;
     #current_page_name = 'main';
 
-    #pageName = {
+    #pageNameEnum = {
         main: 'main',
         settingsActionBlock: 'settingsActionBlock',
         contentActionBlock: 'contentActionBlock'
@@ -30,8 +32,8 @@ class PageService {
         this.#actionBlockService = actionBlockService_to_set;
     }
 
-    getPageNameOptions() {
-        return this.#pageName;
+    getPageNameEnum() {
+        return this.#pageNameEnum;
     }
 
     getcurrent_page_name() {
@@ -48,11 +50,12 @@ class PageService {
 
     openActionBlockPage(title) {
         if ($('#input_field_request').val() === '') {
-            this.hash_previous = window.location.hash;
+            this.#hash_previous = window.location.hash;
+            console.log(this.#hash_previous);
         }
-        // else {
-        //     this.hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
-        // }
+        else {
+            this.#hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
+        }
 
         window.location.hash = '#request=' + title + '&executebytitle=true';
         // console.log('openActionBlockPage', title);
@@ -63,20 +66,20 @@ class PageService {
 
     openSettingsActionBlockPage() {
         if ($('#input_field_request').val() === '') {
-            this.hash_previous = window.location.hash;
+            this.#hash_previous = window.location.hash;
         }
         else {
-            this.hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
+            this.#hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
         }
         
         window.location.hash = '#settingsActionBlock';
 
-        this.setPageName('settingsActionBlock');
+        this.setPageName(this.#pageNameEnum.settingsActionBlock);
     }
 
     openPreviousPage() {
-        if (this.hash_previous && this.hash_previous.includes('#settingsActionBlock') === false) {
-            window.location.hash = this.hash_previous;
+        if (this.#hash_previous && this.#hash_previous.includes('#settingsActionBlock') === false && this.#hash_previous.includes('&executebytitle=true') === false) {
+            window.location.hash = this.#hash_previous;
         }
         else {
             this.openMainPage();
