@@ -100,6 +100,8 @@ class PageService {
 
     handleHash() {
         const that = this;
+
+        if (this.getHashChangeListenerActiveState() === false) return;
         
         this.#actionBlockService.view.clear();
 

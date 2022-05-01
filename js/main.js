@@ -1,5 +1,13 @@
 class YesSir {
+    #dialogWindow;
+
     constructor() {
+        this.#dialogWindow = new DialogWindow();
+        
+        this.noteService = new NoteService();
+        this.dataStorageService = new DataStorageService(this.#dialogWindow);
+        this.searchService = new SearchSevice();
+        this.scrollService = new ScrollService();
         this.textManager = new TextManager();
         this.fileManager = new FileManager(this.textManager);
         this.dateManager = new DateManager();
@@ -8,7 +16,7 @@ class YesSir {
         this.autocompleteService = new AutocompleteService(this.textManager);
         this.voiceRecognitionService = new VoiceRecognitionService();
         this.speakerService = new SpeakerService();
-        
+        this.pageService = new PageService(this.textManager);
     }
 }
 
@@ -57,13 +65,13 @@ let actionBlockService;
         const voiceRecognitionService = yesSir.voiceRecognitionService;
         const speakerService = yesSir.speakerService;
         const autocompleteService = yesSir.autocompleteService;
-        const scrollService = new ScrollService();
-        const searchService = new SearchSevice();
+        const scrollService = yesSir.scrollService;
+        const searchService = yesSir.searchSevice;
         const logsService = yesSir.logsService;
         const loadingService = new LoadingService();
-        const noteService = new NoteService();
-        const dataStorageService = new DataStorageService(dialogWindow);
-        const pageService = new PageService(textManager);
+        const noteService = yesSir.noteService;
+        const dataStorageService = yesSir.dataStorageService;
+        const pageService = yesSir.pageService;
         actionBlockService = new ActionBlockService(dbManager, observable, fileManager, textManager, 
             dropdownManager, dataStorageService, mapDataStructure, logsService, dialogWindow, 
             keyCodeByKeyName, scrollService, searchService, loadingService, pageService, noteService, dateManager);
@@ -73,12 +81,12 @@ let actionBlockService;
         speakerController = new SpeakerController(speakerService);
         loadingController = new LoadingController(observable);
         actionBlockController = new ActionBlockController(actionBlockService, dbManager,
-            dropdownManager, mapDataStructure, loadingService, pageController, dialogWindow, 
+            dropdownManager, mapDataStructure, loadingService, dialogWindow, 
             scrollService, searchService, pageService, noteService);
         const autocompleteController = new AutocompleteController(pageService, actionBlockService, autocompleteService);
-        voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable);
+        voiceRecognitionController = new VoiceRecogfnitionController(voiceRecognitionService, observable);
         scrollController = new ScrollController(scrollService, actionBlockService);
-        pageController = new PageController(pageService, actionBlockController, actionBlockService, textManager);
+        pageController = new PageController(pageService);
         searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);
         noteController = new NoteController(actionBlockService, noteService, pageService);
         const dataStorageController = new DataStorageController(actionBlockService, dataStorageService, pageService, dialogWindow);

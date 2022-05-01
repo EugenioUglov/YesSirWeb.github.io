@@ -1029,10 +1029,10 @@ class ActionBlockModel {
   
         // Check new title validation.
         if (original_title != title) {
-            console.log('original_title != title');
             const is_actionBlock_exists_by_title = this.getActionBlockByTitle(title);
             
             if (is_actionBlock_exists_by_title) {
+                alert('Action-Block with current title already exists. Title: ' + title);
                 return false;
             }
 
@@ -1043,7 +1043,7 @@ class ActionBlockModel {
 
         if ( ! is_deleted) {
             alert('ERROR! Action-Block hasn\'t been deleted');
-            return;
+            return false;
         }
         
         const action_block =

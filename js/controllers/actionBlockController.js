@@ -1,12 +1,11 @@
 class ActionBlockController {
     constructor(actionBlockService, dbManager, dropdownManager, 
-        mapDataStructure, loadingService, pageController, dialogWindow, 
+        mapDataStructure, loadingService, dialogWindow, 
         scrollService, searchService, pageService, noteService
     ) {
         this.actionBlockService = actionBlockService;
         this.loadingService = loadingService;
         // this.logsController = logsController;
-        this.pageController = pageController;
         this.dialogWindow = dialogWindow;
         this.mapDataStructure = mapDataStructure;
         this.scrollService = scrollService;
@@ -167,17 +166,16 @@ class ActionBlockController {
     }
 
     onClickBtnUpdateActionBlock = (title, tags, selected_action, content, image_url) => {
+        const is_updated = this.actionBlockService.model.updateActionBlock(title, tags, selected_action, content, image_url);
+        if (is_updated === false) return false;
+
         this.pageService.openPreviousPage();
         this.loadingService.stopLoading();
-
         this.actionBlockService.view.closeSettings();
         this.actionBlockService.view.setDefaultValuesForSettingsElementsActionBlock();
-        this.actionBlockService.model.updateActionBlock(title, tags, selected_action, content, image_url);
-    
         // Scroll top.
         this.scrollService.scrollTo();
         this.actionBlockService.view.updatePage();
-        
         // Refresh Action-Blocks on page.
         this.actionBlockService.showActionBlocks();
     }
