@@ -20,6 +20,7 @@ class ActionBlockService {
         this.noteService = noteService;
 
         this.#dateManager = dateManager;
+        console.log(this.loadingService);
         
         this.model = new ActionBlockModel(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, this.#dateManager);
         this.view = new ActionBlockView(this.model.getActionNameEnum(), this.model.getContentTypeDescriptionByActionEnum(), this.model.action_description_by_action_name, fileManager, textManager, dropdownManager);
@@ -34,7 +35,9 @@ class ActionBlockService {
         this.pageService.setActionBlockService(this);
     }
 
-    createActionBlock(title, tags, action, content, image_URL) {
+    createActionBlock = (title, tags, action, content, image_URL) => {
+        this.loadingService.startLoading();
+
         const actionBlock =
         {
             title: title,
@@ -50,6 +53,10 @@ class ActionBlockService {
             return false;
         }
 
+        this.view.closeSettings();
+        this.view.clearAllFields();
+        this.pageService.openPreviousPage();
+        this.loadingService.stopLoading();
         this.updatePage();
     
         return true;
@@ -455,19 +462,10 @@ class ActionBlockService {
     downloadFileWithActionBlocks = (actionBlocks) => {
         if ( ! actionBlocks) actionBlocks = this.model.getActionBlocks();
         const content = this.mapDataStructure.getStringified(actionBlocks);
-        console.log('download', content);
+        const date_now = this.#dateManager.getDateNow();
+        const time_now = this.#dateManager.getTimeNow();
 
-        const date = new Date();
-
-        //months from 1-12
-        const month = date.getUTCMonth() + 1;
-        const day = date.getUTCDate();
-        const year = date.getUTCFullYear();
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const seconds = date.getSeconds();
-
-        const date_text = '' + year + month + day + '_' + hours + minutes + seconds;
+        const date_text = date_now + '-' + time_now;
 
         // Set variable for name of the saving file with date and time. 
         const file_name = 'Action-Blocks ' + date_text;
@@ -524,7 +522,7 @@ class ActionBlockService {
         return this.view.isActionBlocksPageActive;
     }
 
-    onClickBtnRewriteActionBlocks = function() {
+    rewriteActionBlocks = function() {
         const that = this;
         const text_confirm_window = 'All current Action-Blocks will be deleted ' +
             'and replaced with Action-Blocks retrieved from the database.' +
@@ -546,6 +544,45 @@ class ActionBlockService {
         }
     }
 
+    updateActionBlock = (title, tags, selected_action, content, image_url) => {
+        const is_updated = this.model.updateActionBlock(title, tags, selected_action, content, image_url);
+        if (is_updated === false) return false;
+
+        this.pageService.openPreviousPage();
+        this.loadingService.stopLoading();
+        this.view.closeSettings();
+        this.view.setDefaultValuesForSettingsElementsActionBlock();
+        // Scroll top.
+        this.scrollService.scrollTo();
+        this.view.updatePage();
+        // Refresh Action-Blocks on page.
+        this.showActionBlocks();
+    }
+
+    deleteActionBlock = (title) => {
+        const that = this;
+
+        this.pageService.openPreviousPage();
+        this.loadingService.stopLoading();
+        this.view.closeSettings();
+
+        const text_confirm_window = 'Are you sure you want to delete' + '\n' + ' "' + title + '" ?';
+    
+        function onClickOkConfirm() {
+            that.model.deleteActionBlockByTitle(title);
+    
+            that.updatePage();
+
+            return;
+        }
+    
+        function onClickCancelConfirm() {
+            return;
+        }
+      
+        this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    }
+
 
     #onClickActionBlock = (title) => {
         this.pageService.openActionBlockPage(title);
@@ -557,7 +594,7 @@ class ActionBlockService {
         const actionBlocks = this.model.getActionBlocks();
         const actionBlock = actionBlocks.get(title);
 
-        this.pageService.openSettingsActionBlockPage();
+        this.pageService.openSettingsActionBlockPage(title);
         this.model.title_actionBlock_before_update = title;
         this.view.onPageContentChange();
         this.view.showElementsToUpdateActionBlock(actionBlock);

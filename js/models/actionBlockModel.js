@@ -534,7 +534,7 @@ class ActionBlockModel {
             
             <script>
             $('.btn_upload_actionBlocks').on('change', (event) => {
-                fileManager.uploadFile(onFileLoaded);
+                yesSir.fileManager.uploadFile(onFileLoaded);
         
                 function onFileLoaded(content_of_file) {
                     actionBlockService.saveActionBlocksFromFile(content_of_file);
@@ -774,8 +774,7 @@ class ActionBlockModel {
             openURL: 'openURL',
             showInfo: 'showInfo',
             openFolder: 'openFolder',
-            showHTML: 'showHTML',
-            // createActionBlock: 'createActionBlock',
+            showHTML: 'showHTML'
             //showFileManager: 'showFileManager',
             //showDataStorageManager: 'showDataStorageManager',
             //showLogs: 'showLogs',

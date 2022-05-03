@@ -21,26 +21,6 @@ class ActionBlockController {
     //     return this.actionBlockService.model.getActionBlocks();
     // }
 
-    // createActionBlock(title, tags, action, content, image_URL) {
-    //     const action_block =
-    //     {
-    //         title: title,
-    //         tags: tags,
-    //         action: action,
-    //         content: content,
-    //         imageURL: image_URL
-    //     };
-
-    //     const is_created = this.actionBlockService.model.add(action_block);
-
-    //     if ( ! is_created) {
-    //         return false;
-    //     }
-
-    //     this.#updatePage();
-    
-    //     return true;
-    // }
 
     updateDefaultActionBlocks = () => {
         const that = this;
@@ -102,93 +82,73 @@ class ActionBlockController {
         */
     }
 
-    onClickBtnRewriteActionBlocks = function() {
-        const that = this;
-        const text_confirm_window = 'All current Action-Blocks will be deleted ' +
-            'and replaced with Action-Blocks retrieved from the database.' +
-            '\n' + 'Are you sure you want to replace it now?';
+    // rewriteActionBlocks = function() {
+    //     const that = this;
+    //     const text_confirm_window = 'All current Action-Blocks will be deleted ' +
+    //         'and replaced with Action-Blocks retrieved from the database.' +
+    //         '\n' + 'Are you sure you want to replace it now?';
     
-        this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    //     this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
     
-        function onClickOkConfirm() {
-            $('#dialog_database_manager')[0].close();
-            that.actionBlockService.model.setActionBlocks(that.actionBlockService.model.actionBlocks_from_database);
-            that.actionBlockService.showActionBlocks();
+    //     function onClickOkConfirm() {
+    //         $('#dialog_database_manager')[0].close();
+    //         that.actionBlockService.model.setActionBlocks(that.actionBlockService.model.actionBlocks_from_database);
+    //         that.actionBlockService.showActionBlocks();
 
-            return;
-        }
+    //         return;
+    //     }
     
-        function onClickCancelConfirm() {
-            return;
-        }
-    }
+    //     function onClickCancelConfirm() {
+    //         return;
+    //     }
+    // }
 
-    onClickBtnDeleteActionBlock = (title) => {
-        const that = this;
+    // onClickBtnDeleteActionBlock = (title) => {
+    //     const that = this;
 
-        this.pageService.openPreviousPage();
-        this.loadingService.stopLoading();
-        this.actionBlockService.view.closeSettings();
+    //     this.pageService.openPreviousPage();
+    //     this.loadingService.stopLoading();
+    //     this.actionBlockService.view.closeSettings();
 
-        const text_confirm_window = 'Are you sure you want to delete' + '\n' + ' "' + title + '" ?';
+    //     const text_confirm_window = 'Are you sure you want to delete' + '\n' + ' "' + title + '" ?';
     
-        function onClickOkConfirm() {
-            that.actionBlockService.model.deleteActionBlockByTitle(title);
+    //     function onClickOkConfirm() {
+    //         that.actionBlockService.model.deleteActionBlockByTitle(title);
     
-            that.#updatePage();
+    //         that.#updatePage();
 
-            return;
-        }
+    //         return;
+    //     }
     
-        function onClickCancelConfirm() {
-            return;
-        }
+    //     function onClickCancelConfirm() {
+    //         return;
+    //     }
       
-        this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
-    }
+    //     this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    // }
 
-    onClickBtnCreateActionBlock = (title, tags_plus_title, content, image_URL) => {
-        const that = this;
+    // onClickBtnCreateActionBlock = (title, tags_plus_title, content, image_URL) => {
+    //     const that = this;
 
-        this.loadingService.startLoading();
+    //     this.loadingService.startLoading();
 
-        const is_actionBlock_created = this.actionBlockService.createActionBlock(title, tags_plus_title, 
-            //this.actionBlockService.model.action_for_new_actionBlock, 
-            that.actionBlockService.view.getUserAction(),
-            content, image_URL);
+    //     const is_actionBlock_created = this.actionBlockService.createActionBlock(title, tags_plus_title, 
+    //         that.actionBlockService.view.getUserAction(), content, image_URL);
 
-        if ( ! is_actionBlock_created) return;
+    //     if ( ! is_actionBlock_created) return;
 
-        this.actionBlockService.view.closeSettings();
-        this.actionBlockService.view.clearAllFields();
-        this.pageService.openPreviousPage();
-        this.loadingService.stopLoading();
-    }
+    //     this.actionBlockService.view.closeSettings();
+    //     this.actionBlockService.view.clearAllFields();
+    //     this.pageService.openPreviousPage();
+    //     this.loadingService.stopLoading();
+    // }
 
-    onClickBtnUpdateActionBlock = (title, tags, selected_action, content, image_url) => {
-        const is_updated = this.actionBlockService.model.updateActionBlock(title, tags, selected_action, content, image_url);
-        if (is_updated === false) return false;
-
-        this.pageService.openPreviousPage();
-        this.loadingService.stopLoading();
-        this.actionBlockService.view.closeSettings();
-        this.actionBlockService.view.setDefaultValuesForSettingsElementsActionBlock();
-        // Scroll top.
-        this.scrollService.scrollTo();
-        this.actionBlockService.view.updatePage();
-        // Refresh Action-Blocks on page.
-        this.actionBlockService.showActionBlocks();
-    }
-    
     // uploadFileWithActionBlocks = (actionBlocks_from_file) => {
     //     this.actionBlockService.view.closeSettings();
     //     this.actionBlockService.model.setActionBlocks(actionBlocks_from_file);
     //     this.actionBlockService.showActionBlocks();
     //     this.searchService.clearInputField();
     // }
-
-
-
 
     #onClickBtnCancelSettings = () => {
         yesSir.voiceRecognitionService.stopRecognizing();
@@ -205,10 +165,10 @@ class ActionBlockController {
         this.actionBlockService.view.bindClickBtnSettingsToCreateFolder(this.actionBlockService.showSettingsToCreateFolder);
         this.actionBlockService.view.bindClickBtnSettingsToCreateAdvancedActionBlock(this.actionBlockService.showSettingsToCreateAdvancedActionBlock);
 
-        this.actionBlockService.view.bindCreateActionBlock(this.onClickBtnCreateActionBlock);
-        this.actionBlockService.view.bindUpdateActionBlock(this.onClickBtnUpdateActionBlock);
-        this.actionBlockService.view.bindDeleteActionBlock(this.onClickBtnDeleteActionBlock);
-        this.actionBlockService.view.bindClickBtnRewriteActionBlocks(this.actionBlockService.onClickBtnRewriteActionBlocks);
+        this.actionBlockService.view.bindCreateActionBlock(this.actionBlockService.createActionBlock);
+        this.actionBlockService.view.bindUpdateActionBlock(this.actionBlockService.updateActionBlock);
+        this.actionBlockService.view.bindDeleteActionBlock(this.actionBlockService.deleteActionBlock);
+        this.actionBlockService.view.bindClickBtnRewriteActionBlocks(this.actionBlockService.rewriteActionBlocks);
 
         this.actionBlockService.view.bindClickBtnCancelSettings(this.#onClickBtnCancelSettings);
     }
@@ -217,13 +177,13 @@ class ActionBlockController {
         this.actionBlockService.switchStateMenuTypeActionBlocksToCreate();
     }
 
-    #updatePage() {
-        this.actionBlockService.view.updatePage();
+    // #updatePage() {
+    //     this.actionBlockService.view.updatePage();
         
-        // Refresh Action-Blocks on page.
-        this.actionBlockService.showActionBlocks();
+    //     // Refresh Action-Blocks on page.
+    //     this.actionBlockService.showActionBlocks();
 
-        // Scroll top.
-        this.scrollService.scrollTo();
-    }
+    //     // Scroll top.
+    //     this.scrollService.scrollTo();
+    // }
 }

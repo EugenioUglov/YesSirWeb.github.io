@@ -74,7 +74,7 @@ class DataStorageController {
 
         function onClickBtnRewriteOnDialogDatabaseManger() {
             $(".black_background").hide();
-            that.actionBlockService.onClickBtnRewriteActionBlocks();
+            that.actionBlockService.rewriteActionBlocks();
         }
 
         this.dataStorageService.view.bindClickBtnUploadActionBlocksToDatabase(onClickBtnUploadActionBlocksToDatabase);

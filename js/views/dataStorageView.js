@@ -1,7 +1,6 @@
 class DataStorageView {
     constructor (dialogWindow) {
         this.dialogWindow = dialogWindow;
-        this.#init();
     }
 
     #init() {
@@ -17,7 +16,7 @@ class DataStorageView {
         
         // // dialog_database_manager.btn_rewrite.addEventListener('click', function() {
         // //     $(".black_background").hide();
-        // //     actionBlockController.onClickBtnRewriteActionBlocks();
+        // //     actionBlockController.rewriteActionBlocks();
         // // });
         
         // dialog_database_manager.btn_upload.addEventListener('click', function() {

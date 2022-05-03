@@ -416,7 +416,7 @@ class ActionBlockView {
             //console.log('title: " + input_field_title.value + " | tags: " + input_field_tags.value + " | action: " + action_user_choose + " | input_field_action: " + input_field_action.value + " | image path: " + image_URL.value);
 
 
-            handler(title, tags_plus_title, content, image_URL);
+            handler(title, tags_plus_title, this.getUserAction(), content, image_URL);
         });
     }
 

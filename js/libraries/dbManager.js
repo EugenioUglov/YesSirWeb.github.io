@@ -120,7 +120,6 @@ class DBManager {
         
         const request = 'request=' + 'setUserData' + '&userId=' + user_id + '&userDataToPost=' + encodeURIComponent(data_to_post);
     
-        console.log('setUserData');
         this.#dbRequestPost(this.#phpSetUserDataPath, request, onUpdatedUserData, callBackFail);
     
         return true;
@@ -129,7 +128,6 @@ class DBManager {
 
     #dbRequestPost(path, data_to_send, callBackSuccess, callBackFail) {
         const request = new XMLHttpRequest();
-        console.log('post request')
 
         request.open('POST', path, true);
         request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

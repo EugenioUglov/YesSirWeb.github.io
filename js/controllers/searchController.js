@@ -7,7 +7,7 @@ class SearchController {
         this.keyCodeByKeyName = keyCodeByKeyName;
 
         //this.searchService.view = new SearchView(this, textManager);
-
+        console.log('searchService', this.searchService);
 
         this.#setEventListeners();
         this.#bindViewEvenets();

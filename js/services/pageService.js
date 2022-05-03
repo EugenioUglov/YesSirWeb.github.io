@@ -20,7 +20,7 @@ class PageService {
 
     init() {
         if (window.location.hash.includes('#settingsActionBlock')) {
-            this.pageService.openMainPage();
+            this.openMainPage();
         }
 
         this.setHashChangeListenerActiveState(true);
@@ -64,7 +64,7 @@ class PageService {
         this.setPageName('contentActionBlock');
     }
 
-    openSettingsActionBlockPage() {
+    openSettingsActionBlockPage(title) {
         if ($('#input_field_request').val() === '') {
             this.#hash_previous = window.location.hash;
         }
@@ -72,7 +72,9 @@ class PageService {
             this.#hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
         }
         
-        window.location.hash = '#settingsActionBlock';
+        title = (title != undefined) ? '=' + title : '';
+
+        window.location.hash = '#settingsActionBlock' + title;
 
         this.setPageName(this.#pageNameEnum.settingsActionBlock);
     }

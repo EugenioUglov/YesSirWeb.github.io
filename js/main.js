@@ -3,18 +3,20 @@ class YesSir {
 
     constructor() {
         this.#dialogWindow = new DialogWindow();
-        
-        this.noteService = new NoteService();
-        this.dataStorageService = new DataStorageService(this.#dialogWindow);
-        this.searchService = new SearchSevice();
-        this.scrollService = new ScrollService();
+
         this.textManager = new TextManager();
         this.fileManager = new FileManager(this.textManager);
         this.dateManager = new DateManager();
         this.inputDeviceManager = new InputDeviceManager();
+        this.voiceRecognitionManager = new VoiceRecognitionManager();
+
+        this.noteService = new NoteService();
+        this.dataStorageService = new DataStorageService(this.#dialogWindow);
+        this.searchService = new SearchSevice();
+        this.scrollService = new ScrollService();
         this.logsService = new LogsService(this.fileManager, this.dateManager);
         this.autocompleteService = new AutocompleteService(this.textManager);
-        this.voiceRecognitionService = new VoiceRecognitionService();
+        this.voiceRecognitionService = new VoiceRecognitionService(this.voiceRecognitionManager);
         this.speakerService = new SpeakerService();
         this.pageService = new PageService(this.textManager);
     }
@@ -40,19 +42,11 @@ let actionBlockService;
     });
 
     function onPageLoaded() {
-        //let autocompleteController;
-        let searchController;
-        let voiceRecognitionController;
-        let noteController;
-        let pageController;
-        let scrollController;
-        let loadingController;
-        
+        // Initialize Libraries.
         const observable = new Observable();
         const dateManager = yesSir.dateManager;
         const inputDeviceManager = yesSir.inputDeviceManager;
         const keyCodeByKeyName = inputDeviceManager.getKeyCodeByKeyName();
-        
         const textManager = yesSir.textManager;
         const dialogWindow = new DialogWindow();
         const fileManager = yesSir.fileManager;
@@ -66,7 +60,7 @@ let actionBlockService;
         const speakerService = yesSir.speakerService;
         const autocompleteService = yesSir.autocompleteService;
         const scrollService = yesSir.scrollService;
-        const searchService = yesSir.searchSevice;
+        const searchService = yesSir.searchService;
         const logsService = yesSir.logsService;
         const loadingService = new LoadingService();
         const noteService = yesSir.noteService;
@@ -79,16 +73,16 @@ let actionBlockService;
         // Initialize Controller.
         logsController = new LogsController(fileManager);
         speakerController = new SpeakerController(speakerService);
-        loadingController = new LoadingController(observable);
+        const loadingController = new LoadingController(observable);
         actionBlockController = new ActionBlockController(actionBlockService, dbManager,
             dropdownManager, mapDataStructure, loadingService, dialogWindow, 
             scrollService, searchService, pageService, noteService);
         const autocompleteController = new AutocompleteController(pageService, actionBlockService, autocompleteService);
-        voiceRecognitionController = new VoiceRecogfnitionController(voiceRecognitionService, observable);
-        scrollController = new ScrollController(scrollService, actionBlockService);
-        pageController = new PageController(pageService);
-        searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);
-        noteController = new NoteController(actionBlockService, noteService, pageService);
+        const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable);
+        const scrollController = new ScrollController(scrollService, actionBlockService);
+        const pageController = new PageController(pageService);
+        const searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);
+        const noteController = new NoteController(actionBlockService, noteService, pageService);
         const dataStorageController = new DataStorageController(actionBlockService, dataStorageService, pageService, dialogWindow);
 
         
