@@ -359,7 +359,6 @@ class ActionBlockService {
             that.noteService.is_note_opened = true;
             // Set position top.
             that.scrollService.setPosition(0, 0);
-
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().openFolder) {
             //console.log('open folder from actionblock');
@@ -559,6 +558,32 @@ class ActionBlockService {
         this.showActionBlocks();
     }
 
+    updateDefaultActionBlocks = () => {
+        const that = this;
+        const is_show_alert_on_error = false;
+
+        const actionBlocks_to_create = this.model.getDefaultActionBlocks();
+
+        // Delete previous default Action-Blocks.
+        for (const actionBlock_to_delete of actionBlocks_to_create) {
+            // Update site.
+            this.model.deleteActionBlockByTitle(actionBlock_to_delete.title, is_show_alert_on_error);
+        }
+        
+        // Create default Action-Blocks.
+        createDefaultActionBlocks();
+        this.showActionBlocks();
+
+        return;
+
+        function createDefaultActionBlocks() {
+            actionBlocks_to_create.forEach(actionBlock => {
+                that.createActionBlock(actionBlock.title, actionBlock.tags, actionBlock.action, actionBlock.content, 
+                    actionBlock.imageURL, actionBlock.isEditable);
+            });
+        }
+    }
+
     deleteActionBlock = (title) => {
         const that = this;
 
@@ -581,6 +606,39 @@ class ActionBlockService {
         }
       
         this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
+    }
+
+    openFolder(actionBlock_title) {
+        const actionBlocks = this.model.getActionBlocks();
+        const actionBlock = actionBlocks.get(actionBlock_title);
+        const tags_to_search = actionBlock.content;
+
+        let actionBlocks_to_show;
+
+        if ( ! tags_to_search) {
+            console.log('Warning! Tags for folder don\'t exist');
+            return;
+        }
+      
+        this.view.clear();
+        // Get command text from input field and find possible search data.
+        actionBlocks_to_show = this.model.getByPhrase(tags_to_search);
+    
+        // Delete a folder from array. In order to don't show a folder with Action-Blocks.
+        // if (i_actionBlock >= 0) {
+        //     actionBlocks_to_show.splice(i_actionBlock, 1);
+        // }
+
+        this.showActionBlocks(actionBlocks_to_show);
+        
+        /*
+        if (actionBlocks_to_show.length === 1) {
+            // Open the first infoObject
+    
+            let infoObj = actionBlocks_to_show[0];
+            this.executeActionBlock(infoObj);
+        }
+        */
     }
 
 

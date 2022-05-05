@@ -16,10 +16,10 @@ class VoiceRecognitionService {
     }
 
     isRecognizing() {
-        this.voiceRecognitionManager.is_recognizing();
+        return this.voiceRecognitionManager.isRecognizing();
     }
 
     isBrowserSupportRecognition() {
-        this.voiceRecognitionManager.isBrowserSupportRecognition();
+        return this.voiceRecognitionManager.isBrowserSupportRecognition();
     }
 }

@@ -1,5 +1,5 @@
 class DataStorageController {
-    constructor(actionBlockService, dataStorageService, pageSerice, dialogWindow) {
+    constructor(actionBlockService, dataStorageService, pageSerice) {
         this.actionBlockService = actionBlockService;
         this.dataStorageService = dataStorageService;
         this.pageSerice = pageSerice;

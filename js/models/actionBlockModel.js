@@ -618,6 +618,7 @@ class ActionBlockModel {
                     yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
 
                     function onInterimTranscript(result_text) {
+                        console.log('InterimTranscript', result_text);
                         $('.input_field_content').val(result_text);
                     }
 
@@ -677,7 +678,7 @@ class ActionBlockModel {
 
                     function onFinalTranscript(result_text) {
                         $('.input_field_title').val(result_text);
-                        yesSir. speakerService.speak('Thank you!');
+                        yesSir.speakerService.speak('Thank you!');
                         voiceRecognitionSaveResult();
                     }
 
@@ -736,9 +737,12 @@ class ActionBlockModel {
                     yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
 
                     function onInterimTranscript(result_text) {
+                        console.log('interim result', result_text);
                     }
 
                     function onFinalTranscript(result_text) {
+                        console.log('final result', result_text);
+
                         if (result_text.includes('no') || result_text.includes('nope') || result_text.includes("don't")) {
                             isFinalResult = true;
                             yesSir.speakerService.speak("Ok. I didn't save the note. You can customize the note manually. I'm switching off");

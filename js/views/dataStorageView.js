@@ -3,42 +3,6 @@ class DataStorageView {
         this.dialogWindow = dialogWindow;
     }
 
-    #init() {
-        const that = this;
-
-        // const dialog_database_manager = {};
-        // dialog_database_manager.btn_add = $('#dialog_database_manager').find('.btn_add_actionBlocks')[0];
-        // dialog_database_manager.btn_rewrite = $('#dialog_database_manager').find('.btn_rewrite_actionBlocks')[0];
-        // dialog_database_manager.btn_upload = $('#dialog_database_manager').find('.btn_upload_actionBlocks')[0];
-
-
-        
-        
-        // // dialog_database_manager.btn_rewrite.addEventListener('click', function() {
-        // //     $(".black_background").hide();
-        // //     actionBlockController.rewriteActionBlocks();
-        // // });
-        
-        // dialog_database_manager.btn_upload.addEventListener('click', function() {
-        //     const text_confirm_window = 'Are you sure to synchronize current Action-Blocks?\n\
-        //         All previous data in database will be deleted.';
-            
-        //     function onClickOkConfirm() {
-        //         $(".black_background").hide();
-        //         that.actionBlockService.save(actionBlockController.getActionBlocks());
-        //         that.actionBlockService.showActionBlocks();
-        //     }
-        
-        //     function onClickCancelConfirm() {
-        //         $(".black_background").hide();
-        //     }
-        
-        //     that.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
-        // });
-        
-  
-    }
-
     bindClickBtnUpload(okClickHandler, cancelClickHandler) {
         const that = this;
 
@@ -65,8 +29,6 @@ class DataStorageView {
             that.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
         });
     }
-
-
 
     bindClickBtnGetActionBlocksFromDatabase(handler) {
         const btn_rewrite = $('#dialog_database_manager').find('.btn_rewrite_actionBlocks')[0];

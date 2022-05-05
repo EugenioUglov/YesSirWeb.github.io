@@ -5,7 +5,6 @@ class ActionBlockController {
     ) {
         this.actionBlockService = actionBlockService;
         this.loadingService = loadingService;
-        // this.logsController = logsController;
         this.dialogWindow = dialogWindow;
         this.mapDataStructure = mapDataStructure;
         this.scrollService = scrollService;
@@ -22,65 +21,9 @@ class ActionBlockController {
     // }
 
 
-    updateDefaultActionBlocks = () => {
-        const that = this;
-        const isShowAlertOnError = false;
 
-        const actionBlocks_to_create = this.actionBlockService.model.getDefaultActionBlocks();
 
-        // Delete previous default Action-Blocks.
-        for (const actionBlock_to_delete of actionBlocks_to_create) {
-            // Update site.
-            this.actionBlockService.model.deleteActionBlockByTitle(actionBlock_to_delete.title, isShowAlertOnError);
-        }
-        
-        // Create default Action-Blocks.
-        createDefaultActionBlocks();
-        this.actionBlockService.showActionBlocks();
-
-        return;
-
-        function createDefaultActionBlocks() {
-            actionBlocks_to_create.forEach(actionBlock => {
-                that.actionBlockService.createActionBlock(actionBlock.title, actionBlock.tags, actionBlock.action, actionBlock.content, 
-                    actionBlock.imageURL, actionBlock.isEditable);
-            });
-        }
-    }
-
-    openFolder(actionBlock_title) {
-        const actionBlocks = this.actionBlockService.model.getActionBlocks();
-        const actionBlock = actionBlocks.get(actionBlock_title);
-        const tags_to_search = actionBlock.content;
-
-        let actionBlocks_to_show;
-
-        if ( ! tags_to_search) {
-            console.log('Warning! Tags for folder don\'t exist');
-            return;
-        }
-      
-        this.actionBlockService.view.clear();
-        // Get command text from input field and find possible search data.
-        actionBlocks_to_show = this.actionBlockService.model.getByPhrase(tags_to_search);
-        console.log('actionBlocks_to_show', actionBlocks_to_show);
     
-        // Delete a folder from array. In order to don't show a folder with Action-Blocks.
-        // if (i_actionBlock >= 0) {
-        //     actionBlocks_to_show.splice(i_actionBlock, 1);
-        // }
-
-        this.actionBlockService.showActionBlocks(actionBlocks_to_show);
-        
-        /*
-        if (actionBlocks_to_show.length === 1) {
-            // Open the first infoObject
-    
-            let infoObj = actionBlocks_to_show[0];
-            this.actionBlockService.executeActionBlock(infoObj);
-        }
-        */
-    }
 
     // rewriteActionBlocks = function() {
     //     const that = this;
@@ -157,7 +100,7 @@ class ActionBlockController {
     
     #bindViewEvenets() {
         this.actionBlockService.view.bindClickBtnFixedPlus(this.#onClickBtnFixedPlus);
-        this.actionBlockService.view.bindClickBtnCreateDefaultActionBlocks(this.updateDefaultActionBlocks);
+        this.actionBlockService.view.bindClickBtnCreateDefaultActionBlocks(this.actionBlockService.updateDefaultActionBlocks);
         //this.actionBlockService.view.bindUploadFileWithActionBlocks(this.uploadFileWithActionBlocks);
         
         this.actionBlockService.view.bindClickBtnSettingsToCreateNote(this.actionBlockService.showSettingsToCreateNote);
@@ -176,14 +119,4 @@ class ActionBlockController {
     #onClickBtnFixedPlus = () => {
         this.actionBlockService.switchStateMenuTypeActionBlocksToCreate();
     }
-
-    // #updatePage() {
-    //     this.actionBlockService.view.updatePage();
-        
-    //     // Refresh Action-Blocks on page.
-    //     this.actionBlockService.showActionBlocks();
-
-    //     // Scroll top.
-    //     this.scrollService.scrollTo();
-    // }
 }

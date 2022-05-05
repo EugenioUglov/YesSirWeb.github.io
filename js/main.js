@@ -57,6 +57,7 @@ let actionBlockService;
 
         // Initialize Services.
         const voiceRecognitionService = yesSir.voiceRecognitionService;
+        //console.log('Initialize Services', voiceRecognitionService.isRecognizing());
         const speakerService = yesSir.speakerService;
         const autocompleteService = yesSir.autocompleteService;
         const scrollService = yesSir.scrollService;
@@ -83,7 +84,7 @@ let actionBlockService;
         const pageController = new PageController(pageService);
         const searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);
         const noteController = new NoteController(actionBlockService, noteService, pageService);
-        const dataStorageController = new DataStorageController(actionBlockService, dataStorageService, pageService, dialogWindow);
+        const dataStorageController = new DataStorageController(actionBlockService, dataStorageService, pageService);
 
         
         //autocompleteController.bindApplyTags(onAutocompleteItemSelected);

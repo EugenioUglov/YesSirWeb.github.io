@@ -8,6 +8,7 @@ class VoiceRecognitionManager {
 
 
     #init() {
+        console.log('init #is_recognizing', this.#is_recognizing);
         if (this.isBrowserSupportRecognition) {
             // Create recognizer.
             this.#recognizer = new webkitSpeechRecognition();
@@ -25,12 +26,10 @@ class VoiceRecognitionManager {
 
     
     startRecognizing = (callbackInterimTranscript, callbackFinalTranscript, cllbackEnd) => {
-        if (this.#is_recognizing) return;
         const that = this;
 
         let is_final_result = false;
         
-        console.log('start voice recognition');
         this.#recognizer.start();
         this.#is_recognizing = true;
 
@@ -41,18 +40,26 @@ class VoiceRecognitionManager {
             if (result.isFinal) {
                 is_final_result = true;
                 const final_transcript = result[0].transcript;
+                console.log('final_transcript', final_transcript);
                 
                 if (callbackFinalTranscript) callbackFinalTranscript(final_transcript);
             }
             else {
                 const interim_transcript = result[0].transcript;
+                console.log('final_transcript', interim_transcript);
 
                 if (callbackInterimTranscript) callbackInterimTranscript(interim_transcript);
             }
         }
 
         this.#recognizer.onend = function() {
-            if (is_final_result === false && that.#is_recognizing) that.startRecognizing();
+            console.log('end');
+            console.log('is_final_result', is_final_result);
+            console.log('is_recognizing', that.#is_recognizing);
+            if (is_final_result === false && that.#is_recognizing) { 
+                that.startRecognizing(callbackInterimTranscript, callbackFinalTranscript, cllbackEnd);
+                console.log('startRecognizing again');
+            }
             else {
                 that.#is_recognizing = false;
                 if (cllbackEnd) cllbackEnd();
@@ -72,6 +79,7 @@ class VoiceRecognitionManager {
     }
 
     isRecognizing() {
+        console.log('VoiceRecognitionManager isRec', this.#is_recognizing);
         return this.#is_recognizing;
     }
 
