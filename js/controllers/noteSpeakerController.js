@@ -1,21 +1,23 @@
 class NoteSpeakerController {
-    constructor(noteService, speakerController) {
+    constructor(noteSpeakerService, noteService) {
+        this.noteSpeakerService = noteSpeakerService;
         this.noteService = noteService;
-        this.speakerController = speakerController;
         
-        this.model = new NoteSpeakerModel();
-        this.view = new NoteSpeakerView();
-
-        this.#init();
+        this.#bindViewEvents();
     }
 
-    #init() {
-        this.noteService.view.bindClickBtnClose(this.#onNoteClosed);
+
+    #onClickBtnSpeaker = () => {
+        if (this.noteSpeakerService.isSpeaking()) {
+            this.noteSpeakerService.stopSpeak();
+        }
+        else {
+            this.noteSpeakerService.speak();
+        }
     }
 
-    #onNoteClosed() {
-        that.speakerController.stopSpeak();
-        that.speakerController.setTextForSpeech('');
-        that.speakerController.view.hideBtnSpeakContent();
+
+    #bindViewEvents() {
+        this.noteSpeakerService.bindClickBtnSpeaker(this.#onClickBtnSpeaker);
     }
 }

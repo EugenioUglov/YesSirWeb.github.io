@@ -356,7 +356,7 @@ class ActionBlockService {
             this.noteService.openNote(content, actionBlock.title, isHTML);
             $('#content_executed_from_actionBlock').show();
 
-            that.noteService.is_note_opened = true;
+            
             // Set position top.
             that.scrollService.setPosition(0, 0);
         }

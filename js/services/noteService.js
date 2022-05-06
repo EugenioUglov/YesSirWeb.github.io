@@ -1,17 +1,28 @@
 class NoteService {
-    constructor() {
+    constructor(noteSpeakerService) {
+        this.noteSpeakerService = noteSpeakerService;
+
         this.model = new NoteModel();
         this.view = new NoteView();
-
-        this.is_note_opened = false;
     }
 
     openNote(content, title, isHTML) {
         this.view.showInfo(content, title, isHTML);
+        console.log('ishtml', isHTML);
+
+        if (isHTML === false) {
+            this.noteSpeakerService.showBtnSpeaker();
+        }
     }
 
     close = () => {
-        this.is_note_opened = false;
-        this.view.close(); 
+        this.view.close();
+        
+        this.noteSpeakerService.hideBtnSpeaker();
+        this.noteSpeakerService.stopSpeak();
+    }
+
+    bindClickBtnClose(handler) {
+        this.view.bindClickBtnClose(handler);
     }
 }

@@ -1,19 +1,22 @@
-class SpeakerService {
+class SpeakerManager {
     constructor() {
-        this.model = new SpeakerModel();
-        this.view = new SpeakerView();
+
     }
 
     #language = 'en-US';
-    #text_to_speak = '';
+    #is_speaking = false;
 
-    speak(text_to_speak = this.#text_to_speak, callbackEndSpeak) {
+    speak(text_to_speak, callbackEndSpeak) {
+        const that = this;
+
         const message = new SpeechSynthesisUtterance();
         message.lang = this.#language;
         message.text = text_to_speak;
         const speak_bot = message;
+        this.#is_speaking = true;
 
         speak_bot.onend = () => {
+            that.#is_speaking = false;
             if (callbackEndSpeak) callbackEndSpeak();
         }
 
@@ -22,13 +25,14 @@ class SpeakerService {
 
     stopSpeak() {
         window.speechSynthesis.cancel();
+        this.#is_speaking = false;
     }
 
     setLanguage(new_language) {
         this.#language = new_language;
     }
 
-    setTextToSpeak(new_text_to_speak) {
-        this.#text_to_speak = new_text_to_speak;
+    isSpeaking() {
+        return this.#is_speaking;
     }
 }

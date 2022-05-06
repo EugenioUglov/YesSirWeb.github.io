@@ -36,9 +36,6 @@ class SpeakerController {
         }
     }
 
-    setTextForSpeech(text) {
-        this.speakerService.setTextToSpeak(text);
-    }
 
 
     #bindViewEvents() {

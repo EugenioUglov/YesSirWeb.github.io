@@ -9,20 +9,21 @@ class YesSir {
         this.dateManager = new DateManager();
         this.inputDeviceManager = new InputDeviceManager();
         this.voiceRecognitionManager = new VoiceRecognitionManager();
-
-        this.noteService = new NoteService();
+        this.speakerManager = new SpeakerManager();
+        
+        this.noteSpeakerService = new NoteSpeakerService(this.speakerManager);
+        this.noteService = new NoteService(this.noteSpeakerService);
         this.dataStorageService = new DataStorageService(this.#dialogWindow);
         this.searchService = new SearchSevice();
         this.scrollService = new ScrollService();
         this.logsService = new LogsService(this.fileManager, this.dateManager);
         this.autocompleteService = new AutocompleteService(this.textManager);
         this.voiceRecognitionService = new VoiceRecognitionService(this.voiceRecognitionManager);
-        this.speakerService = new SpeakerService();
-        this.pageService = new PageService(this.textManager);
+        this.pageService = new PageService(this.textManager, this.noteSpeakerService);
     }
 }
 
-const yesSir = new YesSir();
+let yesSir;
 
 let dropdownManager;
 let mapDataStructure;
@@ -31,8 +32,6 @@ let arrayManager;
 
 let actionBlockController; 
 let logsController; 
-let speakerController;
-
 let actionBlockService;
 
 
@@ -42,6 +41,7 @@ let actionBlockService;
     });
 
     function onPageLoaded() {
+        yesSir = new YesSir();
         // Initialize Libraries.
         const observable = new Observable();
         const dateManager = yesSir.dateManager;
@@ -58,7 +58,6 @@ let actionBlockService;
         // Initialize Services.
         const voiceRecognitionService = yesSir.voiceRecognitionService;
         //console.log('Initialize Services', voiceRecognitionService.isRecognizing());
-        const speakerService = yesSir.speakerService;
         const autocompleteService = yesSir.autocompleteService;
         const scrollService = yesSir.scrollService;
         const searchService = yesSir.searchService;
@@ -73,7 +72,7 @@ let actionBlockService;
 
         // Initialize Controller.
         logsController = new LogsController(fileManager);
-        speakerController = new SpeakerController(speakerService);
+        const noteSpeakerController = new NoteSpeakerController(yesSir.noteSpeakerService, noteService);
         const loadingController = new LoadingController(observable);
         actionBlockController = new ActionBlockController(actionBlockService, dbManager,
             dropdownManager, mapDataStructure, loadingService, dialogWindow, 

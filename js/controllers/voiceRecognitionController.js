@@ -71,11 +71,9 @@ class VoiceRecognitionController {
         console.log('isrec', this.voiceRecognitionService.isRecognizing());
 
         if (this.voiceRecognitionService.isRecognizing()) {
-            console.log('stopRecognizing');
             this.voiceRecognitionService.stopRecognizing();
         }
         else {
-            console.log('startRecognizing');
             this.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript);
 
             function onInterimTranscript(interim_transcript) {
@@ -90,7 +88,7 @@ class VoiceRecognitionController {
                     final_transcript = final_transcript.substr(0, final_transcript.length - 1);
                 }
 
-                window.location.hash = '#request=' + final_transcript + '&executebytitle=true';
+                window.location.hash = '#request=' + final_transcript + '&executebytitle=true' + '&listen';
             }
         }
     }

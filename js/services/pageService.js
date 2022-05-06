@@ -1,9 +1,10 @@
 class PageService {
     #hash_previous;
 
-    constructor(textManager) {
+    constructor(textManager, noteSpeakerService) {
         this.textManager = textManager;
-
+        this.noteSpeakerService = noteSpeakerService;
+        
         this.#hash_previous;
     }
 
@@ -139,6 +140,10 @@ class PageService {
                 const to_character_request = '&executebytitle';
                 request = that.textManager.getCuttedText(text_to_cut, from_character_request, to_character_request);
                 $('#input_field_request')[0].style.color = 'black';
+
+                if (window.location.hash.includes('&listen')) {
+                    that.noteSpeakerService.speak();
+                }
             }
             else {
                 request = that.textManager.getCuttedText(text_to_cut, from_character_request);
