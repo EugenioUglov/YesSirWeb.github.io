@@ -1,31 +1,28 @@
-<<<<<<< HEAD
 "# Yes Sir - Web" 
-=======
-"# Yes Sir Web" 
->>>>>>> 46df384039df281ca0b43a501b12aef20a419586
 
 <p>The idea is to quickly search for information by a phrase, as it is done in a google search engine, and tags. When you enter a phrase that matches the title Action-Block, it is activated instantly.</p>
 
 <h2>Algorithm</h2>
 <p>When the user enters commands through a space into the search bar and clicks the find button -
-the algorithm takes as input each set of characters (word) of the user and displays Action-Blocks on the page, which correspond to the input of the users. Tags are stored in an object, where the key is the tag and the value is an array of Action-Blocks indexes containing the tag. This approach makes it approximately one operation to find a tag - O(1).
+the algorithm takes as input each set of characters (word) of the user and displays Action-Blocks on the page, which correspond to the input of the users. Tags are stored in an object, where the key is the tag and the value is an array of Action-Blocks indexes containing the tag. This approach makes it approximately one operation to find a tag - O(1).<br><br>
 
-<b>For instance:</b>
+Let's imagine that we want to watch a cartoon whose name we forgot. But we know that there were animals. And it was specified in the tags on creating the Action-Block.<br><br>
 <ul>
 <li>User input:</li>
-  "Watch cartoon about animals".
+  Watch cool cartoon about animals
   <li>Search:</li>
-  Indexes_by_tag [‘watch’] = [3, 1] <br>
-  Indexes_by_tag [‘cartoon’] = [3, 8] <br>
-  Indexes_by_tag [‘about’] = undefined <br>
-  Indexes_by_tag [‘animals’] = [1, 3, 259] <br>
+  titles_by_tag ['watch'] = ['watch The Lion Guard', 'watch Harry Potter'] <br>
+  titles_by_tag ['cartoon'] = ['watch The Lion Guard', 'Read inforamtion about Diney's cartoons'] <br>
+  titles_by_tag ['about'] = undefined <br>
+  titles_by_tag ['cool'] = ['Read inforamtion about Diney's cartoons'] <br>
+  titles_by_tag ['animals'] = ['watch The Lion Guard'] <br>
   <li>Result:</li>
-  Displaying Action-Blocks with the highest number of identical tags in priority. Displaying Action-Blocks with indexes in priority order: 3, 1, 8, 259.
+  Displaying Action-Blocks with the highest number of identical tags in priority: 'watch The Lion Guard', 'Read inforamtion about Diney's cartoons', 'watch Harry Potter'.
 </ul>
 <h2><b>Action-Blocks</b></h2>
 The information that the user enters is contained in the Action-Block.
-Action-Block object:
-{title:…, action:…., info: ...., tags: ..., imagePath: ...}
+Action-Block object includes properties:
+title, action, content, tags, imagePath.
 
 
 <h2>Used technologies</h2>
