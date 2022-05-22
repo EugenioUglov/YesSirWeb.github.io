@@ -43,6 +43,16 @@ class SearchController {
     }
 
 
+    #onKeypressInputFieldPlusTags = (event) => {
+        const that = this;
+        // Enter.
+        if (event.keyCode == 13)  {
+            event.preventDefault();
+
+            that.searchService.view.focusInputFieldMinusTags();
+        }
+    }
+
     #setEventListeners() {
         const that = this;
 
@@ -71,5 +81,8 @@ class SearchController {
         this.searchService.view.bindClickBtnClearRequestField(this.onClickBtnClear);
         this.searchService.view.bindClickBtnEnterRequest(this.onEnter);
         this.searchService.view.bindKeyUpRequestField(onKeyUpRequestField);
+        this.searchService.view.bindKeypressInputFieldPlusTags(this.#onKeypressInputFieldPlusTags);
     }
+
+ 
 }

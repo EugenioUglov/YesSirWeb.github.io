@@ -1,6 +1,11 @@
 class VoiceRecognitionService {
     constructor(voiceRecognitionManager) {
         this.voiceRecognitionManager = voiceRecognitionManager;
+        this.view = new VoiceRecognitionView();
+    }
+
+    showSettings() {
+        this.view.showSettings();
     }
 
     startRecognizing = (callbackInterimTranscript, callbackFinalTranscript, cllbackEnd) => {
@@ -8,6 +13,7 @@ class VoiceRecognitionService {
     }
     
     stopRecognizing = () => {
+        console.log('stop rec');
         this.voiceRecognitionManager.stopRecognizing();
     }
 

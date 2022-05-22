@@ -8,13 +8,25 @@ class NoteSpeakerService {
     }
 
     speak = () => {
-        this.speakerManager.speak(this.view.getContent());
+        const that = this;
+        console.log('speak content', this.view.getContent());
+        this.speakerManager.speak(this.view.getContent(), onEndSpeak);
         this.view.changeTextForSpeakButton('Stop');
+
+        function onEndSpeak() {
+            that.view.changeTextForSpeakButton('Listen');
+        }
     }
 
     stopSpeak() {
         this.speakerManager.stopSpeak();
         this.view.changeTextForSpeakButton('Listen');
+    }
+
+
+    removeFromPage() {
+        this.hideBtnSpeaker();
+        this.stopSpeak();
     }
 
     changeTextForSpeakButton(new_text) {
@@ -26,7 +38,9 @@ class NoteSpeakerService {
     }
 
     showBtnSpeaker() {
-        this.view.showBtnSpeaker();
+        const BTN_SPEAKER = this.view.showBtnSpeaker();
+
+        return BTN_SPEAKER;
     }
 
     hideBtnSpeaker() {

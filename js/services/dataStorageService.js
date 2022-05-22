@@ -5,6 +5,9 @@ class DataStorageService {
 
     #user_storage = localStorage['storage'];
 
+    showDataStorageSettings() {
+        this.view.showDataStorageSettings();
+    }
 
     getStorageNameEnum() {
         const STORAGE_NAME_ENUM = {

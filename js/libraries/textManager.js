@@ -63,6 +63,10 @@ class TextManager {
         let escapedFind = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
         return text.replace(new RegExp(escapedFind, 'g'), replace);
     }
+
+    getTextWithoutLastSymbol(text_to_edit) {
+        return text_to_edit.substr(0, text_to_edit.length - 1);
+    }
     
     getLastWord = function(text, symol_before_word = ' ') {
         // Delete spaces from the sides of text.

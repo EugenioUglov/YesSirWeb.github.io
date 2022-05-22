@@ -15,6 +15,7 @@
 	<!-- .START - Load styles. -->
 
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/main.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/modalBox.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/button.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/radiobutton.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/textfield.css">
@@ -38,6 +39,25 @@
 
 <body>
 	<div class = "content">
+
+		<!-- The Modal -->
+		<div id="modalBox" class="modal">
+			<!-- Modal content -->
+			<div class="modal-content">
+				<div class="modal-header" style="min-height: 60px;">
+					<span class="close modal-close">&times;</span>
+					<h2 class="modal-header-text">Modal Header</h2>
+				</div>
+				<div class="modal-body">
+					<p>Some text in the Modal Body</p>
+					<p>Some other text...</p>
+				</div>
+					<div class="modal-footer">
+					<h3 class="modal-footer-text">Modal Footer</h3>
+				</div>
+			</div>
+		</div>
+
 		<div class="container">
 			<!--Make sure the form has the autocomplete function switched off:-->
 			<!--<form autocomplete="off" action="/action_page.php">	</form>-->
@@ -198,7 +218,8 @@
 							<div id="icon_close" class="image" style="border-radius: 10px;">
 							</div>
 						</button>
-						
+
+						<button class="btn_open_settings_actionBlock btn btn_right" type="button" style="display: none;">Edit</button>
 						<button class="btn_content_speaker btn btn_right" type="button" style="display: none;">Listen</button>
 
 						<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
@@ -221,19 +242,19 @@
 
 				</div>
 
-				<div id="elements_to_update_actionBlock" class="elements_for_executed_actionBlock" style="display: none;" disabled>
-					<div style="font-size:30px; padding: 50px;"><b> Update Action-Block </b></div>
+				<div id="elements_to_edit_actionBlock" class="elements_for_executed_actionBlock" style="display: none;" disabled>
+					<div style="font-size:30px; padding: 50px;"><b>Edit Action-Block </b></div>
 					<div class="title_actionBlock" style="font-size:30px; padding: 20px;"></div>
 				</div>
 
-				<div id="settings_action_block_container" class="elements_for_executed_actionBlock" style="display: none;" disabled>
+				<div id="settings_actionBlock_container" class="elements_for_executed_actionBlock" style="display: none;" disabled>
 					<div style="outline: 1px solid gray; padding: 10px; border-radius: 10px;">
 						<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title / Command</div> 
 						<div><textarea class="input_field_title interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px" required></textarea> </div>
 						<div align="left" class="text_example">Example: Show my tasks</div>
 						<br>
 
-						<div class="type_action-block_container">
+						<div class="type_actionBlock_container">
 							<div class="text_title_for_input_field" title="Action when a command is triggered">Action</div>
 							<select name="topic" class="dropdown_select_action interactive_field" style="cursor: pointer">
 							</select>
@@ -285,10 +306,10 @@
 
 					
 					<div class="bottom_buttons" style="margin-top: 50px; margin-bottom: 180px;">
-						<button id="btn_create_action-block" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
-						<button id="btn_update_action-block" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
-						<button id="btn_create_default_ActionBlocks" class="btn btn_right" style="margin-top: 10px; margin-left: 20px; display: none;" type="button">Create default Action-Blocks</button>
-						<button id="btn_delete_action-block" class="btn btn_right" style="margin-top: 10px;" type="button">Delete</button>
+						<button id="btn_create_actionBlock" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
+						<button id="" class="btn_update_actionBlock btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
+						<button id="btn_create_default_actionBlocks" class="btn btn_right" style="margin-top: 10px; margin-left: 20px; display: none;" type="button">Create default Action-Blocks</button>
+						<button id="btn_delete_actionBlock" class="btn btn_right" style="margin-top: 10px;" type="button">Delete</button>
 						<button id="btn_cancel" class="btn_back btn btn_right" style="margin-top: 10px;" type="button">Cancel</button></div>
 					</div>
 				</div>
@@ -411,7 +432,7 @@
 	
 	
 	<div class="fixed_elements">
-		<div id="list_of_type_action-blocks_to_create" style="display: none;">
+		<div id="list_of_type_actionBlocks_to_create" style="display: none;">
 			<div class="title" style="padding: 10px;font-size: 25px;text-transform: uppercase;"><b>Create</b></div>
 			<ul id="myUL">
 				<li id="btn_settings_to_create_note" title="Text information" value="showInfo">Note</li>
@@ -424,13 +445,6 @@
 		<div id="fixed_btn_plus" class="ico-btn btn">
 			<span class="ico-btn__plus"></span>
 		</div>
-		  <!--
-		<button id="fixed_btn_plus">
-			<div class="ico-btn">
-				<span class="ico-btn__plus"></span>
-			  </div>
-		</button>
-	-->
 
 		<div id="btn_scroll_up" class="ico-btn btn" style="display: none;">
 			^
@@ -508,7 +522,6 @@
 	<script src="./js/opensource/observable.js"></script>
 
 	
-	<script src="./js/textareaResizer.js"></script>
 	<script src="./js/libraries/mapDataStructure.js"></script>
 	<script src="./js/libraries/dateManager.js"></script>
 	<script src="./js/libraries/textManager.js"></script>
@@ -533,6 +546,8 @@
 	<script src="./js/services/logsService.js"></script>
 	<script src="./js/services/dataStorageService.js"></script>
 	<script src="./js/services/loadingService.js"></script>
+	<script src="./js/services/modalBoxService.js"></script>
+	<script src="./js/services/modalLoadingService.js"></script>
 	
 
 	<script src="./js/models/noteModel.js"></script>
@@ -544,6 +559,7 @@
 	
 	
 	<script src="./js/views/noteView.js"></script>
+	<script src="./js/views/pageView.js"></script>
 	<script src="./js/views/scrollView.js"></script>
 	<script src="./js/views/noteSpeakerView.js"></script>
 	<script src="./js/views/voiceRecognitionView.js"></script>
@@ -553,6 +569,7 @@
 	<script src="./js/views/searchView.js"></script>
 	<script src="./js/views/loadingView.js"></script>
 	<script src="./js/views/dataStorageView.js"></script>
+	<script src="./js/views/modalBoxView.js"></script>
 	
 	
 	<script src="./js/controllers/logsController.js"></script>

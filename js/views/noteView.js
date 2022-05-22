@@ -5,9 +5,11 @@ class NoteView {
     
 
     showInfo(content, title, isHTML) {
+        // $('.btn_open_settings_actionBlock').show();
+
         // Title text.
         const titleHTML = '<div class="center" style="font-size: 30px"><b>' + title + '</div></b><br><br>';
-        $('#content_executed_from_actionBlock').find('.title').val(title);
+        // $('#content_executed_from_actionBlock').find('.title').val(title);
         // content text.
         const contentHTML = '<div class="text_info"></div>';
         // const contentHTML = '<div class="info">' + content + '</div>';
@@ -16,42 +18,49 @@ class NoteView {
        // content_to_show = titleHTML + contentHTML;
         $('#content_executed_from_actionBlock').find('.title').html(title);
     
+        const showContentOnPage = function(content, isHTML = false) {
+            $('#btn_close').show();
+            $('#content_executed_from_actionBlock').show();
+            
+            // Hide search area with Action-Blocks.
+            //document.getElementById('actionBlocks_page').style.display = "none";
+            
+        
+            // Append title and html elements.
+            //document.getElementById('content_executed_from_actionBlock').innerHTML = content_to_show;
+            // $('#content_executed_from_actionBlock').find('.content').show();
+        
+            if (isHTML) {
+                $('#content_executed_from_actionBlock').find('.content').css('white-space', '')
+                $('#content_executed_from_actionBlock').find('.content').html(content);
+            }
+            else {
+                console.log('not html');
+                $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap')
+                // this.textManager.getConvertedTextToHTML(content);
+                $('#content_executed_from_actionBlock').find('.content').text(content);
+            }
+        
+            $('#content_executed_from_actionBlock').find('.content').show();
+        }
     
-        this.#showContentOnPage(content, isHTML);
-    }
+        showContentOnPage(content, isHTML);
 
-    #showContentOnPage(content, isHTML = false) {
-        $('#btn_close').show();
-        $('#content_executed_from_actionBlock').show();
-        
-        // Hide search area with Action-Blocks.
-        //document.getElementById('actionBlocks_page').style.display = "none";
-        
-    
-        // Append title and html elements.
-        //document.getElementById('content_executed_from_actionBlock').innerHTML = content_to_show;
-        $('#content_executed_from_actionBlock').find('.content').show();
-    
-        if (isHTML) {
-            $('#content_executed_from_actionBlock').find('.content').css('white-space', '')
-            $('#content_executed_from_actionBlock').find('.content').html(content);
-        }
-        else {
-            console.log('not html');
-            $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap')
-            // this.textManager.getConvertedTextToHTML(content);
-            $('#content_executed_from_actionBlock').find('.content').text(content);
-        }
-    
-        $('#content_executed_from_actionBlock').find('.content').show();
+        return [$('.btn_open_settings_actionBlock'), $('#content_executed_from_actionBlock'),
+            $('#content_executed_from_actionBlock').find('.content'), ]
     }
 
     
     bindClickBtnClose(handler) {
+        const that = this;
         const buttons_close = ['#btn_close', '#btn_back'];
 
         for (const button_close of buttons_close) {
-            $(button_close).on('click', () => { handler(); });
+            $(button_close).on('click', () => {
+                that.close();
+                $('.btn_open_settings_actionBlock').hide();
+                handler(); 
+            });
         }
     }
 
@@ -65,9 +74,6 @@ class NoteView {
         // Clear executed content.
         $('#content_executed_from_actionBlock').hide();
         $('#content_executed_action-block_container').hide();
-    
-        // Also close modal box (by standart logic of API).
-
         $('#btn_close').hide();
         $('#btn_back').hide();
     }

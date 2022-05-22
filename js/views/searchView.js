@@ -43,6 +43,10 @@ class SearchView {
         $('#input_field_request')[0].value = '';
     }
 
+    focusInputFieldMinusTags() {
+        $('.input_field_minus_tags').focus();
+    }
+
     bindClickBtnEnterRequest(handler) {
         console.log('bindClickBtnEnterRequest');
         const that = this;
@@ -81,6 +85,13 @@ class SearchView {
         });
     }
 
+
+    bindKeypressInputFieldPlusTags(handler) {
+        $('.input_field_plus_tags').keypress(function(event) {
+            handler(event);
+        });
+    }
+
     #setEventListeners() {
         const that = this;
 
@@ -113,13 +124,8 @@ class SearchView {
             $("#search_by_tags_container").show();
         });
 
-        $('.input_field_plus_tags').keypress(function(event) {
-            // Enter.
-            if (event.keyCode == 13)  {
-                event.preventDefault();
-                $('.input_field_minus_tags').focus();
-            }
-        });
+
+
     
 
 

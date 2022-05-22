@@ -16,11 +16,11 @@ class NoteController {
     }
 
     #onClose = () => {
-        this.noteService.close(); 
+        this.noteService.close();
+        console.log('close note');
 
-        yesSir.voiceRecognitionService.stopRecognizing();
         
-        if (window.location.hash.includes('#settingsActionBlock')) {
+        if (window.location.hash.includes('#editActionBlock')) {
             this.actionBlockService.setDefaultValuesForSettingsElementsActionBlock();
         }
 

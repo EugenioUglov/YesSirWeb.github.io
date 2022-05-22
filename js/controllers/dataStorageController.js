@@ -7,8 +7,6 @@ class DataStorageController {
         this.#setListeners();
     }
 
-    // #user_storage = localStorage['storage'];
-
     #onRbStorageDatabaseChecked() {
         this.dataStorageService.setUserStorage(this.dataStorageService.getStorageNameEnum().database);
     }
@@ -18,25 +16,6 @@ class DataStorageController {
         this.dataStorageService.setUserStorage(this.dataStorageService.getStorageNameEnum().localStorage);
         $('#authorization_form').hide();
     }
-
-    // getUserStorage() {
-    //     if (this.#user_storage === undefined) {
-    //         this.#user_storage = this.dataStorageService.getStorageNameEnum().localStorage;
-    //     }
-        
-    //     return this.#user_storage;
-    // }
-
-    // setUserStorage(storage) {
-    //     this.#user_storage = storage;
-    //     localStorage['storage'] = storage;
-
-    //     if (storage === this.dataStorageService.getStorageNameEnum().database) {
-    //         $('#rb_storage_database')[0].checked = true;
-    //         $('#authorization_form').show();
-    //     }
-    // }
-
 
 
     #setListeners() {

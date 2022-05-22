@@ -1,36 +1,27 @@
-let textAreaResizer = {}
+class TextArea {
+    constructor() {
 
-textAreaResizer.update = function() { 
-    resizeTextAreaOnEvent();
-}
+    }
 
-function resizeTextAreaOnEvent() {
-    // Each text area resize to text size.
-    /*
-    $(".resize_field").each(function () {
-        this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
-    }).on("input", function () {
-        let height = this.style.height.replace(/[^0-9\.]+/g,'')|0;
-        console.log("height: " + height + " | this.scrollHeight: " + this.scrollHeight);
-        if (height != this.scrollHeight) {
-            this.style.height = "auto";
-            this.style.height = (this.scrollHeight) + "px";
-        }
-    });
-    
+    bindClickTextArea() {
+        const that = this;
 
+        $(".resize_field").each(function () {
+            this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+        }).on("click", function () {
+            that.resizeBycontentSize();
+        });
+    }
 
-    $(".resize_field").each(function () {
-        this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
-    }).on("click", function () {
-        let height = this.style.height.replace(/[^0-9\.]+/g,'')|0;
+    resizeBycontentSize() {
+        const height = this.style.height.replace(/[^0-9\.]+/g,'')|0;
         // console.log("height: " + height + " | this.scrollHeight: " + this.scrollHeight);
+
         if (height != this.scrollHeight) {
             // Set height of textarea as count of words in the field.
 
             this.style.height = "auto";
             this.style.height = (this.scrollHeight) + "px";
         }
-    });
-    */
+    }
 }

@@ -2,37 +2,41 @@ class YesSir {
     #dialogWindow;
 
     constructor() {
-        this.#dialogWindow = new DialogWindow();
-
+        const inputDeviceManager = new InputDeviceManager();
         this.textManager = new TextManager();
         this.fileManager = new FileManager(this.textManager);
         this.dateManager = new DateManager();
-        this.inputDeviceManager = new InputDeviceManager();
         this.voiceRecognitionManager = new VoiceRecognitionManager();
         this.speakerManager = new SpeakerManager();
+        this.dropdownManager = new DropdownManager();
+        this.mapDataStructure = new MapDataStructure();
+        this.dbManager = new DBManager();
+        this.arrayManager = new ArrayManager();
+
+        this.keyCodeByKeyName = inputDeviceManager.getKeyCodeByKeyName();
+        this.dialogWindow = new DialogWindow();
+        this.observable = new Observable();
         
+        this.modalBoxService = new ModalBoxService();
+        this.modalLoadingService = new ModalLoadingService(this.modalBoxService);
         this.noteSpeakerService = new NoteSpeakerService(this.speakerManager);
-        this.noteService = new NoteService(this.noteSpeakerService);
         this.dataStorageService = new DataStorageService(this.#dialogWindow);
         this.searchService = new SearchSevice();
         this.scrollService = new ScrollService();
         this.logsService = new LogsService(this.fileManager, this.dateManager);
         this.autocompleteService = new AutocompleteService(this.textManager);
         this.voiceRecognitionService = new VoiceRecognitionService(this.voiceRecognitionManager);
-        this.pageService = new PageService(this.textManager, this.noteSpeakerService);
+        this.pageService = new PageService(this.textManager, this.noteSpeakerService, this.searchService);
+        this.loadingService = new LoadingService();
+        this.noteService = new NoteService(this.noteSpeakerService, this.pageService);
+        this.actionBlockService = new ActionBlockService(this.dbManager, this.fileManager, 
+            this.textManager, this.dropdownManager, this.dataStorageService, this.mapDataStructure, 
+            this.logsService, this.dialogWindow, this.keyCodeByKeyName, this.scrollService, 
+            this.searchService, this.loadingService, this.pageService, this.noteService, this.dateManager, this.modalLoadingService);
     }
 }
 
 let yesSir;
-
-let dropdownManager;
-let mapDataStructure;
-let dbManager;
-let arrayManager;
-
-let actionBlockController; 
-let logsController; 
-let actionBlockService;
 
 
 (function(){
@@ -43,40 +47,36 @@ let actionBlockService;
     function onPageLoaded() {
         yesSir = new YesSir();
         // Initialize Libraries.
-        const observable = new Observable();
+        const observable = yesSir.observable;
         const dateManager = yesSir.dateManager;
-        const inputDeviceManager = yesSir.inputDeviceManager;
-        const keyCodeByKeyName = inputDeviceManager.getKeyCodeByKeyName();
+
+        const keyCodeByKeyName = yesSir.keyCodeByKeyName;
         const textManager = yesSir.textManager;
-        const dialogWindow = new DialogWindow();
+        const dialogWindow = yesSir.dialogWindow;
         const fileManager = yesSir.fileManager;
-        dropdownManager = new DropdownManager();
-        mapDataStructure = new MapDataStructure();
-        dbManager = new DBManager();
-        arrayManager = new ArrayManager();
+        dropdownManager = yesSir.dropdownManager;
+        mapDataStructure = yesSir.mapDataStructure;
+        dbManager = yesSir.dbManager;
+        arrayManager = yesSir.arrayManager;
 
         // Initialize Services.
         const voiceRecognitionService = yesSir.voiceRecognitionService;
-        //console.log('Initialize Services', voiceRecognitionService.isRecognizing());
         const autocompleteService = yesSir.autocompleteService;
         const scrollService = yesSir.scrollService;
         const searchService = yesSir.searchService;
         const logsService = yesSir.logsService;
-        const loadingService = new LoadingService();
+        const loadingService = yesSir.loadingService;
         const noteService = yesSir.noteService;
         const dataStorageService = yesSir.dataStorageService;
         const pageService = yesSir.pageService;
-        actionBlockService = new ActionBlockService(dbManager, observable, fileManager, textManager, 
-            dropdownManager, dataStorageService, mapDataStructure, logsService, dialogWindow, 
-            keyCodeByKeyName, scrollService, searchService, loadingService, pageService, noteService, dateManager);
+        const actionBlockService = yesSir.actionBlockService;
 
         // Initialize Controller.
-        logsController = new LogsController(fileManager);
+        const logsController = new LogsController(fileManager);
         const noteSpeakerController = new NoteSpeakerController(yesSir.noteSpeakerService, noteService);
-        const loadingController = new LoadingController(observable);
-        actionBlockController = new ActionBlockController(actionBlockService, dbManager,
-            dropdownManager, mapDataStructure, loadingService, dialogWindow, 
-            scrollService, searchService, pageService, noteService);
+        const loadingController = new LoadingController();
+        const actionBlockController = new ActionBlockController(actionBlockService,
+            loadingService, dialogWindow, scrollService, searchService, pageService, noteService);
         const autocompleteController = new AutocompleteController(pageService, actionBlockService, autocompleteService);
         const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable);
         const scrollController = new ScrollController(scrollService, actionBlockService);

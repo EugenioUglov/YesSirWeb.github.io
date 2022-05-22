@@ -67,15 +67,20 @@
 }
 
 .infoBlock:hover {
+
+   box-shadow: 0 0 3pt 2pt blueviolet;
+    -webkit-box-shadow: 0 0 3pt 2pt blueviolet;
+    -moz-box-shadow: 0 0 3pt 2pt blueviolet;
+
    /* Set outline light around block with image */
    /*
    box-shadow: 0px 0px 5px 2px #000000; 
    -webkit-box-shadow: 0px 0px 5px 5px #000000;
    -moz-box-shadow: 0px 0px 5px 5px #000000;
    */
-   box-shadow: 10px 20px 30px lightblue;
+   /* box-shadow: 10px 20px 30px lightblue;
    -webkit-box-shadow: 10px 20px 30px lightblue;
-   -moz-box-shadow: 10px 20px 30px lightblue;
+   -moz-box-shadow: 10px 20px 30px lightblue; */
 } 
 
 .infoBlock:active {
@@ -137,10 +142,13 @@
 }
 
 .infoBlock .settings:hover {
+   box-shadow: 0 0 3pt 2pt blueviolet;
+   -webkit-box-shadow: 0 0 3pt 2pt blueviolet;
+   -moz-box-shadow: 0 0 3pt 2pt blueviolet;
    /* Set outline light around block with image */
-   box-shadow: 0px 0px 1px 1px #4285f4; 
+   /* box-shadow: 0px 0px 1px 1px #4285f4; 
    -webkit-box-shadow: 0px 0px 5px 2px #4285f4;
-   -moz-box-shadow: 0px 0px 5px 2px #4285f4;
+   -moz-box-shadow: 0px 0px 5px 2px #4285f4; */
    /**/
    transition: 0s linear;
 }

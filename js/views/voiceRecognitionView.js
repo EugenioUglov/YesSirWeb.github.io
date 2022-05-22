@@ -5,7 +5,7 @@ class VoiceRecognitionView {
 
     recognition = {};
 
-    show() {
+    showSettings() {
         $('#elements_for_voice_recognition_settings').show();
     }
 

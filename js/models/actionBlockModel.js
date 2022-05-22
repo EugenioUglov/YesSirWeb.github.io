@@ -12,12 +12,9 @@ class ActionBlockModel {
 
         this.#dateManager = dateManager;
 
-        this.actionBlocks = [];
+        // this.actionBlocks = [];
         this.actionBlocks_from_database = [];
-        // this.indexes_actionBlocks_by_tag = [];
-        this.infoBlocks_on_page = '';
         this.is_menu_create_type_actionBlock_open = false;
-        // this.actionBlocks_to_show = [];
     
         this.action_description_by_action_name = {
             openURL: 'Open URL',
@@ -32,7 +29,6 @@ class ActionBlockModel {
 
 
     #actionBlocks_map;
-    //#index_actionBlock_by_title = {};
     #titles_actionBlocksMap_by_tag = {};
     
     #init() {
@@ -306,7 +302,7 @@ class ActionBlockModel {
                 for (const i_index_infoObj_to_show in indexes_infoObjects_curr) {
                     let i_infoObj_to_show = indexes_infoObjects_curr[i_index_infoObj_to_show];
     
-                    let index_exist_in_indexes_infoObjects = arrayManager.isValueExistsInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
+                    let index_exist_in_indexes_infoObjects = yesSir.arrayManager.isValueExistsInArray(indexes_infoObjects_to_show, i_infoObj_to_show);
     
                     if (index_exist_in_indexes_infoObjects) {
                         continue;
@@ -390,7 +386,7 @@ class ActionBlockModel {
                     titles_actionBlocks_to_show = titles_actionBlocks_to_show.concat(that.#titles_actionBlocksMap_by_tag[tag]);
                 }
                 else {
-                    titles_actionBlocks_to_show = arrayManager.getSameItemsFromArrays
+                    titles_actionBlocks_to_show = yesSir.arrayManager.getSameItemsFromArrays
                     (
                         titles_actionBlocks_to_show, that.#titles_actionBlocksMap_by_tag[tag]
                     );
@@ -413,6 +409,7 @@ class ActionBlockModel {
                 for (const minus_tag of minus_tags) {
                     for (const i_index_infoObj_to_show in titles_actionBlocks_to_show) {
                         const i_infoObj_to_show = titles_actionBlocks_to_show[i_index_infoObj_to_show];
+                        console.log(that.#titles_actionBlocksMap_by_tag[minus_tag]);
     
                         // Compare minus tag with each Action-Block that has this tag.
                         for (const index_actionBlock_with_minus_tag of that.#titles_actionBlocksMap_by_tag[minus_tag]) {
@@ -439,7 +436,7 @@ class ActionBlockModel {
             title: 'Create Action-Block',
             tags: 'Create Action-Block, default',
             action: 'showHTML',
-            content: '<script>actionBlockService.showSettingsToCreateActionBlock()</script>',
+            content: '<script>yesSir.actionBlockService.showSettingsToCreateActionBlock()</script>',
             imageURL: 'https://i.ibb.co/K6kqJQc/plus.png'
         };
 
@@ -463,7 +460,7 @@ class ActionBlockModel {
             title: 'Open Data Storage Manager',
             tags: 'Data Storage Manager, localstorage, database, default',
             action: 'showHTML',
-            content: '<script>actionBlockService.showDataStorageSettings()</script>',
+            content: '<script>yesSir.dataStorageService.showDataStorageSettings()</script>',
             imageURL: 'https://www.sostechgroup.com/wp-content/uploads/2016/08/ThinkstockPhotos-176551504.jpg'
         };
     
@@ -495,7 +492,7 @@ class ActionBlockModel {
             title: 'Open voice recognition settings',
             tags: 'voice recognition, default',
             action: 'showHTML',
-            content: '<script>yesSir.voiceRecognitionService.show()</script>',
+            content: '<script>yesSir.voiceRecognitionService.showSettings()</script>',
             imageURL: 'https://walkthechat.com/wp-content/uploads/2015/02/voice-recognition.jpg'
         };
 
@@ -513,261 +510,154 @@ class ActionBlockModel {
         ];
 
         function getContentActionBlockOpenFileManager() {
-            return `<div id="elements_for_file_manager" class="elements_for_executed_actionBlock" padding-top: 50px;">
-            <br><br>
-        
-            <div class="outline">
-                <p>Save Action-Blocks to the file</p>
-                <button class="btn_download_actionBlocks btn" title="Save Action-Blocks in the file">Download Action-Blocks file</button>
+            return `
+                <div id="elements_for_file_manager" class="elements_for_executed_actionBlock" padding-top: 50px;">
                 <br><br>
-            </div>
-            <br>
-            <div class="outline">
-                <p>Upload file with Action-Blocks</p>
-                <div class="upload_commands_container">
-                    <button type="file" class="btn" title="Upload file with Action-Blocks"><input class="btn_upload_actionBlocks" type="file" name="file" title=" ">
-                    </button>
-                </div>
-            </div>
-            <br>
-            </div>
             
-            <script>
-            $('.btn_upload_actionBlocks').on('change', (event) => {
-                yesSir.fileManager.uploadFile(onFileLoaded);
-        
-                function onFileLoaded(content_of_file) {
-                    actionBlockService.saveActionBlocksFromFile(content_of_file);
-        
-                    // Give possibility to load the same file again.
-                    $('.btn_upload_actionBlocks').value = '';
-        
-                    window.location.hash = "main";
-                }
-            });
-        
-            $('.btn_download_actionBlocks')[0].addEventListener('click', () => {
-                actionBlockService.downloadFileWithActionBlocks();
-            });
-            </script>`;
+                <div class="outline">
+                    <p>Save Action-Blocks to the file</p>
+                    <button class="btn_download_actionBlocks btn" title="Save Action-Blocks in the file">Download Action-Blocks file</button>
+                    <br><br>
+                </div>
+                <br>
+                <div class="outline">
+                    <p>Upload file with Action-Blocks</p>
+                    <div class="upload_commands_container">
+                        <button type="file" class="btn" title="Upload file with Action-Blocks"><input class="btn_upload_actionBlocks" type="file" name="file" title=" ">
+                        </button>
+                    </div>
+                </div>
+                <br>
+                </div>
+                
+                <script>
+                $('.btn_upload_actionBlocks').on('change', (event) => {
+                    yesSir.fileManager.uploadFile(onFileLoaded);
+            
+                    function onFileLoaded(content_of_file) {
+                        yesSir.actionBlockService.saveActionBlocksFromFile(content_of_file);
+            
+                        // Give possibility to load the same file again.
+                        $('.btn_upload_actionBlocks').value = '';
+            
+                        window.location.hash = "main";
+                    }
+                });
+            
+                $('.btn_download_actionBlocks')[0].addEventListener('click', () => {
+                    yesSir.actionBlockService.downloadFileWithActionBlocks();
+                });
+                </script>
+            `;
         }
     
         function getContentActionBlockCreateNote() {
-            return `<script>
-            actionBlockService.showSettingsToCreateActionBlock('showInfo');
+            return `
+                <script>
+                yesSir.actionBlockService.showSettingsToCreateActionBlock('showInfo');
+                yesSir.pageService.setHashCreateNote();
 
-            $('#settings_action_block_container').find('.dropdown_select_action').val('showInfo');
-            $('#title_action_descritption').text(actionBlockService.model.getContentTypeDescriptionByActionEnum['showInfo']);
-
-  
-            /*
-            let is_recognizer_active = true;
-            
-            // Создаем распознаватель
-            const recognizer = new webkitSpeechRecognition();
-            
-            // Ставим опцию, чтобы распознавание началось ещё до того, как пользователь закончит говорить
-            recognizer.interimResults = true;
-            
-            // Какой язык будем распознавать?
-            recognizer.lang = 'en-En';
-
-            $('.btn').on('click', () => {
-                console.log('stop voice recognition');
-                is_recognizer_active = false;
-                recognizer.stop();
-            });
-            */
-
-            
-            
-            voiceRecognitionForContent();
-            
-            function voiceRecognitionForContent() {
-               $('.input_field_content').focus();
-               yesSir.speakerService.speak('Please, tell the text of the note', onEndSpeak);
-            
-                function onEndSpeak() {
-                    console.log('on end speaker');
-                    /*
-                    let isFinalResult = false;
-            
-                    // Используем колбек для обработки результатов
-                    recognizer.onresult = function (event) {
-                        let result = event.results[event.resultIndex];
-                        console.log('result', result);
-            
-                        if (result.isFinal) {
-                            isFinalResult = true;
-                            const user_final_speech_text = result[0].transcript;
-                            $('.input_field_content').val(user_final_speech_text);
-                            yesSir.speakerService.speak('Thank you!');
-                            voiceRecognitionForCommand();
-                        } else {
-                            const user_cotinuous_speech_text = result[0].transcript;
-                            $('.input_field_content').val(user_cotinuous_speech_text);
-                        }
-                    }
-                    recognizer.onend = function() {
-                        if (isFinalResult === false && 
-                            is_recognizer_active) recognizer.start();
-                    }
-                    */
-
-                    // Начинаем слушать микрофон и распознавать голос
-                    yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
-
-                    function onInterimTranscript(result_text) {
-                        console.log('InterimTranscript', result_text);
-                        $('.input_field_content').val(result_text);
-                    }
-
-                    function onFinalTranscript(result_text) {
-                        $('.input_field_content').val(result_text);
-                        yesSir.speakerService.speak('Thank you!');
-                        voiceRecognitionForCommand();
-                    }
-
-                    function onEndVoiceRecognition() {
-                        console.log('end');
-                    }
-                }
-            }
-            
-            function voiceRecognitionForCommand() {
-               $('.input_field_title').focus();
-               yesSir.speakerService.speak('Please, tell the command that opens this note', onEndSpeak);
-            
-                function onEndSpeak() {
-                    /*
-                    let isFinalResult = false;
-            
-                    // Используем колбек для обработки результатов
-                    recognizer.onresult = function (event) {
-                        let result = event.results[event.resultIndex];
-            
-                        if (result.isFinal) {
-                            isFinalResult = true;
-                            const user_final_speech_text = result[0].transcript;
-                            $('.input_field_title').val(user_final_speech_text);
-                            
-                            yesSir.speakerService.speak('Thank you!');
-                            voiceRecognitionSaveResult();
-                    
-                        } else {
-                            const user_cotinuous_speech_text = result[0].transcript;
-                            $('.input_field_title').val(user_cotinuous_speech_text);
-                        }
-                            
+                // const dropdown_select_action = $('#settings_actionBlock_container').find('.dropdown_select_action');
+                // dropdown_select_action.val('showInfo');
+                // $('#title_action_descritption').text(yesSir.actionBlockService.model.getContentTypeDescriptionByActionEnum()[dropdown_select_action.val()]);
                 
+                voiceRecognitionForContent();
+                
+                function voiceRecognitionForContent() {
+                    $('.input_field_content').focus();
+                    yesSir.speakerManager.speak('Please, tell the text of the note', onEndSpeak);
+                
+                    function onEndSpeak() {
+                        if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
+
+                        // Начинаем слушать микрофон и распознавать голос
+                        yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
+
+                        function onInterimTranscript(result_text) {
+                            console.log('InterimTranscript', result_text);
+                            $('.input_field_content').val(result_text);
                         }
-                        recognizer.onend = function() {
-                              if (isFinalResult === false &&
-                                is_recognizer_active) recognizer.start();
+
+                        function onFinalTranscript(result_text) {
+                            $('.input_field_content').val(result_text);
+                            yesSir.speakerManager.speak('Thank you!');
+                            voiceRecognitionForCommand();
                         }
-                    // Начинаем слушать микрофон и распознавать голос
-                    recognizer.start(); 
-                    */
 
-                    // Начинаем слушать микрофон и распознавать голос
-                    yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
-
-                    function onInterimTranscript(result_text) {
-                        $('.input_field_title').val(result_text);
-                    }
-
-                    function onFinalTranscript(result_text) {
-                        $('.input_field_title').val(result_text);
-                        yesSir.speakerService.speak('Thank you!');
-                        voiceRecognitionSaveResult();
-                    }
-
-                    function onEndVoiceRecognition() {
-                        console.log('end');
+                        function onEndVoiceRecognition() {
+                            console.log('end');
+                        }
                     }
                 }
-            }
-            
-            function voiceRecognitionSaveResult() {
-                yesSir.speakerService.speak('Do you want to save this note?', onEndSpeak);
-            
-                function onEndSpeak() {
-                    /*
-                    let isFinalResult = false;
-            
-                    // Используем колбек для обработки результатов
-                    recognizer.onresult = function (event) {
-                        let result = event.results[event.resultIndex];
-            
-                        if (result.isFinal) {
-                            const user_text = result[0].transcript;
+                
+                function voiceRecognitionForCommand() {
+                    $('.input_field_title').focus();
+                    yesSir.speakerManager.speak('Please, tell the command that opens this note', onEndSpeak);
+                
+                    function onEndSpeak() {
+                        if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
 
-                            if (result[0].transcript.includes('no') || result[0].transcript.includes('nope') || result[0].transcript.includes("don't")) {
+                        yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
+
+                        function onInterimTranscript(result_text) {
+                            $('.input_field_title').val(result_text);
+                        }
+
+                        function onFinalTranscript(result_text) {
+                            $('.input_field_title').val(result_text);
+                            yesSir.speakerManager.speak('Thank you!');
+                            voiceRecognitionSaveResult();
+                        }
+
+                        function onEndVoiceRecognition() {
+                            console.log('end');
+                        }
+                    }
+                }
+                
+                function voiceRecognitionSaveResult() {
+                    yesSir.speakerManager.speak('Do you want to save this note?', onEndSpeak);
+                
+                    function onEndSpeak() {
+                        if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
+                        
+                        yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
+
+                        function onInterimTranscript(result_text) {
+                            console.log('interim result', result_text);
+                        }
+
+                        function onFinalTranscript(result_text) {
+                            console.log('final result', result_text);
+
+                            if (result_text.includes('no') || result_text.includes('nope') || result_text.includes("don't")) {
                                 isFinalResult = true;
-                                yesSir.speakerService.speak("Ok. I didn't save the note. You can customize the note manually. I'm switching off");
-                              
-                              return;
-                            }
-                            else if (result[0].transcript.includes('save') || result[0].transcript.includes('yes') || result[0].transcript.includes('yeah') || result[0].transcript.includes('want')) {
-                                isFinalResult = true;
-                                yesSir.speakerService.speak('Ok. Note has been saved!', onEndSpeak);
-                                
-                                function onEndSpeak() {
-                                    $('#btn_create_action-block').click();
-                                }
+                                yesSir.speakerManager.speak("Ok. I didn't save the note. You can customize the note manually. I'm switching off");
+                            
                                 return;
                             }
-                        } else {
-                            console.log('Промежуточный результат: ', result[0].transcript);
-                        }
-            
-            
-            
-                    }
-                    recognizer.onend = function() {
-                            console.log('onend | isFinalResult', isFinalResult);
-                            if (isFinalResult === false &&
-                                is_recognizer_active) recognizer.start();
-                    }
-                    // Начинаем слушать микрофон и распознавать голос
-                    recognizer.start(); 
-                    */
-
-                    // Начинаем слушать микрофон и распознавать голос
-                    yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
-
-                    function onInterimTranscript(result_text) {
-                        console.log('interim result', result_text);
-                    }
-
-                    function onFinalTranscript(result_text) {
-                        console.log('final result', result_text);
-
-                        if (result_text.includes('no') || result_text.includes('nope') || result_text.includes("don't")) {
-                            isFinalResult = true;
-                            yesSir.speakerService.speak("Ok. I didn't save the note. You can customize the note manually. I'm switching off");
-                          
-                            return;
-                        }
-                        else if (result_text.includes('save') || result_text.includes('yes') || 
-                            result_text.includes('yeah') || result_text.includes('want')) {
+                            else if (
+                                result_text.includes('save') || result_text.includes('yes') || 
+                                result_text.includes('yeah') || result_text.includes('want')
+                            ) {
                                 isFinalResult = true;
-                                yesSir.speakerService.speak('Ok. Note has been saved!', onEndSpeak);
+                                yesSir.speakerManager.speak('Ok. Note has been saved!', onEndSpeak);
                                 
                                 function onEndSpeak() {
-                                    $('#btn_create_action-block').click();
+                                    $('#btn_create_actionBlock').click();
                                 }
 
                                 return;
+                            }
+                        }
+
+                        function onEndVoiceRecognition() {
+                            console.log('end');
                         }
                     }
-
-                    function onEndVoiceRecognition() {
-                        console.log('end');
-                    }
                 }
-            }
-                </script>`;
+                </script>
+            `;
         }
 
         return default_actionBlocks;
@@ -827,28 +717,24 @@ class ActionBlockModel {
             if (that.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().localStorage) {
                 that.setActionBlocks(actionBlocks_from_user_storage);
                 if (callbackSetActionBlocks) callbackSetActionBlocks();
-                // that.showActionBlocks();
             }
             else {
                 if (that.mapDataStructure.getStringified(actionBlocks_from_user_storage) === that.mapDataStructure.getStringified(actionBlocks_from_localStorage)) {
                     that.setActionBlocks(actionBlocks_from_user_storage);
                     if (callbackSetActionBlocks) callbackSetActionBlocks();
-                    // that.showActionBlocks();
                 }
                 else {
-                   // that.downloadFileWithActionBlocks(actionBlocks_from_localStorage);
                     that.dataStorageService.view.showDatabaseDialog();
                     if (callbackUserStorageDifferentFromLocal) callbackUserStorageDifferentFromLocal();
                 }
             }
-
-            // that.pageService.setHashChangeListenerActiveState(true);
         }
 
         return this.#actionBlocks_map;
     }
 
     add(actionBlock_to_add, is_show_alert_on_error = true) {
+        console.log("actionBlock_to_add", actionBlock_to_add);
         actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
 
         if (this.#actionBlocks_map.has(actionBlock_to_add.title)) {
@@ -1018,9 +904,7 @@ class ActionBlockModel {
     }
 
     saveInLocalStorage(actionBlocks) {
-        //console.log('Before Save in localstorage', actionBlocks);
         const actionBlocks_to_save = this.mapDataStructure.getStringified(actionBlocks);
-        //console.log('Save in localstorage stringified', actionBlocks_to_save);
         const key = 'actionBlocks';
         localStorage.setItem(key, actionBlocks_to_save);
 
@@ -1147,7 +1031,7 @@ class ActionBlockModel {
                         let indexes_arr = Object.values(indexes_actionBlocks_by_tag[tag_word]);
                         
                         // Each index must be different in indexes array.
-                        let isIndexExistInIndexesArr = arrayManager.isValueExistsInArray(indexes_arr, i_actionBlock_to_paste);
+                        let isIndexExistInIndexesArr = yesSir.arrayManager.isValueExistsInArray(indexes_arr, i_actionBlock_to_paste);
 
                         if (isIndexExistInIndexesArr) continue;
 
@@ -1201,7 +1085,7 @@ class ActionBlockModel {
                         let indexes_arr = Object.values(indexes_actionBlocks_by_tag[tag_word]);
                         
                         // Each index must be different in indexes array.
-                        let isIndexExistInIndexesArr = arrayManager.isValueExistsInArray(indexes_arr, i_actionBlock);
+                        let isIndexExistInIndexesArr = yesSir.arrayManager.isValueExistsInArray(indexes_arr, i_actionBlock);
 
                         if (isIndexExistInIndexesArr) continue;
 

@@ -6,11 +6,13 @@ class NoteSpeakerView {
     #btn_speaker = $('.btn_content_speaker');
     
     showBtnSpeaker() {
-        $('.btn_content_speaker').show();
+        const btn_speaker = $('.btn_content_speaker');
+        btn_speaker.show();
+        return btn_speaker;
     }
 
     hideBtnSpeaker() {
-        $('.btn_content_speaker').hide();
+        this.#btn_speaker.hide();
     }
 
     bindClickBtnSpeaker(handler) {
@@ -25,6 +27,8 @@ class NoteSpeakerView {
     }
     
     getContent() {
-        return $("#content_executed_from_actionBlock").find('.content').text();
+        const content = $("#content_executed_from_actionBlock").find('.content').text();
+        console.log(content);
+        return content;
     }
 }

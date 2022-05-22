@@ -24,13 +24,10 @@ class AutocompleteController {
         }
 
         function onSelect() {
-            console.log('curent page name', that.pageService.getCurrentPageName());
-            
             if (that.pageService.getCurrentPageName() === that.pageService.getPageNameEnum().main) {
                 const actionBlocks_to_show = that.actionBlockService.getActionBlocksByPhrase($('#input_field_request').val());
                 that.actionBlockService.showActionBlocks(actionBlocks_to_show);
             }
-            
         }
     }
 

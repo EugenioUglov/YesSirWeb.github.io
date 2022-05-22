@@ -1,12 +1,12 @@
 class ActionBlockService {
     #dateManager;
 
-    constructor(dbManager, observable, fileManager, textManager, 
+    constructor(dbManager, fileManager, textManager, 
         dropdownManager, dataStorageService, mapDataStructure, logsService, dialogWindow, 
-        keyCodeByKeyName, scrollService, searchService, loadingService, pageService, noteService, dateManager
+        keyCodeByKeyName, scrollService, searchService, loadingService, pageService, noteService, 
+        dateManager, modalLoadingService
     ) {
         this.fileManager = fileManager;
-        this.observable = observable;
         this.textManager = textManager;
         this.dataStorageService = dataStorageService;
         this.logsService = logsService;
@@ -18,24 +18,26 @@ class ActionBlockService {
         this.loadingService = loadingService;
         this.pageService = pageService;
         this.noteService = noteService;
+        this.modalLoadingService = modalLoadingService;
 
         this.#dateManager = dateManager;
-        console.log(this.loadingService);
         
         this.model = new ActionBlockModel(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, this.#dateManager);
         this.view = new ActionBlockView(this.model.getActionNameEnum(), this.model.getContentTypeDescriptionByActionEnum(), this.model.action_description_by_action_name, fileManager, textManager, dropdownManager);
         
-        this.is_result_voice_search = false;
-        this.index_last_showed_actionBlock = 0;
 
         this.init();
     }
 
+    #index_last_showed_actionBlock = 0;
+
     init() {
+        console.log(this.pageService);
         this.pageService.setActionBlockService(this);
     }
 
     createActionBlock = (title, tags, action, content, image_URL) => {
+        console.log('create action block');
         this.loadingService.startLoading();
 
         const actionBlock =
@@ -47,6 +49,8 @@ class ActionBlockService {
             imageURL: image_URL
         };
 
+        console.log('create', actionBlock);
+
         const is_created = this.model.add(actionBlock);
 
         if ( ! is_created) {
@@ -54,7 +58,7 @@ class ActionBlockService {
         }
 
         this.view.closeSettings();
-        this.view.clearAllFields();
+        this.view.clearAllSettingsFields();
         this.pageService.openPreviousPage();
         this.loadingService.stopLoading();
         this.updatePage();
@@ -66,8 +70,22 @@ class ActionBlockService {
         this.view.setDefaultValuesForSettingsElementsActionBlock();
     }
 
+    switchStateMenuTypeActionBlocksToCreate = () => {
+        if (this.model.is_menu_create_type_actionBlock_open) {
+            this.view.hideListOfTypeActionBlocksToCreate();
+        }
+        else {
+            this.view.showListOfTypeActionBlocksToCreate();
+        }
+
+        this.view.rotateFixedBtnPlus();
+
+        this.model.is_menu_create_type_actionBlock_open = ! this.model.is_menu_create_type_actionBlock_open;
+    }
+
     showSettingsToCreateNote = () => {
-        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().showInfo);
+        console.log('showSettingsToCreateNote');
+        this.showSettingsToCreateActionBlock(this.model.getActionNameEnum().showInfo);
         
         if (this.model.is_menu_create_type_actionBlock_open) {
             this.switchStateMenuTypeActionBlocksToCreate();
@@ -75,7 +93,7 @@ class ActionBlockService {
     }
 
     showSettingsToCreateLink = () => {
-        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().openURL);
+        this.showSettingsToCreateActionBlock(this.model.getActionNameEnum().openURL);
 
         if (this.model.is_menu_create_type_actionBlock_open) {
             this.switchStateMenuTypeActionBlocksToCreate();
@@ -83,7 +101,7 @@ class ActionBlockService {
     }
 
     showSettingsToCreateFolder = () => {
-        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().openFolder);
+        this.showSettingsToCreateActionBlock(this.model.getActionNameEnum().openFolder);
 
         if (this.model.is_menu_create_type_actionBlock_open) {
             this.switchStateMenuTypeActionBlocksToCreate();
@@ -91,7 +109,7 @@ class ActionBlockService {
     }
 
     showSettingsToCreateAdvancedActionBlock = () => {
-        this.#showSettingsToCreateActionBlock(this.model.getActionNameEnum().openURL);
+        this.showSettingsToCreateActionBlock(this.model.getActionNameEnum().openURL);
 
         if (this.model.is_menu_create_type_actionBlock_open) {
             this.switchStateMenuTypeActionBlocksToCreate();
@@ -114,7 +132,7 @@ class ActionBlockService {
         this.loadingService.startLoading();
         this.view.hideActionBlocksContainer();
 
-        this.index_last_showed_actionBlock = 0;
+        this.#index_last_showed_actionBlock = 0;
 
         if (actionBlocks_to_show === undefined) {
             actionBlocks_to_show = [];
@@ -153,14 +171,17 @@ class ActionBlockService {
             i++;
         }
 
-        that.index_last_showed_actionBlock = i;
+        that.#index_last_showed_actionBlock = i;
 
-        this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickSettingsActionBlock);
+        this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickBtnShowSettingsActionBlock);
         
-
         this.loadingService.stopLoading();
-        that.view.showActionBlocksContainer();
-        
+
+        const elements_to_show = that.view.showActionBlocksContainer();
+
+        elements_to_show.forEach(element => {
+            this.pageService.showElement(element); 
+        });
 
         updateLogMessage();
 
@@ -237,7 +258,7 @@ class ActionBlockService {
     showActionBlocksByRequest(request, is_execute_actionBlock_by_title = true) {
         const that = this;
 
-        this.index_last_showed_actionBlock = 0;
+        this.#index_last_showed_actionBlock = 0;
 
         let actionBlocks_to_show;
 
@@ -287,13 +308,13 @@ class ActionBlockService {
     //     this.view.showElementsForVoiceRecognitionManager();
     // }
 
-    
-    showDataStorageSettings() {
-        this.view.showDataStorageSettings();
-    }
+    #showSettingsToCreateActionBlock() {
+        const that = this;
 
-    showSettingsToCreateActionBlock() {
-        this.view.showSettingsToCreateActionBlock();
+        const view_elements_to_show = this.view.showSettingsToCreateActionBlock();
+        view_elements_to_show.forEach(element => {
+            // that.pageService.showElement(element);
+        });
     }
     
     executeActionBlockByTitle(title) {
@@ -343,15 +364,16 @@ class ActionBlockService {
         }
         // Action alertInfo must to include info option.
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showInfo) {
+            console.log('showinfo');
             const isHTML = false;
 
-            this.view.onPageContentChange();
+            this.onPageContentChange();
             this.view.onNoteExecuted();
             this.noteService.openNote(content, actionBlock.title, isHTML);
             this.view.hidePage();
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
-            this.view.onPageContentChange();
+            this.onPageContentChange();
             const isHTML = true;
             this.noteService.openNote(content, actionBlock.title, isHTML);
             $('#content_executed_from_actionBlock').show();
@@ -369,7 +391,7 @@ class ActionBlockService {
         }
         /*
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showFileManager) {
-            this.view.onPageContentChange();
+            this.onPageContentChange();
             this.view.showElementsForFileManager();
         }
         */
@@ -385,13 +407,15 @@ class ActionBlockService {
         }
 
         let count_actionBlocks_curr = 0;
-        const max_count_actionBlocks_to_add_on_page = 50;
+        let max_count_actionBlocks_to_add_on_page = 50;
 
         const actionBlocks = this.model.actionBlocks_to_show;
         
         let i;
 
-        for (i = this.index_last_showed_actionBlock; i < actionBlocks.length; i++) {
+        console.log('this.#index_last_showed_actionBlock', this.#index_last_showed_actionBlock);
+
+        for (i = this.#index_last_showed_actionBlock; i < actionBlocks.length; i++) {
             if (count_actionBlocks_curr >= max_count_actionBlocks_to_add_on_page) {
                 break;
             }
@@ -400,9 +424,9 @@ class ActionBlockService {
             count_actionBlocks_curr++;
         }
         
-        this.index_last_showed_actionBlock = i;
+        this.#index_last_showed_actionBlock = i;
 
-        this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickSettingsActionBlock);
+        this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickBtnShowSettingsActionBlock);
     }
 
 
@@ -481,6 +505,8 @@ class ActionBlockService {
 
         // Get actionBlocks from the file.
         let actionBlocks_from_file;
+
+        this.modalLoadingService.show();
         
         try {
             // OLD
@@ -491,27 +517,19 @@ class ActionBlockService {
         catch(error) {
             alert('Content of file is not correct. File must contain an Action-Blocks data.');
             console.log(error);
+            this.modalLoadingService.hide();
             return;
         }
+
 
         this.view.closeSettings();
         this.model.setActionBlocks(actionBlocks_from_file);
         this.showActionBlocks();
         this.searchService.clearInputField();
+        this.modalLoadingService.hide();
     }
 
-    switchStateMenuTypeActionBlocksToCreate() {
-        if (this.model.is_menu_create_type_actionBlock_open) {
-            this.view.hideListOfTypeActionBlocksToCreate();
-        }
-        else {
-            this.view.showListOfTypeActionBlocksToCreate();
-        }
-
-        this.view.rotateFixedBtnPlus();
-
-        this.model.is_menu_create_type_actionBlock_open = ! this.model.is_menu_create_type_actionBlock_open;
-    }
+   
 
     bindClickActionBlock(clickActionBlockHandler, clickSettingsActionBlockHandler) {
         this.view.bindClickActionBlock(clickActionBlockHandler, clickSettingsActionBlockHandler);
@@ -530,10 +548,11 @@ class ActionBlockService {
         this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
     
         function onClickOkConfirm() {
+            that.modalLoadingService.show();
             $('#dialog_database_manager')[0].close();
-           // observable.dispatchEvent('clickBtnRewrite', 'Click button Rewrite');
             that.model.setActionBlocks(that.model.actionBlocks_from_database);
             that.showActionBlocks();
+            that.modalLoadingService.hide();
 
             return;
         }
@@ -541,11 +560,17 @@ class ActionBlockService {
         function onClickCancelConfirm() {
             return;
         }
-    }
+    };
 
     updateActionBlock = (title, tags, selected_action, content, image_url) => {
+        this.modalLoadingService.show();
         const is_updated = this.model.updateActionBlock(title, tags, selected_action, content, image_url);
-        if (is_updated === false) return false;
+
+        if (is_updated === false) {
+            this.modalLoadingService.hide();
+
+            return false;
+        }
 
         this.pageService.openPreviousPage();
         this.loadingService.stopLoading();
@@ -556,7 +581,8 @@ class ActionBlockService {
         this.view.updatePage();
         // Refresh Action-Blocks on page.
         this.showActionBlocks();
-    }
+        this.modalLoadingService.hide();
+    };
 
     updateDefaultActionBlocks = () => {
         const that = this;
@@ -578,25 +604,27 @@ class ActionBlockService {
 
         function createDefaultActionBlocks() {
             actionBlocks_to_create.forEach(actionBlock => {
-                that.createActionBlock(actionBlock.title, actionBlock.tags, actionBlock.action, actionBlock.content, 
-                    actionBlock.imageURL, actionBlock.isEditable);
+                that.createActionBlock(actionBlock.title, actionBlock.tags, actionBlock.action, 
+                    actionBlock.content, actionBlock.imageURL, actionBlock.isEditable);
             });
         }
-    }
+    };
 
     deleteActionBlock = (title) => {
         const that = this;
 
         this.pageService.openPreviousPage();
-        this.loadingService.stopLoading();
+        // this.loadingService.stopLoading();
         this.view.closeSettings();
 
         const text_confirm_window = 'Are you sure you want to delete' + '\n' + ' "' + title + '" ?';
     
         function onClickOkConfirm() {
+            that.modalLoadingService.show();
             that.model.deleteActionBlockByTitle(title);
     
             that.updatePage();
+            that.modalLoadingService.hide();
 
             return;
         }
@@ -606,7 +634,7 @@ class ActionBlockService {
         }
       
         this.dialogWindow.confirmAlert(text_confirm_window, onClickOkConfirm, onClickCancelConfirm);
-    }
+    };
 
     openFolder(actionBlock_title) {
         const actionBlocks = this.model.getActionBlocks();
@@ -646,23 +674,51 @@ class ActionBlockService {
         this.pageService.openActionBlockPage(title);
         
         if (this.model.is_menu_create_type_actionBlock_open) this.switchStateMenuTypeActionBlocksToCreate();
-    }
+    };
 
-    #onClickSettingsActionBlock = (title) => {
+    #onClickBtnShowSettingsActionBlock = (title) => {
+        // this.openActionBlockSettings(title);
+        window.location.hash = '#editActionBlock=' + title;
+    };
+
+    showSettingsToCreateActionBlock = (action_name) => {
+        console.log('showSettingsToCreateActionBlock');
+        this.model.action_for_new_actionBlock = action_name;
+
+        this.view.showSettingsToCreateActionBlock(action_name);
+        this.onPageContentChange();
+    };
+
+    openActionBlockSettings = (title) => {
+        this.pageService.hideShowedElements();
+        const that = this;
         const actionBlocks = this.model.getActionBlocks();
         const actionBlock = actionBlocks.get(title);
 
         this.pageService.openSettingsActionBlockPage(title);
         this.model.title_actionBlock_before_update = title;
-        this.view.onPageContentChange();
-        this.view.showElementsToUpdateActionBlock(actionBlock);
+        this.onPageContentChange();
+        const elements_to_show = this.view.showElementsToEditActionBlock(actionBlock);
+        that.pageService.hideShowedElements();
+
+        elements_to_show.forEach(element => {
+             that.pageService.showElement(element);
+        }); 
+
+        console.log('show elements', elements_to_show);
     }
 
-    #showSettingsToCreateActionBlock = (action_name) => {
-        this.model.action_for_new_actionBlock = action_name;
+    clearAllSettingsFields() {
+        this.view.clearAllSettingsFields();
+    }
 
-        this.view.showSettingsToCreateActionBlock(action_name);
+    onPageContentChange() {
+        if (this.model.is_menu_create_type_actionBlock_open) this.switchStateMenuTypeActionBlocksToCreate();
         this.view.onPageContentChange();
-        this.pageService.openSettingsActionBlockPage();
+    }
+
+    closeActionBlockSettings = () => {
+        yesSir.voiceRecognitionService.stopRecognizing();
+        this.pageService.openPreviousPage();
     }
 }

@@ -525,7 +525,7 @@ input[type=submit] {
 
 
 
-div#list_of_type_action-blocks_to_create {
+div#list_of_type_actionBlocks_to_create {
   position: fixed;
   right: 30px;
   bottom: 30px;
@@ -577,7 +577,8 @@ ul li {
 
 /* Darker background-color on hover */
 ul li:hover {
-  background: #38265f;
+  box-shadow: 0 0 3pt 2pt blueviolet;
+  /* background: #38265f; */
 }
 
 /* When clicked on, add a background color and strike out text */

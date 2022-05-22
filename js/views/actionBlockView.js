@@ -13,9 +13,9 @@ class ActionBlockView {
     }
 
     #init() {
-        const dropdown_select_action_for_create_container =  $('#settings_action_block_container').find('.dropdown_select_action')[0];
+        const dropdown_select_action_for_create_container =  $('#settings_actionBlock_container').find('.dropdown_select_action')[0];
         this.dropdownManager.setOptions(dropdown_select_action_for_create_container, this.action_description_by_action_name);
-        let i_action = 0;
+        const i_action = 0;
         const first_dropdown_item_text_for_create = dropdown_select_action_for_create_container[i_action].value;
         const content_type_description = this.content_type_description_by_action[first_dropdown_item_text_for_create];
     }
@@ -33,9 +33,10 @@ class ActionBlockView {
     }
 
     updatePreview() {
+        console.log('Update preview');
         const actionBlock_preview = {
-            title: $('#settings_action_block_container').find('.input_field_title')[0].value,
-            imageURL: $('#settings_action_block_container').find('.input_field_image_URL')[0].value
+            title: $('#settings_actionBlock_container').find('.input_field_title')[0].value,
+            imageURL: $('#settings_actionBlock_container').find('.input_field_image_URL')[0].value
         };
         
         // Set default values.
@@ -54,7 +55,9 @@ class ActionBlockView {
         $('#welcome_page').hide();
         // Show search area with Info-Blocks.
         this.showPage();
-        $('#fixed_btn_plus').css('visibility', 'visible');
+        $('#fixed_btn_plus').show();
+
+        return [];
     }
 
     hideActionBlocksContainer() {
@@ -64,40 +67,42 @@ class ActionBlockView {
     showSettingsToCreateActionBlock(action_name) {
         $('#btn_close').show();
         $('#elements_to_create_action-block').show();
-        $('#settings_action_block_container').show();
-        $('#btn_create_action-block').show();
-        $('#btn_update_action-block').hide();
-        $('#btn_delete_action-block').hide();
-        $('#settings_action_block_container').find('.input_field_title')[0].focus();
+        $('#settings_actionBlock_container').show();
+        $('#btn_create_actionBlock').show();
+        $('.btn_update_actionBlock').hide();
+        $('#btn_delete_actionBlock').hide();
+        $('#settings_actionBlock_container').find('.input_field_title')[0].focus();
         $('#btn_back').show();
         
         if (action_name) {
-            const settings_action_block_container = $('#settings_action_block_container');
-            settings_action_block_container.find('.dropdown_select_action').val(action_name);
+            const settings_actionBlock_container = $('#settings_actionBlock_container');
+            settings_actionBlock_container.find('.dropdown_select_action').val(action_name);
             $('#title_action_descritption').text(this.content_type_description_by_action[action_name]);
         }
         
         this.updatePreview();
+
+        return [];
     }
 
-    showElementsToUpdateActionBlock(actionBlock) {
-        const settings_action_block_container = $('#settings_action_block_container');
+    showElementsToEditActionBlock(actionBlock) {
+        const settings_actionBlock_container = $('#settings_actionBlock_container');
         let action_name_of_actionBlock = actionBlock.action;
         if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = this.action_name_enum.showInfo;
         if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = this.action_name_enum.openURL;
 
         $('#btn_close').show();
-        $('#elements_to_update_actionBlock').show();
-        settings_action_block_container.show();
+        $('#elements_to_edit_actionBlock').show();
+        settings_actionBlock_container.show();
         $('#elements_for_delete_infoBlock').show();
-        settings_action_block_container.find('.input_field_title')[0].focus();
+        settings_actionBlock_container.find('.input_field_title')[0].focus();
 
-        $('#btn_create_action-block').hide();
-        $('#btn_update_action-block').show();
-        $('#btn_delete_action-block').show();
+        $('#btn_create_actionBlock').hide();
+        $('.btn_update_actionBlock').show();
+        $('#btn_delete_actionBlock').show();
 
         // Set value title.
-        settings_action_block_container.find('.input_field_title')[0].value = actionBlock.title;
+        settings_actionBlock_container.find('.input_field_title')[0].value = actionBlock.title;
         
         let tags = '';
 
@@ -109,22 +114,22 @@ class ActionBlockView {
             }
         }
 
-        settings_action_block_container.find('.input_field_tags')[0].value = tags;
+        settings_actionBlock_container.find('.input_field_tags')[0].value = tags;
 
         // Set value dropdown.
-        $('#settings_action_block_container').find('.type_action-block_container').show();
-        settings_action_block_container.find('.dropdown_select_action').val(action_name_of_actionBlock);
-        console.log('dropdown select action', settings_action_block_container.find('.dropdown_select_action').val());
+        $('#settings_actionBlock_container').find('.type_actionBlock_container').show();
+        settings_actionBlock_container.find('.dropdown_select_action').val(action_name_of_actionBlock);
+        console.log('dropdown select action', settings_actionBlock_container.find('.dropdown_select_action').val());
         // DropDown to choose action of Action-Block hide.
         
         // Set value content.
-        settings_action_block_container.find('.input_field_content')[0].value = actionBlock.content;
+        settings_actionBlock_container.find('.input_field_content')[0].value = actionBlock.content;
         
         // Set value image path.
-        settings_action_block_container.find('.input_field_image_URL')[0].value = actionBlock.imageURL;
+        settings_actionBlock_container.find('.input_field_image_URL')[0].value = actionBlock.imageURL;
         
-        if (settings_action_block_container.find('.input_field_image_URL')[0].value === 'undefined') {
-            settings_action_block_container.find('.input_field_image_URL')[0].value = '';
+        if (settings_actionBlock_container.find('.input_field_image_URL')[0].value === 'undefined') {
+            settings_actionBlock_container.find('.input_field_image_URL')[0].value = '';
         }
 
         const titles_elements = $('.title_actionBlock');
@@ -135,17 +140,13 @@ class ActionBlockView {
 
         this.updatePreview();
         this.#onDropdownActionValueChange();
+
+        return [];
     }
-
-
 
     // showElementsForVoiceRecognitionManager() {
     //     $('#elements_for_voice_recognition_settings').show();
     // }
-
-    showDataStorageSettings() {
-        $('#elements_for_data_storage').show();
-    }
 
     showElementsForFileManager() {
         $('#elements_for_file_manager').show();
@@ -153,8 +154,8 @@ class ActionBlockView {
 
     onShowMainPage() {
         // Show button to add ActionBlock.
-        $('#fixed_btn_plus').css('visibility', 'visible');
-        $('#btn_create_default_ActionBlocks').hide();
+        $('#fixed_btn_plus').show();
+        $('#btn_create_default_actionBlocks').hide();
     }
 
     onOpenMainPageWithoutActionBlocks() {
@@ -176,7 +177,8 @@ class ActionBlockView {
         const icon_plus = document.querySelector('.ico-btn');
 
         // Hide button to add ActionBlock.
-        $('#fixed_btn_plus').css('visibility', 'hidden');
+        $('#fixed_btn_plus').hide();
+        
         this.hidePage();
         $('#btn_back').show();
     }
@@ -202,13 +204,13 @@ class ActionBlockView {
     setEventListeners() {
         const that = this;
 
-        $('#settings_action_block_container').find('.input_field_title').on('input', () => this.updatePreview());
-        $('#settings_action_block_container').find('.input_field_image_URL').on('input', () => this.updatePreview());
+        $('#settings_actionBlock_container').find('.input_field_title').on('input', () => this.updatePreview());
+        $('#settings_actionBlock_container').find('.input_field_image_URL').on('input', () => this.updatePreview());
 
         $('.btn_save').on('click', () => { $('#btn_back').hide(); });
 
         // On change value of dropdown to choose action.
-        $('#settings_action_block_container').find('.dropdown_select_action')[0].onchange = function () {
+        $('#settings_actionBlock_container').find('.dropdown_select_action')[0].onchange = function () {
             that.#onDropdownActionValueChange();
         };
 
@@ -218,7 +220,7 @@ class ActionBlockView {
     }
 
     bindClickBtnCancelSettings(handler) {
-        const btn_cancel_settings = $('#settings_action_block_container').find('#btn_cancel');
+        const btn_cancel_settings = $('#settings_actionBlock_container').find('#btn_cancel');
 
         btn_cancel_settings.on('click', () => { 
             this.closeSettings();
@@ -234,10 +236,13 @@ class ActionBlockView {
         if (settings_container) {
             settings_container.mouseenter(function(){ is_mouse_enter_settings = true; });
             settings_container.mouseleave(function(){ is_mouse_enter_settings = false; });
-            settings_container.on('click', onClickBtnSettings);
+            settings_container.on('click', onClickBtnShowSettings);
 
-            function onClickBtnSettings(e) {
-                var title = $(this).closest('.infoBlock').attr('value');
+            function onClickBtnShowSettings(e) {
+                // var title = $(this).closest('.infoBlock').attr('value');
+                // var title = $(this).closest('.infoBlock').closest('.title').val();
+                const title = $(this).closest('.infoBlock').find('.title').text();
+                console.log('onClickBtnShowSettings', title);
                 settingsActionBlockClickHandler(title);
             }
         }
@@ -247,6 +252,7 @@ class ActionBlockView {
             if (is_mouse_enter_settings) return false;
             // const title = $(this).attr('value');
             const title = $(this).text();
+            console.log('clicked action-block', title);
             
             actionBlockClickHandler(title);
         });
@@ -266,94 +272,54 @@ class ActionBlockView {
         });
     }
 
-    /*
-    bindClickBtnDownloadActionBlocks(handler) {
-        $('#btn_download_actionBlocks')[0].addEventListener('click', () => {
-            handler();
-        });
-    }
-   
-
-    bindUploadFileWithActionBlocks(handlerFileUploaded) {
-        // On cLick button Upload file.
-        $('#btn_upload_actionBlocks')[0].addEventListener('change', (event) => {
-            this.fileManager.uploadFile(onFileLoaded);
-        
-            function onFileLoaded(content_of_file) {
-                if (content_of_file === undefined) {
-                    alert('Error! Data from the file has not been loaded');
-                    return;
-                }
-
-                // Get actionBlocks from the file.
-                let actionBlocks_from_file;
-                
-                try {
-                    actionBlocks_from_file = JSON.parse(content_of_file);
-                    console.log('file uploaded');
-                    handlerFileUploaded(actionBlocks_from_file);
-                }
-                catch(error) {
-                    alert('Content of file is not correct. File must contain an Action-Blocks data.');
-                    console.log(error);
-                    return;
-                }
-            }
-        
-            // Give possibility to load the same file again.
-            $('#btn_upload_actionBlocks').value = '';
-        });
-    }
-     */
-
     showListOfTypeActionBlocksToCreate() {
-        $('#list_of_type_action-blocks_to_create').show();
+        $('#list_of_type_actionBlocks_to_create').show();
     }
 
     hideListOfTypeActionBlocksToCreate() {
-        $('#list_of_type_action-blocks_to_create').hide();
+        $('#list_of_type_actionBlocks_to_create').hide();
     }
 
-    bindClickBtnSettingsToCreateNote(handler) {
+    bindClickBtnShowSettingsToCreateNote(handler) {
         $('#btn_settings_to_create_note').on('click', () => {
             this.hideSettingsContainer();
             handler();
         });
     }
 
-    bindClickBtnSettingsToCreateLink(handler) {
+    bindClickBtnShowSettingsToCreateLink(handler) {
         $('#btn_settings_to_create_link').on('click', () => {
             this.hideSettingsContainer();
             handler();
         });
     }
 
-    bindClickBtnSettingsToCreateFolder(handler) {
+    bindClickBtnShowSettingsToCreateFolder(handler) {
         $('#btn_settings_to_create_folder').on('click', () => {
             this.hideSettingsContainer();
             handler();
         });
     }
 
-    bindClickBtnSettingsToCreateAdvancedActionBlock(handler) {
+    bindClickBtnShowSettingsToCreateAdvancedActionBlock(handler) {
         $('#btn_settings_to_create_advanced_action-block').on('click', () => {
             // DropDown to choose action of Action-Block show.
-            $('#settings_action_block_container').find('.type_action-block_container').show();
-            $('#btn_create_default_ActionBlocks').show();
+            $('#settings_actionBlock_container').find('.type_actionBlock_container').show();
+            $('#btn_create_default_actionBlocks').show();
             handler();
         });
     }
 
     hideSettingsContainer() {
-        $('#settings_action_block_container').find('.type_action-block_container').hide();
+        $('#settings_actionBlock_container').find('.type_actionBlock_container').hide();
     }
 
-    bindCreateActionBlock(handler) {
-        $('#btn_create_action-block').on('click', () => {
-            const settings_action_block_container = $('#settings_action_block_container');
+    bindClickBtnCreateActionBlock(handler) {
+        $('#btn_create_actionBlock').on('click', () => {
+            const settings_actionBlock_container = $('#settings_actionBlock_container');
 
             // Get title value.
-            const input_field_title = settings_action_block_container.find('.input_field_title');
+            const input_field_title = settings_actionBlock_container.find('.input_field_title');
             const title = this.textManager.getTextInOneLine(input_field_title.val());
             
             
@@ -364,7 +330,7 @@ class ActionBlockView {
     
             // .Start tags.
             // Get tags values.
-            let input_field_tags = settings_action_block_container.find('.input_field_tags')[0];
+            let input_field_tags = settings_actionBlock_container.find('.input_field_tags')[0];
             let tags_from_field = input_field_tags.value;
             
     
@@ -381,7 +347,7 @@ class ActionBlockView {
     
     
             // Get action.
-            //let selected_action = settings_action_block_container.find('.dropdown_select_action').find(':selected')[0];
+            //let selected_action = settings_actionBlock_container.find('.dropdown_select_action').find(':selected')[0];
             //let action_user_choose = selected_action.value;
     
             // infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
@@ -397,7 +363,7 @@ class ActionBlockView {
             // }
     
             // Get content of action.
-            const input_field_info_container = settings_action_block_container.find('.input_field_content');
+            const input_field_info_container = settings_actionBlock_container.find('.input_field_content');
             let content = input_field_info_container.val();
     
             if (content === '') {
@@ -408,13 +374,8 @@ class ActionBlockView {
             }
             
     
-            //let input_field_action = settings_action_block_container.find('#input_field_action')[0];
-    
-            const input_field_image_URL_container = settings_action_block_container.find('.input_field_image_URL');
+            const input_field_image_URL_container = settings_actionBlock_container.find('.input_field_image_URL');
             const image_URL = input_field_image_URL_container.val();
-    
-            //console.log('title: " + input_field_title.value + " | tags: " + input_field_tags.value + " | action: " + action_user_choose + " | input_field_action: " + input_field_action.value + " | image path: " + image_URL.value);
-
 
             handler(title, tags_plus_title, this.getUserAction(), content, image_URL);
         });
@@ -424,22 +385,22 @@ class ActionBlockView {
         return $('.dropdown_select_action').find(':selected')[0].value;
     }
 
-    clearAllFields() {
+    clearAllSettingsFields() {
         // Clear all fields.
-        $('#settings_action_block_container').find('.resize_field').val('');
+        $('#settings_actionBlock_container').find('.resize_field').val('');
     }
 
     bindClickBtnCreateDefaultActionBlocks(handler) {
-        $('#btn_create_default_ActionBlocks').on('click', () =>{
+        $('#btn_create_default_actionBlocks').on('click', () =>{
             this.closeSettings();
             handler();
         });
     }
 
-    bindUpdateActionBlock(handler) {
-        $('#btn_update_action-block').on('click', () => {
+    bindClickBtnSaveEditedActionBlock(handler) {
+        $('.btn_update_actionBlock').on('click', () => {
             // Get new title value.
-            const input_field_title = $('#settings_action_block_container').find('.input_field_title');
+            const input_field_title = $('#settings_actionBlock_container').find('.input_field_title');
             let title = input_field_title.val();
         
             if ( ! title) {
@@ -448,13 +409,10 @@ class ActionBlockView {
             }
         
             // Get tags values
-            const input_field_tags = $('#settings_action_block_container').find('.input_field_tags')[0];
+            const input_field_tags = $('#settings_actionBlock_container').find('.input_field_tags')[0];
             const tags_from_input_field = input_field_tags.value;
             let tags = tags_from_input_field;
         
-
-        
-            
         
             /*
             // Change all new lines to symbol ","
@@ -479,7 +437,7 @@ class ActionBlockView {
             */
         
             // Action.
-            const dropdown_select_action_for_update = $('#settings_action_block_container').find('.dropdown_select_action');
+            const dropdown_select_action_for_update = $('#settings_actionBlock_container').find('.dropdown_select_action');
             // Get selected action.
             const selected_action = dropdown_select_action_for_update.find(':selected')[0].value;
 
@@ -489,7 +447,7 @@ class ActionBlockView {
             }
         
             // Get content.
-            const input_field_info_container = $('#settings_action_block_container').find('.input_field_content');
+            const input_field_info_container = $('#settings_actionBlock_container').find('.input_field_content');
             const content = input_field_info_container.val();
             
             if ( ! content) {
@@ -499,36 +457,45 @@ class ActionBlockView {
         
         
             // Get image URL.
-            const input_field_image_URL_container = $('#settings_action_block_container').find('.input_field_image_URL');
+            const input_field_image_URL_container = $('#settings_actionBlock_container').find('.input_field_image_URL');
             const image_url = input_field_image_URL_container.val();
 
             handler(title, tags, selected_action, content, image_url);
         });
     }
 
-    bindDeleteActionBlock(handler) {
-        $('#btn_delete_action-block').on('click', () => {
-            const title = $('#elements_to_update_actionBlock').find('.title_actionBlock')[0].innerText;
+    bindClickBtnOpenActionBlockSettings(handler) {
+        $('.btn_open_settings_actionBlock').on('click', () => {
+            // Clear executed content.
+            $('#content_executed_from_actionBlock').hide();
+            const title = $('#content_executed_from_actionBlock').find('.title').text();
+            console.log('bindClickBtnOpenActionBlockSettings', title);
+            handler(title);
+        });
+    }
+
+    bindClickBtnDeleteActionBlock(handler) {
+        $('#btn_delete_actionBlock').on('click', () => {
+            const title = $('#elements_to_edit_actionBlock').find('.title_actionBlock')[0].innerText;
             handler(title);
         });
     }
 
     setDefaultValuesForSettingsElementsActionBlock() {
-        const settings_action_block_container = $('#settings_action_block_container');
+        const settings_actionBlock_container = $('#settings_actionBlock_container');
     
         // Get title value
-        let input_field_title = settings_action_block_container.find('.input_field_title');
+        let input_field_title = settings_actionBlock_container.find('.input_field_title');
         input_field_title.val('');
 
-        let input_field_info_container = settings_action_block_container.find('.input_field_content');
+        let input_field_info_container = settings_actionBlock_container.find('.input_field_content');
         input_field_info_container.val('');
         
-        let input_field_tags = settings_action_block_container.find('.input_field_tags')[0];
+        let input_field_tags = settings_actionBlock_container.find('.input_field_tags')[0];
         input_field_tags.value = '';
      
-        
-        let input_field_image_URL_container = settings_action_block_container.find('.input_field_image_URL');
-        input_field_image_URL_container.val('');
+        settings_actionBlock_container.find('.input_field_image_URL').val('');
+        // INPUT_FIELD_IMAGE_URL_CONTAINER.val('');
     }
 
     closeSettings() {
@@ -543,7 +510,7 @@ class ActionBlockView {
         $('#content_executed_from_actionBlock').hide();
 
         // Clear all input fields.
-        this.clearAllFields();
+        this.clearAllSettingsFields();
     
         // Also close modal box (by standart logic of API).
 
@@ -665,7 +632,7 @@ class ActionBlockView {
     }
 
     #onDropdownActionValueChange() {
-        let dropdown = $('#settings_action_block_container').find('.dropdown_select_action'); 
+        let dropdown = $('#settings_actionBlock_container').find('.dropdown_select_action'); 
         const selected_action = dropdown.find(':selected')[0];
         $('#title_action_descritption').text(this.content_type_description_by_action[selected_action.value]);
     }

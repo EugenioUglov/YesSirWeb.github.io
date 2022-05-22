@@ -11,7 +11,7 @@ button {
     cursor: pointer;
     border-radius: 8px;
     /* color: #274f99; */
-    background-color: transparent;
+    background-color: #b5b5b524;
     background-repeat: no-repeat;
     color: #d1c4ac;
     transition: .1s;
@@ -37,12 +37,11 @@ button {
 
 .btn_right {
     float: right;
-    margin-left: 30px;
+    margin-left: 7px;
 }
 
 .btn_save {
-    background-color: #3927ad;
-    color: ghostwhite;
+    color: #8d8de5;
 }
 
 .fixed_elements .btn_content_speaker {
@@ -117,9 +116,8 @@ button {
     cursor: pointer;
 }
 
-#btn_delete_action-block {
-    color: #eecaca;
-    background-color: #5c0202;
+#btn_delete_actionBlock {
+    color: #a94747f2;
 }
 
 .icon_tag {
@@ -191,10 +189,7 @@ div#btn_search_by_tags {
     display: relative;
     position: relative;
     float: right;
-    /* position: absolute; */
-    /* right: 8px; */
-    margin-right: 20px;
-
+    margin-left: 20px;
 
     width: 45px;
     height: 45px;

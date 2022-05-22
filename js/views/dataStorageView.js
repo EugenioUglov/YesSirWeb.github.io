@@ -3,6 +3,10 @@ class DataStorageView {
         this.dialogWindow = dialogWindow;
     }
 
+    showDataStorageSettings() {
+        $('#elements_for_data_storage').show();
+    }
+
     bindClickBtnUpload(okClickHandler, cancelClickHandler) {
         const that = this;
 
