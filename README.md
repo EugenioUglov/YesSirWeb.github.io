@@ -13,8 +13,8 @@ Let's imagine that we want to watch a cartoon whose name we forgot. But we know 
   <li>Search:</li>
   titles_by_tag ['watch'] = ['watch The Lion Guard', 'watch Harry Potter'] <br>
   titles_by_tag ['cartoon'] = ['watch The Lion Guard', 'Read inforamtion about Diney's cartoons'] <br>
-  titles_by_tag ['about'] = undefined <br>
-  titles_by_tag ['cool'] = ['Read inforamtion about Diney's cartoons'] <br>
+  titles_by_tag ['about'] = ['Read inforamtion about Diney's cartoons'] <br>
+  titles_by_tag ['cool'] = undefined <br>
   titles_by_tag ['animals'] = ['watch The Lion Guard'] <br>
   <li>Result:</li>
   Displaying Action-Blocks with the highest number of identical tags in priority: 'watch The Lion Guard', 'Read inforamtion about Diney's cartoons', 'watch Harry Potter'.
