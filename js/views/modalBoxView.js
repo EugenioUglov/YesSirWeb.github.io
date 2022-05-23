@@ -25,7 +25,6 @@ class ModalBoxView {
         let header_text = setting.header_text != undefined ? setting.header_text : DEFAULT_SETTING.header_text;
         let footer_text = setting.footer_text != undefined ? setting.footer_text : DEFAULT_SETTING.footer_text;
         let is_possible_close = setting.is_possible_close != undefined ? setting.is_possible_close : DEFAULT_SETTING.is_possible_close;
-        console.log('is_possible_close', is_possible_close);
 
         if (is_possible_close) {
             $('.modal-close').show();
@@ -40,6 +39,12 @@ class ModalBoxView {
         } else { 
             $('.modal-header-text').html('<h2></h2>');
         }
+        if (body_text) {
+            $('.modal-body').html(body_text);
+            $('.modal-body').show();
+        } else {
+            $('.modal-body').hide();
+        }
         if (footer_text) {
             $('.modal-footer-text').html(footer_text);
             $('.modal-footer').show();
@@ -47,7 +52,6 @@ class ModalBoxView {
              $('.modal-footer').hide();
         }
 
-        $('.modal-body').html(body_text);
         this.#modal.classList.remove('hide');
         this.#modalContent.classList.remove('hide');
         this.#modal.style.display = 'block';
