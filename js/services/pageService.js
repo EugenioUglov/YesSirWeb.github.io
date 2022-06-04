@@ -29,6 +29,7 @@ class PageService {
     }
 
     #setCurrenPageName(new_page_name) {
+        console.log('set current page: ' + new_page_name);
         this.#current_page_name = new_page_name;
     }
 
@@ -46,11 +47,30 @@ class PageService {
         window.location.hash = this.getPageNameEnum().name;
     }
 
-    setHashRequest(value) {
+    setHashRequest = (parameter = {
+        request_value: '', 
+        is_execute_actionBlock_by_title: false}) => {
+            
+        const DEFAULT_PARAMETER = {
+            request_value: '',
+            is_execute_actionBlock_by_title: false
+        };
+
+        const request_value = parameter.request_value != undefined ? parameter.request_value : 
+            DEFAULT_PARAMETER.request_value;
+        const is_execute_actionBlock_by_title = parameter.is_execute_actionBlock_by_title != undefined ? 
+            parameter.is_execute_actionBlock_by_title : DEFAULT_PARAMETER.is_execute_actionBlock_by_title;
+
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.#setCurrenPageName(this.getPageNameEnum().reuqest);
-        window.location.hash = this.getPageNameEnum().reuqest + '=' + value;
-    }
+        if (request_value === undefined || request_value === '') {
+            this.openMainPage();
+        }
+
+        this.#setCurrenPageName(this.getPageNameEnum().request);
+        const new_hash = this.getPageNameEnum().request + '=' + request_value + 
+            (is_execute_actionBlock_by_title ? '&executebytitle' : '');
+        window.location.hash = new_hash;
+    };
 
     setHashCreateActionBlock() {
         this.#hash_previous = this.getNormalizedCurrentHash();
@@ -108,27 +128,12 @@ class PageService {
     }
 
     openActionBlockPage(title) {
-        // if ($('#input_field_request').val() === '') {
-        //     this.#hash_previous = window.location.hash;
-        // }
-        // else {
-        //     this.#hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
-        // }
-
         window.location.hash = '#request=' + title + '&executebytitle=true';
         
         this.setPageName('contentActionBlock');
     }
 
     openSettingsActionBlockPage(title) {
-        // if ($('#input_field_request').val() === '') {
-        //     this.#hash_previous = this.getNormalizedCurrentHash();
-        // }
-        // else {
-        //     // this.#hash_previous = '#request=' + $('#input_field_request').val() + '&executebytitle=false';
-        // }
-        
-        // title = (title != undefined) ? '=' + title : '';
         window.location.hash = '#editActionBlock=' + title;
         this.setPageName(this.getPageNameEnum().settingsActionBlock);
     }
@@ -240,15 +245,12 @@ class PageService {
             // }
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().createActionBlock)) {
-            console.log('handleHash create ActionBLock');
             this.#actionBlockService.showSettingsToCreateAdvancedActionBlock();
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().createNote)) {
-            console.log('createNote');
             this.#actionBlockService.showSettingsToCreateNote();
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().createLink)) {
-            console.log('createLink');
             this.#actionBlockService.showSettingsToCreateLink();
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().editActionBlock)) {
@@ -259,17 +261,13 @@ class PageService {
 
             let title = this.textManager.getCuttedText(text_to_cut, from_character_actionBlock_settings, 
                 to_character_request_actionBlock_settings);
-            console.log("editactionblock=" + title);
 
             title = decodeURIComponent(title);
             this.#actionBlockService.openActionBlockSettings(title);
         }
         else {
-            console.log('else');
-
             window.location.hash === this.getPageNameEnum().main;
         }
-
     }
 
     #getConvertedHashToObject() {

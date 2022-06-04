@@ -345,8 +345,10 @@ class ActionBlockService {
             action_name_of_actionBlock === this.model.getActionNameEnum().openUrl
         ) {
             const url = getValidURL(content);
+
             // open in new tab.
             let new_tab = window.open(url, '_blank');
+            console.log('open url');
 
             this.pageService.openPreviousPage();
 

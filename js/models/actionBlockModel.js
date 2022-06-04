@@ -151,17 +151,18 @@ class ActionBlockModel {
                                     if (DB_responce['user_data']) {
                                         let userDataFromDB;
                                         let actionBlocks_from_database = new Map();
-                                        
+
                                         // IF data from DB parsed successfully THEN go next.
                                         try {
                                             userDataFromDB = JSON.parse(DB_responce['user_data']);
-                                            actionBlocks_from_database = that.mapDataStructure.getParsed(userDataFromDB['actionBlocks']);
                                         }
                                         catch {
                                             onGetActionBlocksFailed();
 
                                             return;
                                         }
+
+                                        actionBlocks_from_database = that.mapDataStructure.getParsed(userDataFromDB['actionBlocks']);
 
                                         if (that.mapDataStructure.isMap(actionBlocks_from_database) === false) {
                                             onGetActionBlocksFailed();
@@ -861,7 +862,7 @@ class ActionBlockModel {
     saveInDatabase() {
         const that = this;
 
-        const actionBlocks_to_DB_string = this.mapDataStructure.getStringified(this.getActionBlocks());
+        let actionBlocks_to_DB_string = this.mapDataStructure.getStringified(this.getActionBlocks());
 
         let authorization_data;
         if (localStorage['authorization']) authorization_data = JSON.parse(localStorage['authorization']);
@@ -871,7 +872,9 @@ class ActionBlockModel {
             onDatabaseError();
             return false; 
         }
-        
+
+        console.log('actionBlocks_to_DB_string', actionBlocks_to_DB_string);
+        // actionBlocks_to_DB_string = '{"_type":"map","map":[["Cute videos",{"title":"Cute videos","tags":["Cute videos","video","fun","funny"],"action":"showInfo","content":"https://youtu.be/FTcjzaqL0pE\n\nhttps://youtube.com/shorts/CBuVCGI_mOM?feature=share\n\nhttps://youtube.com/shorts/Lehz34upmHs?feature=share\n\nhttps://youtube.com/shorts/HL0JFvzADfg?feature=share\n\nhttps://youtube.com/shorts/0BypBg5UXgU?feature=share\n\nhttps://youtube.com/shorts/ytbixShVm74?feature=share\n\nhttps://youtu.be/2Wzk_UlPcWg\n\nMonkey chill\nhttps://www.instagram.com/reel/CcCdHpcJg58/?utm_medium=copy_link\n\nOld man gives present to grandma\nhttps://www.instagram.com/reel/Cb_6hWAJUOw/?utm_medium=copy_link\n______\nDogs\n\nhttps://www.instagram.com/reel/Cb1kF4hJz4h/?utm_medium=copy_link\n\nhttps://www.instagram.com/reel/Cb0TY-WlXjT/?utm_medium=copy_link\n\nhttps://www.instagram.com/reel/CbupzFQpKUe/?utm_medium=copy_link\n\nhttps://www.instagram.com/reel/CcAvlB9lysj/?utm_medium=copy_link","imageURL":"","is_editable":true,"priority":1}]]}';
         // Set object to save in DB
         const userData_to_DB_obj = {
             actionBlocks: actionBlocks_to_DB_string

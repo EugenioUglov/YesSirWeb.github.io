@@ -20,7 +20,7 @@ class YesSir {
         this.modalBoxService = new ModalBoxService();
         this.modalLoadingService = new ModalLoadingService(this.modalBoxService);
         this.noteSpeakerService = new NoteSpeakerService(this.speakerManager);
-        this.dataStorageService = new DataStorageService(this.#dialogWindow);
+        this.dataStorageService = new DataStorageService(this.dialogWindow);
         this.searchService = new SearchSevice();
         this.scrollService = new ScrollService();
         this.logsService = new LogsService(this.fileManager, this.dateManager);

@@ -13,7 +13,6 @@ class VoiceRecognitionService {
     }
     
     stopRecognizing = () => {
-        console.log('stop rec');
         this.voiceRecognitionManager.stopRecognizing();
     }
 

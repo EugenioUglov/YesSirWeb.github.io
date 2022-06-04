@@ -11,6 +11,11 @@ class SearchSevice {
         this.view.setTextToInputField(text)
     }
 
+    getTextFromMainInputField() {
+        this.view.getTextFromMainInputField();
+    }
+
+
     focusInputField() {
         this.view.focus();
     }

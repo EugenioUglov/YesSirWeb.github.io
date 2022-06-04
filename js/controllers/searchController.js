@@ -24,17 +24,14 @@ class SearchController {
         }
     }
 
-    // Show infoBlocks by user_phrase.
-    onEnter = (is_execute_actionBlock_by_title = true) => {
-        this.searchService.view.onEnter();
-        const request = this.searchService.view.getUserRequest();
-
-        if (request === '') {
-            this.pageService.openMainPage();
-            return;
-        }
+    onEnter = () => {
+        this.searchService.view.setTextColorInInpurField('black');
+        const user_request = this.searchService.view.getTextFromMainInputField();
         
-        window.location.hash = '#request=' + $('#input_field_request').val() + '&executebytitle=true';
+        this.searchService.setHashRequest({
+            request_value: user_request, 
+            is_execute_actionBlock_by_title: true
+        });
     }
 
     onClickBtnClear = () => {
@@ -64,18 +61,21 @@ class SearchController {
     }
 
     #bindViewEvenets() {
+        const that = this;
+
         const onKeyUpRequestField = (request, clicked_keyCode) => {
-            const that = this;
+            let is_execute_actionBlock_by_title = false;
 
             if (clicked_keyCode === that.keyCodeByKeyName.enter) {
-                const is_execute_actionBlock_by_title = true;
-    
-                window.location.hash = '#request=' + request + '&executebytitle=' + is_execute_actionBlock_by_title;
+                is_execute_actionBlock_by_title = true;
+            } else {
+                is_execute_actionBlock_by_title = false;
             }
-            else {
-                const is_execute_actionBlock_by_title = false;
-                window.location.hash = '#request=' + request + '&executebytitle=' + is_execute_actionBlock_by_title;
-            }
+
+            that.pageService.setHashRequest({
+                request_value: request, 
+                is_execute_actionBlock_by_title: is_execute_actionBlock_by_title
+            });
         }
 
         this.searchService.view.bindClickBtnClearRequestField(this.onClickBtnClear);
@@ -83,6 +83,4 @@ class SearchController {
         this.searchService.view.bindKeyUpRequestField(onKeyUpRequestField);
         this.searchService.view.bindKeypressInputFieldPlusTags(this.#onKeypressInputFieldPlusTags);
     }
-
- 
 }

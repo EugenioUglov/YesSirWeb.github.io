@@ -11,7 +11,7 @@ class SearchView {
         $('#input_field_request')[0].style.color = 'gray';
     }
 
-    getUserRequest() {
+    getTextFromMainInputField() {
         const user_phrase = $('#input_field_request')[0].value;
         return user_phrase;
     }
@@ -34,9 +34,9 @@ class SearchView {
         return user_minus_tags;
     }
 
-    onEnter() {
+    setTextColorInInputField(new_color) {
         // Set color of text in input field command to black.
-        $('#input_field_request')[0].style.color = 'black';
+        $('#input_field_request')[0].style.color = new_color;
     }
 
     clear() {
@@ -51,7 +51,7 @@ class SearchView {
         console.log('bindClickBtnEnterRequest');
         const that = this;
         $('#btn_accept_input_field_request')[0].addEventListener('click', () => { 
-            that.onEnter(); 
+            that.setTextColorInInputField('black'); 
             handler();
         });
     }

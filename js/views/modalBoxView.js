@@ -13,18 +13,18 @@ class ModalBoxView {
     $btn_close = document.getElementsByClassName("close")[0];
 
 
-    show(setting = {body_text: '', header_text: '', footer_text: '', is_possible_close: true}) {
-        const DEFAULT_SETTING = {
+    show(parameter = {body_text: '', header_text: '', footer_text: '', is_possible_close: true}) {
+        const DEFAULT_PARAMETER = {
             body_text: '',
             header_text: '',
             footer_text: '',
             is_possible_close: true
         };
 
-        let body_text = setting.body_text != undefined ? setting.body_text : DEFAULT_SETTING.body_text;
-        let header_text = setting.header_text != undefined ? setting.header_text : DEFAULT_SETTING.header_text;
-        let footer_text = setting.footer_text != undefined ? setting.footer_text : DEFAULT_SETTING.footer_text;
-        let is_possible_close = setting.is_possible_close != undefined ? setting.is_possible_close : DEFAULT_SETTING.is_possible_close;
+        let body_text = parameter.body_text != undefined ? parameter.body_text : DEFAULT_PARAMETER.body_text;
+        let header_text = parameter.header_text != undefined ? parameter.header_text : DEFAULT_PARAMETER.header_text;
+        let footer_text = parameter.footer_text != undefined ? parameter.footer_text : DEFAULT_PARAMETER.footer_text;
+        let is_possible_close = parameter.is_possible_close != undefined ? parameter.is_possible_close : DEFAULT_PARAMETER.is_possible_close;
 
         if (is_possible_close) {
             $('.modal-close').show();

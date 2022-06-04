@@ -35,9 +35,9 @@ class DataStorageView {
     }
 
     bindClickBtnGetActionBlocksFromDatabase(handler) {
-        const btn_rewrite = $('#dialog_database_manager').find('.btn_rewrite_actionBlocks')[0];
+        const btn_rewrite = $('#dialog_database_manager').find('.btn_rewrite_actionBlocks');
         
-        btn_rewrite.addEventListener('click', function() {
+        btn_rewrite.on('click', () => {
             handler();
         });
     }
@@ -45,9 +45,9 @@ class DataStorageView {
     bindClickBtnUploadActionBlocksToDatabase(okClickHandler, cancelClickHandler) {
         const that = this;
 
-        const btn_upload = $('#dialog_database_manager').find('.btn_upload_actionBlocks')[0];
+        const btn_upload = $('#dialog_database_manager').find('.btn_upload_actionBlocks');
         
-        btn_upload.addEventListener('click', function() {
+        btn_upload.on('click', () => {
             const text_confirm_window = 'Are you sure that you want to synchronize current Action-Blocks?\n\
                 All previous data in the database will be deleted.';
             

@@ -32,6 +32,7 @@
         $dataFromJSWithoutEmoji = removeEmoji($dataFromJS['userDataToPost']);
         // To hold spec symbols in database.
         $userDataWithSpecSymbols = mysqli_real_escape_string($conn, $dataFromJSWithoutEmoji);
+        // $dataForDatabase = htmlspecialchars
         //print_r($userDataWithSpecSymbols);
         //print_r('UPDATE users_info SET user_data='.$userDataWithSpecSymbols.' WHERE id='.$userId);
      
