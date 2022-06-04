@@ -11,7 +11,7 @@ class PageService {
 
     #actionBlockService;
     #is_hash_change_listener_active_state_enabled = false;
-    #current_page_name = 'main';
+    #current_page_name;
     #view = new PageView();
 
     getPageNameEnum() {
@@ -28,12 +28,7 @@ class PageService {
         return PAGE_NAME_ENUM;
     }
 
-    setCurrenPageName(new_page_name) {
-        if (this.getPageNameEnum()[new_page_name] === undefined) {
-            alert('setCurrenPageName page name error');
-            return;
-        }
-
+    #setCurrenPageName(new_page_name) {
         this.#current_page_name = new_page_name;
     }
 
@@ -47,37 +42,37 @@ class PageService {
 
     setHashMain() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.setCurrenPageName(this.getPageNameEnum().name);
+        this.#setCurrenPageName(this.getPageNameEnum().name);
         window.location.hash = this.getPageNameEnum().name;
     }
 
     setHashRequest(value) {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.setCurrenPageName(this.getPageNameEnum().reuqest);
+        this.#setCurrenPageName(this.getPageNameEnum().reuqest);
         window.location.hash = this.getPageNameEnum().reuqest + '=' + value;
     }
 
     setHashCreateActionBlock() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.setCurrenPageName(this.getPageNameEnum().createActionBlock);
+        this.#setCurrenPageName(this.getPageNameEnum().createActionBlock);
         window.location.hash = this.getPageNameEnum().createActionBlock;
     }
 
     setHashCreateNote() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.setCurrenPageName(this.getPageNameEnum().createNote);
+        this.#setCurrenPageName(this.getPageNameEnum().createNote);
         window.location.hash = this.getPageNameEnum().createNote;
     }
 
     setHashCreateLink() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.setCurrenPageName(this.getPageNameEnum().createLink);
+        this.#setCurrenPageName(this.getPageNameEnum().createLink);
         window.location.hash = this.getPageNameEnum().createLink;
     }
 
     setHashEditActionBlock(title) {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        this.setCurrenPageName(this.getPageNameEnum().editActionBlock);
+        this.#setCurrenPageName(this.getPageNameEnum().editActionBlock);
         window.location.hash = this.getPageNameEnum().editActionBlock + '=' + title;
     }
 
@@ -160,12 +155,12 @@ class PageService {
 
     openPageSettingsToCreateLink() {
         window.location.hash = this.getPageNameEnum().createLink;
-        this.setCurrenPageName(this.getPageNameEnum().createLink);
+        this.#setCurrenPageName(this.getPageNameEnum().createLink);
     }
 
     openPageSettingsToCreateNote() {
         window.location.hash = this.getPageNameEnum().createNote;
-        this.setCurrenPageName(this.getPageNameEnum().createNote);
+        this.#setCurrenPageName(this.getPageNameEnum().createNote);
     }
 
     openPreviousBrowserPage() {
@@ -182,6 +177,9 @@ class PageService {
 
     handleHash() {
         const that = this;
+        const hash_converted_to_object = this.#getConvertedHashToObject();
+        console.log('hash_converted_to_object', hash_converted_to_object);
+        console.log('hash_converted_to_object.hasOwnProperty("request")', hash_converted_to_object.hasOwnProperty("request"));
         if (this.noteSpeakerService.isSpeaking) this.noteSpeakerService.stopSpeak();
 
         this.hideShowedElements();
@@ -192,7 +190,6 @@ class PageService {
         this.#actionBlockService.view.clear();
 
         if (this.getNormalizedCurrentHash() === '#main' || this.getNormalizedCurrentHash() === '' || this.getNormalizedCurrentHash() === '#undefined') {
-            console.log('main page');
             this.setPageName('main');
             // $('#input_field_request').val('');
             this.searchService.clearInputField();
@@ -208,7 +205,6 @@ class PageService {
             that.#actionBlockService.view.onShowMainPage();
         }
         else if (this.getNormalizedCurrentHash().includes('#request')) {
-            console.log('request');
             let request = '';
             const text_to_cut = window.location.hash;
             const from_character_request = '=';
@@ -276,7 +272,12 @@ class PageService {
 
     }
 
-    #getHashValueByProperty(property) {
+    #getConvertedHashToObject() {
+        const hash2Obj = window.location.hash
+            .split("&")
+            .map(v => v.split("="))
+            .reduce( (pre, [key, value]) => ({ ...pre, [key]: value }), {} );
 
+        return hash2Obj;
     }
 }
