@@ -8,8 +8,11 @@ class VoiceRecognitionService {
         this.view.showSettings();
     }
 
-    startRecognizing = (callbackInterimTranscript, callbackFinalTranscript, cllbackEnd) => {
-        this.voiceRecognitionManager.startRecognizing(callbackInterimTranscript, callbackFinalTranscript, cllbackEnd);
+    startRecognizing = (parameter = {
+        callbackInterimTranscript: callbackInterimTranscript, 
+        callbackFinalTranscript: callbackFinalTranscript, 
+        callbackEnd: callbackEnd}) => {
+            this.voiceRecognitionManager.startRecognizing(parameter);
     }
     
     stopRecognizing = () => {

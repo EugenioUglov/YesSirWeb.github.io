@@ -20,4 +20,12 @@ class VoiceRecognitionView {
             handler(event);
         });
     }
+
+    showRecognitionInProgress() {
+        $('#img_voice_recognition').attr('src', './icons/mic-animate.gif');
+    }
+
+    showRecognitionStop() {
+        $('#img_voice_recognition').attr('src', './icons/mic.gif');
+    }
 }

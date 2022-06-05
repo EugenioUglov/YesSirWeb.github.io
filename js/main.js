@@ -78,7 +78,7 @@ let yesSir;
         const actionBlockController = new ActionBlockController(actionBlockService,
             loadingService, dialogWindow, scrollService, searchService, pageService, noteService);
         const autocompleteController = new AutocompleteController(pageService, actionBlockService, autocompleteService);
-        const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable);
+        const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable, pageService);
         const scrollController = new ScrollController(scrollService, actionBlockService);
         const pageController = new PageController(pageService);
         const searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);

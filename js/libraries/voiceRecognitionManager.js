@@ -40,7 +40,7 @@ class VoiceRecognitionManager {
     ];
     
     #init() {
-        if (this.isBrowserSupportRecognition) {
+        if (this.isBrowserSupportRecognition()) {
             // Create recognizer.
             this.#recognizer = new webkitSpeechRecognition();
 
@@ -48,7 +48,7 @@ class VoiceRecognitionManager {
             this.#recognizer.interimResults = true;
             
             // Language for recognizing.
-            this.#recognizer.lang = 'en-En';
+            // this.#recognizer.lang = 'en-En';
         }
         else {
             console.log('Warning! Speech recognition is not supported in this browser');
@@ -56,40 +56,61 @@ class VoiceRecognitionManager {
     }
 
     
-    startRecognizing = (callbackInterimTranscript, callbackFinalTranscript, cllbackEnd) => {
-        console.log('start rec');
-        const that = this;
+    startRecognizing = (parameter = {
+        callbackStart: undefined,
+        callbackInterimTranscript: undefined, 
+        callbackFinalTranscript: undefined, 
+        callbackEnd: undefined,
+        callbackError: undefined,
+        language: undefined}) => {    
+            const that = this;
 
-        let is_final_result = false;
-        
-        this.#recognizer.start();
-        this.#is_recognizing = true;
+            const callbackStart = parameter.callbackStart;
+            const callbackInterimTranscript = parameter.callbackInterimTranscript;
+            const callbackFinalTranscript = parameter.callbackFinalTranscript;
+            const callbackEnd = parameter.callbackEnd;
+            const callbackError = parameter.callbackError;
+            const recognition_language = parameter.language != undefined ? parameter.language : 'en-En';
 
-        // Используем колбек для обработки результатов
-        this.#recognizer.onresult = function (event) {
-            let result = event.results[event.resultIndex];
+            let is_final_result = false;
+            
+            this.#recognizer.lang = recognition_language;
+            this.#recognizer.start();
+            this.#is_recognizing = true;
 
-            if (result.isFinal) {
-                is_final_result = true;
-                const final_transcript = result[0].transcript;
-                
-                if (callbackFinalTranscript) callbackFinalTranscript(final_transcript);
+            this.#recognizer.onstart = function() {
+                if (callbackStart) callbackStart();
             }
-            else {
-                const interim_transcript = result[0].transcript;
 
-                if (callbackInterimTranscript) callbackInterimTranscript(interim_transcript);
-            }
+            // Используем колбек для обработки результатов
+            this.#recognizer.onresult = function (event) {
+                let result = event.results[event.resultIndex];
+
+                if (result.isFinal) {
+                    is_final_result = true;
+                    const final_transcript = result[0].transcript;
+                    
+                    if (callbackFinalTranscript) callbackFinalTranscript(final_transcript);
+                }
+                else {
+                    const interim_transcript = result[0].transcript;
+
+                    if (callbackInterimTranscript) callbackInterimTranscript(interim_transcript);
+                }
         }
 
         this.#recognizer.onend = function() {
             if (is_final_result === false && that.#is_recognizing) { 
-                that.startRecognizing(callbackInterimTranscript, callbackFinalTranscript, cllbackEnd);
+                that.startRecognizing(parameter);
             }
             else {
                 that.#is_recognizing = false;
-                if (cllbackEnd) cllbackEnd();
+                if (callbackEnd) callbackEnd();
             }
+        }
+
+        this.#recognizer.onerror = function() {
+            if (callbackError) callbackError();
         }
     }
     

@@ -467,13 +467,13 @@ class ActionBlockService {
     }
 
 
-    deleteAll() {
-        const text_confirm_window = 'Are you sure you want to delete ALL commands?' + '\n' +
-        '* It\'s recommended to download the commands first to save all created information';
+    deleteAllActionBlocks() {
+        const that = this;
+        const text_confirm_window = 'Are you sure you want to delete ALL Action-Blocks?';
 
         function onClickOkConfirm() {
             // Clear model variable with Action-Blocks and show it.
-
+            that.model.deleteActionBlocks();
             return;
         }
 
@@ -511,9 +511,6 @@ class ActionBlockService {
         this.modalLoadingService.show();
         
         try {
-            // OLD
-            // actionBlocks_from_file = JSON.parse(content_of_file);
-            // NEW
             actionBlocks_from_file = this.mapDataStructure.getParsed(content_of_file);
         }
         catch(error) {

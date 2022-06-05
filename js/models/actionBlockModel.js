@@ -35,8 +35,6 @@ class ActionBlockModel {
         this.#actionBlocks_map = new Map();
     }
 
-
-
     getActionBlocks() {
         return this.#actionBlocks_map;
     }
@@ -572,7 +570,11 @@ class ActionBlockModel {
                         if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
 
                         // Начинаем слушать микрофон и распознавать голос
-                        yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
+                        yesSir.voiceRecognitionService.startRecognizing({
+                            callbackInterimTranscript: onInterimTranscript, 
+                            callbackFinalTranscript: onFinalTranscript, 
+                            callbackEnd: onEndVoiceRecognition
+                        });
 
                         function onInterimTranscript(result_text) {
                             console.log('InterimTranscript', result_text);
@@ -598,7 +600,11 @@ class ActionBlockModel {
                     function onEndSpeak() {
                         if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
 
-                        yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
+                        yesSir.voiceRecognitionService.startRecognizing({
+                            callbackInterimTranscript: onInterimTranscript, 
+                            callbackFinalTranscript: onFinalTranscript, 
+                            callbackEnd: onEndVoiceRecognition
+                        });
 
                         function onInterimTranscript(result_text) {
                             $('.input_field_title').val(result_text);
@@ -622,7 +628,11 @@ class ActionBlockModel {
                     function onEndSpeak() {
                         if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
                         
-                        yesSir.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript, onEndVoiceRecognition);
+                        yesSir.voiceRecognitionService.startRecognizing({
+                            callbackInterimTranscript: onInterimTranscript, 
+                            callbackFinalTranscript: onFinalTranscript, 
+                            callbackEnd: onEndVoiceRecognition
+                        });
 
                         function onInterimTranscript(result_text) {
                             console.log('interim result', result_text);
@@ -670,9 +680,6 @@ class ActionBlockModel {
             showInfo: 'showInfo',
             openFolder: 'openFolder',
             showHTML: 'showHTML'
-            //showFileManager: 'showFileManager',
-            //showDataStorageManager: 'showDataStorageManager',
-            //showLogs: 'showLogs',
         };
 
         return ACTION_NAME_ENUM;
@@ -975,7 +982,9 @@ class ActionBlockModel {
         return is_deleted;
     }
 
-
+    deleteActionBlocks() {
+        this.#actionBlocks_map = new Map();
+    }
 
     #onUpdateVarialbeWithActionBlocks() {
         this.saveAsync(this.getActionBlocks());
@@ -1166,8 +1175,6 @@ class ActionBlockModel {
             console.log('Warning! title property doesn\'t exist in obj: ', obj);
         }
 
-
-
         // Separated words of user phrase.
         const user_words = this.#textManager.splitText(user_phrase, ' ');
         // All tags.
@@ -1180,7 +1187,6 @@ class ActionBlockModel {
                 const tag = tags_phrases[i_inTags];
                 const tag_words = this.#textManager.splitText(tag, ' ');
                 tags = tags.concat(tag_words);
-                //console.log('tag_words', tags);
             }
             
             // For each word in tag.
@@ -1191,13 +1197,7 @@ class ActionBlockModel {
                 // If in tag exist user word THEN add priority for this info object.
                 if (this.#textManager.isSame(user_word, tag_word)) {
                     priority++;
-                    /*
-                    console.log('====== GROWUP PRIORITY =======');
-                    console.log('obj.title', obj.title);
-                    console.log('priority', priority);
-                    console.log('tag_word', tag_word);
-                    console.log('====== END GROWUP PRIORITY =======');
-                    */
+                    
                     break;
                 }
             }
@@ -1222,18 +1222,7 @@ class ActionBlockModel {
                 }
             }
         }
-        //console.log("sorted actionBlocks:.");
-        //console.log(actionBlocks);
+
         return actionBlocks;
     }
-
-    // #deleteAllIndexes() {
-    //     const key = 'indexes_actionBlocks_by_tag';
-    //     localStorage[key] = '';
-    
-    //     return true;
-    // }
 }
-
-
-// const infoBlockModel = {};

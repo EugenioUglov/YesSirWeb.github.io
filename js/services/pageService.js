@@ -14,6 +14,13 @@ class PageService {
     #current_page_name;
     #view = new PageView();
 
+
+    init() {
+        this.setHashChangeListenerActiveState(true);
+        this.handleHash();
+    }
+
+
     getPageNameEnum() {
         const PAGE_NAME_ENUM = {
             main: 'main',
@@ -49,17 +56,21 @@ class PageService {
 
     setHashRequest = (parameter = {
         request_value: '', 
-        is_execute_actionBlock_by_title: false}) => {
+        is_execute_actionBlock_by_title: false,
+        is_listen_text: false}) => {
             
         const DEFAULT_PARAMETER = {
             request_value: '',
-            is_execute_actionBlock_by_title: false
+            is_execute_actionBlock_by_title: false,
+            is_listen_text: false
         };
 
         const request_value = parameter.request_value != undefined ? parameter.request_value : 
             DEFAULT_PARAMETER.request_value;
         const is_execute_actionBlock_by_title = parameter.is_execute_actionBlock_by_title != undefined ? 
             parameter.is_execute_actionBlock_by_title : DEFAULT_PARAMETER.is_execute_actionBlock_by_title;
+        const is_listen_text = parameter.is_listen_text != undefined ? parameter.is_listen_text : 
+            DEFAULT_PARAMETER.is_listen_text;
 
         this.#hash_previous = this.getNormalizedCurrentHash();
         if (request_value === undefined || request_value === '') {
@@ -68,7 +79,7 @@ class PageService {
 
         this.#setCurrenPageName(this.getPageNameEnum().request);
         const new_hash = this.getPageNameEnum().request + '=' + request_value + 
-            (is_execute_actionBlock_by_title ? '&executebytitle' : '');
+            (is_execute_actionBlock_by_title ? '&executebytitle' : '') + (is_listen_text ? '&listen' : '');
         window.location.hash = new_hash;
     };
 
@@ -98,11 +109,6 @@ class PageService {
 
 
 
-   
-    init() {
-        this.setHashChangeListenerActiveState(true);
-        this.handleHash();
-    }
 
     showElement(element) {
         this.#view.showElement(element);
@@ -116,8 +122,6 @@ class PageService {
     setActionBlockService(actionBlockService_to_set) {
         this.#actionBlockService = actionBlockService_to_set;
     }
-
-
 
     setPageName(new_page_name) {
         this.#current_page_name = new_page_name;
@@ -139,12 +143,11 @@ class PageService {
     }
 
     openPreviousPage() {
-        console.log('previous hash', this.#hash_previous);
-
         let hash_lower_case = window.location.hash.toLowerCase();
 
         if (
-            this.#hash_previous && this.#hash_previous.includes(this.getPageNameEnum().editActionBlock) === false && 
+            this.#hash_previous && 
+            this.#hash_previous.includes(this.getPageNameEnum().editActionBlock) === false && 
             this.#hash_previous.includes('&executebytitle=true') === false
         ) {
             window.location.hash = this.#hash_previous;
@@ -152,10 +155,6 @@ class PageService {
         else {
             this.openMainPage();
         }
-
-        // if (hash_lower_case.includes(this.getPageNameEnum().createActionBlock) || hash_lower_case.includes(this.getPageNameEnum().editActionBlock)) {
-        //     this.openMainPage();
-        // }
     }
 
     openPageSettingsToCreateLink() {
@@ -196,7 +195,6 @@ class PageService {
 
         if (this.getNormalizedCurrentHash() === '#main' || this.getNormalizedCurrentHash() === '' || this.getNormalizedCurrentHash() === '#undefined') {
             this.setPageName('main');
-            // $('#input_field_request').val('');
             this.searchService.clearInputField();
 
             if (that.#actionBlockService.model.getActionBlocks().size > 0) {
@@ -231,18 +229,7 @@ class PageService {
 
             request = decodeURIComponent(request);
             that.#actionBlockService.showActionBlocksByRequest(request, is_execute_actionBlock_by_title);
-
-
-            this.searchService.setTextToInputField(request)
-            // $('#input_field_request').val(request);
-            
-            // request = that.textManager.replaceSymbols(request, '%20', ' ');
-
-            // const last_character_of_requets = request.slice(-1);;
-
-            // if (last_character_of_requets === ' ') {
-            //     is_execute_actionBlock_by_title = false;
-            // }
+            this.searchService.setTextToInputField(request);
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().createActionBlock)) {
             this.#actionBlockService.showSettingsToCreateAdvancedActionBlock();
