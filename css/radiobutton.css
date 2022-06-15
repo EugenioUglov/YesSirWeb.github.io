@@ -16,7 +16,9 @@
   text-align: left;
   position: relative;
   margin-left: 35px;
+  margin-top: 10px;
   font-size: 15px;
+  padding-top: 3px;
 }
 
 form#rb_search_mode_container {
@@ -26,6 +28,8 @@ form#rb_search_mode_container {
   outline: 10px;
   padding: 10px;
   border-radius: 8px;
+  
+  margin-top: 100px;
 }
 
 .gray_container {

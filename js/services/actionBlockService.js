@@ -370,16 +370,18 @@ class ActionBlockService {
             const isHTML = false;
 
             this.onPageContentChange();
-            this.view.onNoteExecuted();
+            this.view.showContentOfActionBlock();
             this.noteService.openNote(content, actionBlock.title, isHTML);
             this.view.hidePage();
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
+           
+
             this.onPageContentChange();
             const isHTML = true;
             this.noteService.openNote(content, actionBlock.title, isHTML);
             $('#content_executed_from_actionBlock').show();
-
+            console.log(content);
             
             // Set position top.
             that.scrollService.setPosition(0, 0);
@@ -676,8 +678,8 @@ class ActionBlockService {
     };
 
     #onClickBtnShowSettingsActionBlock = (title) => {
-        // this.openActionBlockSettings(title);
-        window.location.hash = '#editActionBlock=' + title;
+        this.pageService.openSettingsActionBlockPage(title);
+        // window.location.hash = '#editActionBlock=' + title;
     };
 
     showSettingsToCreateActionBlock = (action_name) => {

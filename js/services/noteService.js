@@ -10,7 +10,7 @@ class NoteService {
     openNote(content, title, isHTML) {
         const that = this;
         const elements_to_show = this.view.showInfo(content, title, isHTML);
-        // $('.btn_open_settings_actionBlock').show();
+
         elements_to_show.forEach(element_to_show => {
             that.pageService.showElement(element_to_show);
         });

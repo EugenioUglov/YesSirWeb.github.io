@@ -1,6 +1,7 @@
 class VoiceRecognitionService {
-    constructor(voiceRecognitionManager) {
+    constructor(voiceRecognitionManager, pageService) {
         this.voiceRecognitionManager = voiceRecognitionManager;
+        this.pageService = pageService;
         this.view = new VoiceRecognitionView();
     }
 
@@ -8,11 +9,11 @@ class VoiceRecognitionService {
         this.view.showSettings();
     }
 
-    startRecognizing = (parameter = {
+    startRecognizing = (option = {
         callbackInterimTranscript: callbackInterimTranscript, 
         callbackFinalTranscript: callbackFinalTranscript, 
         callbackEnd: callbackEnd}) => {
-            this.voiceRecognitionManager.startRecognizing(parameter);
+            this.voiceRecognitionManager.startRecognizing(option);
     }
     
     stopRecognizing = () => {
