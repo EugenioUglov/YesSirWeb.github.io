@@ -62,7 +62,7 @@
 			<!--Make sure the form has the autocomplete function switched off:-->
 			<!--<form autocomplete="off" action="/action_page.php">	</form>-->
 		
-			<div id="actionBlocks_page" style="margin-top: 20px">
+			<div id="actionBlocks_page" style="margin-top: 20px;">
 				<div id="autocomplete">
 					<div id="request_container">
 						<div id="input_field_request_container">
@@ -134,6 +134,8 @@
 
 				</div>
 
+				<div id="label_help"></div>
+
 				<div id="advanced_settings" style="display: none;">
 					<form id="rb_search_mode_container">
 						<label id="rb_search_by_request" class="rb_container" title="Write a text as in google ">
@@ -148,8 +150,6 @@
 						</label>
 					</form>
 				</div>
-				
-				<div id="label_help"></div>
 
 				<!--
 					<div class="autoComplete_wrapper">
@@ -195,7 +195,7 @@
 		
 				<br><br>
 						
-				<div class="actionBlocks_container" style="display: none;"></div>
+				<div class="actionBlocks_container" style="display: none; margin-top:100px;"></div>
 				<img src="./icons/spinner-greyblue.svg" class="icon_spinner" width="200px" height="200px" alt="tags icon" style="display: none;">
 				<br><br>
 
@@ -510,6 +510,7 @@
 		</p>
 	</div>
 
+	<div class="footer" style="margin-bottom:250px"></div>
 
 
 	<!-- When active hide all content, but not info alert -->
@@ -533,7 +534,9 @@
 	<script src="./js/libraries/inputDeviceManger.js"></script>
 	<script src="./js/libraries/voiceRecognitionManager.js"></script>
 	<script src="./js/libraries/speakerManager.js"></script>
-	
+	<script src="./js/libraries/hashManager.js"></script>
+	<script src="./js/libraries/blockManager.js"></script>
+	<script src="./js/libraries/defaultActionBlocks.js"></script>
 	
 	<script src="./js/services/actionBlockService.js"></script>
 	<script src="./js/services/searchSevice.js"></script>
@@ -541,6 +544,7 @@
 	<script src="./js/services/voiceRecognitionService.js"></script>
 	<script src="./js/services/autocompleteService.js"></script>
 	<script src="./js/services/pageService.js"></script>
+	<script src="./js/services/hashService.js"></script>
 	<script src="./js/services/scrollService.js"></script>
 	<script src="./js/services/noteService.js"></script>
 	<script src="./js/services/logsService.js"></script>
@@ -574,6 +578,7 @@
 	
 	<script src="./js/controllers/logsController.js"></script>
 	<script src="./js/controllers/pageController.js"></script>
+	<script src="./js/controllers/hashController.js"></script>
 	<script src="./js/controllers/noteController.js"></script>
 	<script src="./js/controllers/speakerController.js"></script>
 	<script src="./js/controllers/noteSpeakerController.js"></script>
