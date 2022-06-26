@@ -23,7 +23,13 @@ class ActionBlockService {
         this.#dateManager = dateManager;
         
         this.model = new ActionBlockModel(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, this.#dateManager);
-        this.view = new ActionBlockView(this.model.getActionNameEnum(), this.model.getContentTypeDescriptionByActionEnum(), this.model.action_description_by_action_name, fileManager, textManager, dropdownManager);
+        this.view = new ActionBlockView(this.model.getActionNameEnum(), 
+            this.model.getContentTypeDescriptionByActionEnum(), 
+            this.model.action_description_by_action_name, 
+            fileManager, 
+            textManager, 
+            dropdownManager
+        );
         
 
         this.init();
@@ -127,8 +133,6 @@ class ActionBlockService {
     showActionBlocks(actionBlocks_to_show, count_actionBlocks_to_show_at_time = 50) {
         const that = this;
 
-        // Scroll top.
-        this.scrollService.scrollTo();
         this.loadingService.startLoading();
         this.view.hideActionBlocksContainer();
 
@@ -197,6 +201,7 @@ class ActionBlockService {
             that.logsService.showLog(log);
         }
     }
+
 
     showActionBlocksByTags(user_plus_tags, user_minus_tags) {
         // Get command text from input field and find possible search data.
@@ -345,6 +350,7 @@ class ActionBlockService {
             action_name_of_actionBlock === this.model.getActionNameEnum().openUrl
         ) {
             const url = getValidURL(content);
+
             // open in new tab.
             let new_tab = window.open(url, '_blank');
 
@@ -364,11 +370,10 @@ class ActionBlockService {
         }
         // Action alertInfo must to include info option.
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showInfo) {
-            console.log('showinfo');
             const isHTML = false;
 
             this.onPageContentChange();
-            this.view.onNoteExecuted();
+            this.view.showContentOfActionBlock();
             this.noteService.openNote(content, actionBlock.title, isHTML);
             this.view.hidePage();
         }
@@ -377,7 +382,7 @@ class ActionBlockService {
             const isHTML = true;
             this.noteService.openNote(content, actionBlock.title, isHTML);
             $('#content_executed_from_actionBlock').show();
-
+            console.log(content);
             
             // Set position top.
             that.scrollService.setPosition(0, 0);
@@ -413,7 +418,7 @@ class ActionBlockService {
         
         let i;
 
-        console.log('this.#index_last_showed_actionBlock', this.#index_last_showed_actionBlock);
+        // console.log('this.#index_last_showed_actionBlock', this.#index_last_showed_actionBlock);
 
         for (i = this.#index_last_showed_actionBlock; i < actionBlocks.length; i++) {
             if (count_actionBlocks_curr >= max_count_actionBlocks_to_add_on_page) {
@@ -437,7 +442,7 @@ class ActionBlockService {
         this.showActionBlocks();
     
         // Scroll top.
-        this.scrollService.scrollTo();
+        // this.scrollService.scrollTo();
     }
 
     save(actionBlocks) {
@@ -465,13 +470,13 @@ class ActionBlockService {
     }
 
 
-    deleteAll() {
-        const text_confirm_window = 'Are you sure you want to delete ALL commands?' + '\n' +
-        '* It\'s recommended to download the commands first to save all created information';
+    deleteAllActionBlocks() {
+        const that = this;
+        const text_confirm_window = 'Are you sure you want to delete ALL Action-Blocks?';
 
         function onClickOkConfirm() {
             // Clear model variable with Action-Blocks and show it.
-
+            that.model.deleteActionBlocks();
             return;
         }
 
@@ -509,9 +514,6 @@ class ActionBlockService {
         this.modalLoadingService.show();
         
         try {
-            // OLD
-            // actionBlocks_from_file = JSON.parse(content_of_file);
-            // NEW
             actionBlocks_from_file = this.mapDataStructure.getParsed(content_of_file);
         }
         catch(error) {
@@ -524,6 +526,7 @@ class ActionBlockService {
 
         this.view.closeSettings();
         this.model.setActionBlocks(actionBlocks_from_file);
+        this.scrollService.setPositionTop();
         this.showActionBlocks();
         this.searchService.clearInputField();
         this.modalLoadingService.hide();
@@ -551,6 +554,7 @@ class ActionBlockService {
             that.modalLoadingService.show();
             $('#dialog_database_manager')[0].close();
             that.model.setActionBlocks(that.model.actionBlocks_from_database);
+            this.scrollService.setPositionTop();
             that.showActionBlocks();
             that.modalLoadingService.hide();
 
@@ -580,6 +584,7 @@ class ActionBlockService {
         this.scrollService.scrollTo();
         this.view.updatePage();
         // Refresh Action-Blocks on page.
+        this.scrollService.setPositionTop();
         this.showActionBlocks();
         this.modalLoadingService.hide();
     };
@@ -598,6 +603,7 @@ class ActionBlockService {
         
         // Create default Action-Blocks.
         createDefaultActionBlocks();
+        this.scrollService.setPositionTop();
         this.showActionBlocks();
 
         return;
@@ -656,7 +662,8 @@ class ActionBlockService {
         // if (i_actionBlock >= 0) {
         //     actionBlocks_to_show.splice(i_actionBlock, 1);
         // }
-
+        
+        this.scrollService.setPositionTop();
         this.showActionBlocks(actionBlocks_to_show);
         
         /*
@@ -677,12 +684,10 @@ class ActionBlockService {
     };
 
     #onClickBtnShowSettingsActionBlock = (title) => {
-        // this.openActionBlockSettings(title);
-        window.location.hash = '#editActionBlock=' + title;
+        this.pageService.openSettingsActionBlockPage(title);
     };
 
     showSettingsToCreateActionBlock = (action_name) => {
-        console.log('showSettingsToCreateActionBlock');
         this.model.action_for_new_actionBlock = action_name;
 
         this.view.showSettingsToCreateActionBlock(action_name);
@@ -703,9 +708,7 @@ class ActionBlockService {
 
         elements_to_show.forEach(element => {
              that.pageService.showElement(element);
-        }); 
-
-        console.log('show elements', elements_to_show);
+        });
     }
 
     clearAllSettingsFields() {

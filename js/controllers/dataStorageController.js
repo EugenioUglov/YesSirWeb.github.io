@@ -1,8 +1,8 @@
 class DataStorageController {
-    constructor(actionBlockService, dataStorageService, pageSerice) {
+    constructor(actionBlockService, dataStorageService, pageService) {
         this.actionBlockService = actionBlockService;
         this.dataStorageService = dataStorageService;
-        this.pageSerice = pageSerice;
+        this.pageService = pageService;
 
         this.#setListeners();
     }
@@ -35,6 +35,7 @@ class DataStorageController {
             // $('#btn_authorization')[0].disabled = true;
             $('#authorization_form').hide();
             that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().database);
+            window.scrollTo(0, 0);
             that.actionBlockService.showActionBlocksFromStorage();
         });
 
@@ -54,12 +55,14 @@ class DataStorageController {
         function onClickBtnRewriteOnDialogDatabaseManger() {
             $(".black_background").hide();
             that.actionBlockService.rewriteActionBlocks();
+            that.pageService.openMainPage();
         }
 
         this.dataStorageService.view.bindClickBtnUploadActionBlocksToDatabase(onClickBtnUploadActionBlocksToDatabase);
         
         function onClickBtnUploadActionBlocksToDatabase() {
             that.actionBlockService.save();
+            that.pageService.openMainPage();
         }
 
         this.dataStorageService.view.bindClickBtnCancelGetActionBlocksFromDatabase(onClickBtnCancelDialogDatabase);
@@ -68,7 +71,7 @@ class DataStorageController {
             $('#rb_storage_localStorage')[0].checked = true;
             that.#onRbLocalStorageChoosed();
             that.actionBlockService.showActionBlocksFromStorage();
-            that.pageSerice.openMainPage();
+            that.pageService.openMainPage();
         }
     }
 }

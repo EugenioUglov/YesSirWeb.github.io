@@ -1,6 +1,4 @@
 class YesSir {
-    #dialogWindow;
-
     constructor() {
         const inputDeviceManager = new InputDeviceManager();
         this.textManager = new TextManager();
@@ -12,6 +10,7 @@ class YesSir {
         this.mapDataStructure = new MapDataStructure();
         this.dbManager = new DBManager();
         this.arrayManager = new ArrayManager();
+        this.blockManager = new BlockManager();
 
         this.keyCodeByKeyName = inputDeviceManager.getKeyCodeByKeyName();
         this.dialogWindow = new DialogWindow();
@@ -20,13 +19,13 @@ class YesSir {
         this.modalBoxService = new ModalBoxService();
         this.modalLoadingService = new ModalLoadingService(this.modalBoxService);
         this.noteSpeakerService = new NoteSpeakerService(this.speakerManager);
-        this.dataStorageService = new DataStorageService(this.#dialogWindow);
+        this.dataStorageService = new DataStorageService(this.dialogWindow);
         this.searchService = new SearchSevice();
         this.scrollService = new ScrollService();
         this.logsService = new LogsService(this.fileManager, this.dateManager);
         this.autocompleteService = new AutocompleteService(this.textManager);
-        this.voiceRecognitionService = new VoiceRecognitionService(this.voiceRecognitionManager);
         this.pageService = new PageService(this.textManager, this.noteSpeakerService, this.searchService);
+        this.voiceRecognitionService = new VoiceRecognitionService(this.voiceRecognitionManager, this.pageService);
         this.loadingService = new LoadingService();
         this.noteService = new NoteService(this.noteSpeakerService, this.pageService);
         this.actionBlockService = new ActionBlockService(this.dbManager, this.fileManager, 
@@ -78,7 +77,7 @@ let yesSir;
         const actionBlockController = new ActionBlockController(actionBlockService,
             loadingService, dialogWindow, scrollService, searchService, pageService, noteService);
         const autocompleteController = new AutocompleteController(pageService, actionBlockService, autocompleteService);
-        const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable);
+        const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable, pageService);
         const scrollController = new ScrollController(scrollService, actionBlockService);
         const pageController = new PageController(pageService);
         const searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);

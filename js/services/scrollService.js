@@ -32,6 +32,10 @@ class ScrollService {
         window.scrollTo(pageX, pageY);
     }
 
+    setPositionTop() {
+        window.scrollTo(0, 0);
+    }
+
     bindScroll(callbackScrollEndPage, callbackScrollUp, callbackScrollDown) {
         const that = this;
 

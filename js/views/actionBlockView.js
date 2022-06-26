@@ -191,7 +191,7 @@ class ActionBlockView {
         $('#fixed_btn_plus').hide();
     }
 
-    onNoteExecuted() {
+    showContentOfActionBlock() {
         // this.hidePage();
         $('#content_executed_from_actionBlock').show();
     }

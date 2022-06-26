@@ -11,7 +11,7 @@ class SearchView {
         $('#input_field_request')[0].style.color = 'gray';
     }
 
-    getUserRequest() {
+    getTextFromMainInputField() {
         const user_phrase = $('#input_field_request')[0].value;
         return user_phrase;
     }
@@ -34,13 +34,17 @@ class SearchView {
         return user_minus_tags;
     }
 
-    onEnter() {
+    setTextColorInInputField(new_color) {
         // Set color of text in input field command to black.
-        $('#input_field_request')[0].style.color = 'black';
+        $('#input_field_request')[0].style.color = new_color;
     }
 
     clear() {
         $('#input_field_request')[0].value = '';
+    }
+
+    focusInputFieldPlusTags() {
+        $('.input_field_plus_tags').focus();
     }
 
     focusInputFieldMinusTags() {
@@ -50,14 +54,14 @@ class SearchView {
     bindClickBtnEnterRequest(handler) {
         console.log('bindClickBtnEnterRequest');
         const that = this;
-        $('#btn_accept_input_field_request')[0].addEventListener('click', () => { 
-            that.onEnter(); 
+        $('#btn_accept_input_field_request').on('click', () => { 
+            that.setTextColorInInputField('black'); 
             handler();
         });
     }
     
     bindClickBtnClearRequestField(handler) {
-        $('#btn_clear_input_field_request')[0].addEventListener('click', () => {
+        $('#btn_clear_input_field_request').on('click', () => {
             handler();
             $("#input_field_request")[0].focus();
         });
@@ -65,7 +69,7 @@ class SearchView {
 
     bindKeyUpRequestField(handler) {
         // Execute a function when the user releases a key on the keyboard.
-        $('#input_field_request')[0].addEventListener('keyup', function(e) {
+        $('#input_field_request').on('keyup', function(e) {
             const request = $('#input_field_request')[0].value;
             handler(request, e.keyCode);
         });
@@ -76,19 +80,43 @@ class SearchView {
             handler(this.getPlusTags(), this.getMinusTags());
         });
 
-        $('.input_field_minus_tags').keypress((event) => {
-            // Enter.
-            if (event.keyCode == 13) {
-                event.preventDefault();
-                handler(this.getPlusTags(), this.getMinusTags());
-            }
-        });
+        // $('.input_field_minus_tags').keypress((event) => {
+        //     // Enter.
+        //     if (event.keyCode == 13) {
+        //         event.preventDefault();
+        //         handler(this.getPlusTags(), this.getMinusTags());
+        //     }
+        // });
     }
 
 
     bindKeypressInputFieldPlusTags(handler) {
-        $('.input_field_plus_tags').keypress(function(event) {
-            handler(event);
+        const that = this;
+
+        $('.input_field_plus_tags').on('keyup', function(event) {
+            if (event.keyCode == 13)  {
+                event.preventDefault();
+    
+                // that.focusInputFieldMinusTags();
+            }
+            else {
+                handler(event);
+            }
+        });
+    }
+
+    bindKeypressInputFieldMinusTags(handler) {
+        const that = this;
+
+        $('.input_field_minus_tags').on('keyup', function(event) {
+            if (event.keyCode == 13)  {
+                event.preventDefault();
+    
+                // that.focusInputFieldPlusTags();  
+            }
+            else {
+                handler(event);
+            }
         });
     }
 
@@ -96,7 +124,7 @@ class SearchView {
         const that = this;
 
         /*execute a function when someone writes in the text field:*/
-        $('#input_field_request')[0].addEventListener('input', function(e) {
+        $('#input_field_request').on('input', function(e) {
             const lastCharacter = e.data;
             
             $('#input_field_request')[0].style.color = 'gray';
@@ -123,11 +151,6 @@ class SearchView {
             $("#autocomplete").hide();
             $("#search_by_tags_container").show();
         });
-
-
-
-    
-
 
         $("#input_field_request")[0].onfocus = () => {
             $("#autocomplete")[0].style.boxShadow = "0px 0px 5px 1px #4285f4"; 

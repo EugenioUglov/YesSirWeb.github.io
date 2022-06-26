@@ -13,25 +13,25 @@ class ModalBoxView {
     $btn_close = document.getElementsByClassName("close")[0];
 
 
-    show(setting = {body_text: '', header_text: '', footer_text: '', is_possible_close: true}) {
-        const DEFAULT_SETTING = {
+    show(parameter = {body_text: '', header_text: '', footer_text: '', is_possible_close: true}) {
+        const default_parameter = {
             body_text: '',
             header_text: '',
             footer_text: '',
             is_possible_close: true
         };
 
-        let body_text = setting.body_text != undefined ? setting.body_text : DEFAULT_SETTING.body_text;
-        let header_text = setting.header_text != undefined ? setting.header_text : DEFAULT_SETTING.header_text;
-        let footer_text = setting.footer_text != undefined ? setting.footer_text : DEFAULT_SETTING.footer_text;
-        let is_possible_close = setting.is_possible_close != undefined ? setting.is_possible_close : DEFAULT_SETTING.is_possible_close;
+        let body_text = parameter.body_text != undefined ? parameter.body_text : default_parameter.body_text;
+        let header_text = parameter.header_text != undefined ? parameter.header_text : default_parameter.header_text;
+        let footer_text = parameter.footer_text != undefined ? parameter.footer_text : default_parameter.footer_text;
+        let is_possible_close = parameter.is_possible_close != undefined ? parameter.is_possible_close : default_parameter.is_possible_close;
 
         if (is_possible_close) {
             $('.modal-close').show();
             this.bindClickOutsideModal(()=>this.hide());
         } else {
             $('.modal-close').hide();
-            this.bindClickOutsideModal(()=>{});
+            this.bindClickOutsideModal();
         }
         if (header_text) { 
             $('.modal-header-text').html(header_text);
@@ -79,7 +79,7 @@ class ModalBoxView {
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == that.#modal) {
-                handler();
+                if (handler) handler();
             }
         }
 

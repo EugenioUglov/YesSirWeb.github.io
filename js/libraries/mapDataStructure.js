@@ -20,7 +20,21 @@ class MapDataStructure {
     }
 
     getParsed(map_str) {
+        let parsed = {};
+        // try {
+            parsed = JSON.parse(map_str, this.#reviver);
+        // }
+        // catch {
+        //     map_str = replaceSymbols(map_str, '\n', '\\n');
+        //     parsed = JSON.parse(map_str, this.#reviver);
+        // }
+        
         return JSON.parse(map_str, this.#reviver);
+
+        // function replaceSymbols(text, find, replace) {
+        //     let escapedFind = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        //     return text.replace(new RegExp(escapedFind, 'g'), replace);
+        // }
     }
 
     

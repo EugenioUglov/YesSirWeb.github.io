@@ -17,8 +17,6 @@ class NoteController {
 
     #onClose = () => {
         this.noteService.close();
-        console.log('close note');
-
         
         if (window.location.hash.includes('#editActionBlock')) {
             this.actionBlockService.setDefaultValuesForSettingsElementsActionBlock();

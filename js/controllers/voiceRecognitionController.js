@@ -6,60 +6,9 @@ class VoiceRecognitionController {
         this.event = this.model.getEvent();
         this.voiceRecognitionService = voiceRecognitionService;
         this.recognizer;
-        //this.initOld();
-        //this.#init();
+
         this.#bindViewEvenets();
     }
-
-    #init() {
-        const that = this;
-        
-
-        if ('webkitSpeechRecognition' in window) {
-            // Создаем распознаватель
-            this.recognizer = new webkitSpeechRecognition();
-
-            // Ставим опцию, чтобы распознавание началось ещё до того, как пользователь закончит говорить
-            this.recognizer.interimResults = true;
-            
-            // Какой язык будем распознавать?
-            this.recognizer.lang = 'en-En';
-        
-            const that = this;
-            let isFinalResult = false;
-
-            // Используем колбек для обработки результатов
-            this.recognizer.onresult = function (event) {
-                let result = event.results[event.resultIndex];
-
-                if (result.isFinal) {
-                    isFinalResult = true;
-                    const final_transcript = result[0].transcript;                    
-                    input_field_request.style.color = 'black';
-                    const last_character_final_transcript = final_transcript[final_transcript.length - 1];
-
-                    if (last_character_final_transcript === '.') {
-                        final_transcript = final_transcript.substr(0, final_transcript.length - 1);
-                    }
-                    
-                    window.location.hash = '#request=' + final_transcript + '&executebytitle=true';
-                } else {
-                    const interim_transcript = result[0].transcript;
-
-                    window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
-                }
-            }
-
-            this.recognizer.onend = function() {
-                if (isFinalResult === false && that.voiceRecognitionService.isRecognizing()) that.voiceRecognitionService.startRecognizing();
-                else {
-                    this.isRecognizing = false;
-                }
-            }
-        }
-    }
-
-    
 
     #bindViewEvenets() {
         this.view.bindClickBtnVoiceRecognition(this.onClickBtnVoiceRecognition);
@@ -68,49 +17,42 @@ class VoiceRecognitionController {
 
     onClickBtnVoiceRecognition = () => {
         const that = this;
-        console.log('isrec', this.voiceRecognitionService.isRecognizing());
 
         if (this.voiceRecognitionService.isRecognizing()) {
             this.voiceRecognitionService.stopRecognizing();
         }
         else {
-            this.voiceRecognitionService.startRecognizing(onInterimTranscript, onFinalTranscript);
+            this.voiceRecognitionService.startRecognizing(
+            //     {
+            //     callbackInterimTranscript: onInterimTranscript, 
+            //     callbackFinalTranscript: onFinalTranscript
+            // }
+            );
 
-            function onInterimTranscript(interim_transcript) {
-                window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
-            }
+            // function onInterimTranscript(interim_transcript) {
+            //     pageService.setHashRequest({
+            //         request_value: interim_transcript, 
+            //         is_execute_actionBlock_by_title: false
+            //     });
+            // }
 
-            function onFinalTranscript(final_transcript) {                   
-                input_field_request.style.color = 'black';
-                const last_character_final_transcript = final_transcript[final_transcript.length - 1];
+            // function onFinalTranscript(final_transcript) {                   
+            //     input_field_request.style.color = 'black';
+            //     const last_character_final_transcript = final_transcript[final_transcript.length - 1];
 
-                if (last_character_final_transcript === '.') {
-                    final_transcript = final_transcript.substr(0, final_transcript.length - 1);
-                }
+            //     if (last_character_final_transcript === '.') {
+            //         final_transcript = final_transcript.substr(0, final_transcript.length - 1);
+            //     }
 
-                window.location.hash = '#request=' + final_transcript + '&executebytitle=true' + '&listen';
-            }
+            //     pageService.setHashRequest({
+            //         request_value: final_transcript,
+            //         is_execute_actionBlock_by_title: true,
+            //         is_listen_text: true
+            //     });
+            // }
         }
     }
 
-    /*
-    startRecognizing = (event) => {
-        if (this.isRecognizing) return;
-        
-        console.log('start voice recognition');
-        this.recognizer.start();
-        this.isRecognizing = true;
-    }
-    
-    stopRecognizing = (event) => {
-        if (this.isRecognizing === false) return;
-
-        console.log('stop voice recognition');
-        this.recognizer.stop();
-        this.isRecognizing = false;
-    }
-    */
- 
 
     initOld() {
         const that = this;
@@ -183,15 +125,11 @@ class VoiceRecognitionController {
 
 
 
-        function onload() { 
-            
-        }
 
         let recognition;
 
 
         if (!('webkitSpeechRecognition' in window)) {
-            upgrade();
         } else {
             recognition = new webkitSpeechRecognition();
             
@@ -298,115 +236,22 @@ class VoiceRecognitionController {
                         onSpeechResult(final_transcript);
                     } else {
                         interim_transcript += event.results[i][0].transcript;
-                        onContinousResult(interim_transcript);
                     }
                 }
 
                 final_transcript = capitalize(final_transcript);
                 
-                // Paste text to big speech field
-                //final_span.innerHTML = linebreak(final_transcript);
-                //interim_span.innerHTML = linebreak(interim_transcript);
-                continuos_speech_text = interim_transcript;
-
-
-                // if coninous speech.
-                if (interim_transcript) {
-                    // Set text continous.
-                    //input_field_request.value = continuos_speech_text;
-                    // Set color for text.
-                    //input_field_request.style.color = 'gray';
-                    
-                    if 
-                    (
-                        interim_transcript.includes('ok') || interim_transcript.includes('okay') || 
-                        interim_transcript.includes('enter') || interim_transcript.includes('accept') || 
-                        interim_transcript.includes('finish') || interim_transcript.includes('stop') || interim_transcript.includes('принять') || 
-                        interim_transcript.includes('finito')
-                    ) {
-                        recognition.stop();
-                    }
-
-                    window.location.hash = '#request=' + interim_transcript + '&executebytitle=false';
-                    
-                }
-                // if finish speech.
-                else if (final_transcript) {
-                    recognition.stop();
-                    input_field_request.style.color = 'black';
-                    const last_character_final_transcript = final_transcript[final_transcript.length - 1];
-
-                    if (last_character_final_transcript === '.') {
-                        final_transcript = final_transcript.substr(0, final_transcript.length - 1);
-                    }
-
-                    window.location.hash = '#request=' + final_transcript + '&executebytitle=true';
-
-                    final_transcript = '';
-                }
             };
         }
 
         // Android works just with this result. PC works with this (final result) and continuos speech result.
         function onSpeechResult(speech_text) {
-            let language = 'en';
-
-            console.log('user phrase: ', speech_text);
-            
-            //document.body.innerHTML += 'finish';
             let selected_language_user = dropdown_select_language.options[dropdown_select_language.selectedIndex].text;
-            
-
-            // ENGLISH
-            if(selected_language_user === 'English'){
-                // Execute action on get phrase.
-                
-                language = 'en';
-
-                if(speech_text.includes('stop')) {
-                    if (recognizing) {
-                        recognition.stop();
-                        return;
-                    }
-                }
-            }
-
-            // RUSSIAN
-            else if(selected_language_user === 'Pусский') {
-                console.log('selected_language_user: ' + selected_language_user);
-
-                language = 'ru';
-
-                if(speech_text.includes('стоп')) {
-                    if (recognizing) {
-                        recognition.stop();
-                        return;
-                    }
-                }
-            }
-            
-            else if(selected_language_user === 'Italiano') {
-                language = 'it';
-                
-                if(speech_text.includes('ferma')) {
-                    if (recognizing) {
-                        recognition.stop();
-                        return;
-                    }
-                }
-            }
-            
-            //system.onGetPhrase(speech_text, language);
         }
 
-        function onContinousResult(speech_text) {
-        }
 
         updateDialect();
 
-        function upgrade() {
-            btn_voice_recognition.style.visibility = 'hidden';
-        }
 
 
         function linebreak(s) {
@@ -423,9 +268,6 @@ class VoiceRecognitionController {
             return s.replace(first_char, function(m) { return m.toUpperCase(); });
         }
 
-
-
-
         function startButton(event) {
             if (recognizing) {
                 recognition.stop();
@@ -439,30 +281,6 @@ class VoiceRecognitionController {
             start_timestamp = event.timeStamp;
         }
 
-        function showInfo(s) {
-            /*
-            if (s) {
-                for (let child = info.firstChild; child; child = child.nextSibling) {
-                    if (child.style) {
-                        child.style.display = child.id == s ? 'inline' : 'none';
-                    }
-                }
-                info.style.visibility = 'visible';
-            } else {
-                info.style.visibility = 'hidden';
-            }
-            */
-        }
-
-
-
-        voiceRecognition.stop = function() {
-            if (recognizing) {
-                recognition.stop();
-            }
-        }
-
-
         function onValueChangedInfoDropDown(selected) {
             let selectedValue = selected.value;
             alert(selectedValue);
@@ -473,7 +291,6 @@ class VoiceRecognitionController {
             //let selectIndex=selectObj.selectedIndex;
             //let selectValue=selectObj.options[selectIndex].text;
             //let output=document.getElementById("output");
-            //alert(selected_film.value);
             //output.innerHTML=selectValue;
         }
     }
