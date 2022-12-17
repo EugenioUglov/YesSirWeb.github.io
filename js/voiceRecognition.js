@@ -61,7 +61,7 @@ updateDialect();
 //select_dialect.selectedIndex = 6;
 
 if(localStorage.getItem('i_language') != undefined) {
-	console.log("LOAD from local storage: the last used language is: " + dropdown_select_language[localStorage.getItem('i_language')].text);
+	// console.log("LOAD from local storage: the last used language is: " + dropdown_select_language[localStorage.getItem('i_language')].text);
 	dropdown_select_language.selectedIndex = localStorage.getItem('i_language');
 }
 

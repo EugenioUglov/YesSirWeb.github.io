@@ -17,38 +17,39 @@ class VoiceRecognitionController {
 
     onClickBtnVoiceRecognition = () => {
         const that = this;
-        console.log('isrec', this.voiceRecognitionService.isRecognizing());
 
         if (this.voiceRecognitionService.isRecognizing()) {
             this.voiceRecognitionService.stopRecognizing();
         }
         else {
-            this.voiceRecognitionService.startRecognizing({
-                callbackInterimTranscript: onInterimTranscript, 
-                callbackFinalTranscript: onFinalTranscript
-            });
+            this.voiceRecognitionService.startRecognizing(
+            //     {
+            //     callbackInterimTranscript: onInterimTranscript, 
+            //     callbackFinalTranscript: onFinalTranscript
+            // }
+            );
 
-            function onInterimTranscript(interim_transcript) {
-                pageService.setHashRequest({
-                    request_value: interim_transcript, 
-                    is_execute_actionBlock_by_title: false
-                });
-            }
+            // function onInterimTranscript(interim_transcript) {
+            //     pageService.setHashRequest({
+            //         request_value: interim_transcript, 
+            //         is_execute_actionBlock_by_title: false
+            //     });
+            // }
 
-            function onFinalTranscript(final_transcript) {                   
-                input_field_request.style.color = 'black';
-                const last_character_final_transcript = final_transcript[final_transcript.length - 1];
+            // function onFinalTranscript(final_transcript) {                   
+            //     input_field_request.style.color = 'black';
+            //     const last_character_final_transcript = final_transcript[final_transcript.length - 1];
 
-                if (last_character_final_transcript === '.') {
-                    final_transcript = final_transcript.substr(0, final_transcript.length - 1);
-                }
+            //     if (last_character_final_transcript === '.') {
+            //         final_transcript = final_transcript.substr(0, final_transcript.length - 1);
+            //     }
 
-                pageService.setHashRequest({
-                    request_value: final_transcript,
-                    is_execute_actionBlock_by_title: true,
-                    is_listen_text: true
-                });
-            }
+            //     pageService.setHashRequest({
+            //         request_value: final_transcript,
+            //         is_execute_actionBlock_by_title: true,
+            //         is_listen_text: true
+            //     });
+            // }
         }
     }
 
@@ -59,7 +60,7 @@ class VoiceRecognitionController {
         const languages = this.model.getLanguages();
 
         function onClickBtnVoiceRecognition(event) {
-            console.log('start voice recognition');
+            // console.log('start voice recognition');
             startButton(event);
         }
 
@@ -91,8 +92,7 @@ class VoiceRecognitionController {
         //select_dialect.selectedIndex = 6;
 
         if(localStorage.getItem('i_language') != undefined) {
-            console.log('LOAD from local storage: the last used language is: ' + 
-                dropdown_select_language[localStorage.getItem('i_language')].text);
+            // console.log('LOAD from local storage: the last used language is: ' +  dropdown_select_language[localStorage.getItem('i_language')].text);
 
             dropdown_select_language.selectedIndex = localStorage.getItem('i_language');
         }

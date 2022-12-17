@@ -23,7 +23,7 @@ class DataStorageController {
 
         // On click btn authorization.
         $('#btn_authorization')[0].addEventListener('click', function() {
-            console.log('btn_authorization click');
+            // console.log('btn_authorization click');
             const authorization_data = {
                 nickname: $('#input_field_nickname').val(),
                 password: $('#input_field_password').val()
@@ -35,6 +35,7 @@ class DataStorageController {
             // $('#btn_authorization')[0].disabled = true;
             $('#authorization_form').hide();
             that.dataStorageService.setUserStorage(that.dataStorageService.getStorageNameEnum().database);
+            window.scrollTo(0, 0);
             that.actionBlockService.showActionBlocksFromStorage();
         });
 

@@ -69,14 +69,14 @@ class DefaultActionBlocks {
         };
 
         const default_actionBlocks = [
-            actionBlock_create,
-            actionBlock_create_note,
+            // actionBlock_create,
+            // actionBlock_create_note,
             actionBlock_facebook_of_developer, 
             actionBlock_email_of_developer,
             actionBlock_open_file_manager,
-            actionBlock_open_data_storage_manager,
-            actionBlock_logs,
-            actionBlock_voiceRecognitionSettings
+            // actionBlock_open_data_storage_manager,
+            // actionBlock_logs,
+            // actionBlock_voiceRecognitionSettings
         ];
 
         function getContentActionBlockOpenFileManager() {
@@ -148,7 +148,7 @@ class DefaultActionBlocks {
                         });
 
                         function onInterimTranscript(result_text) {
-                            console.log('InterimTranscript', result_text);
+                            // console.log('InterimTranscript', result_text);
                             $('.input_field_content').val(result_text);
                         }
 
@@ -159,7 +159,7 @@ class DefaultActionBlocks {
                         }
 
                         function onEndVoiceRecognition() {
-                            console.log('end');
+                            // console.log('end');
                         }
                     }
                 }
@@ -188,7 +188,7 @@ class DefaultActionBlocks {
                         }
 
                         function onEndVoiceRecognition() {
-                            console.log('end');
+                            // console.log('end');
                         }
                     }
                 }
@@ -206,11 +206,11 @@ class DefaultActionBlocks {
                         });
 
                         function onInterimTranscript(result_text) {
-                            console.log('interim result', result_text);
+                            // console.log('interim result', result_text);
                         }
 
                         function onFinalTranscript(result_text) {
-                            console.log('final result', result_text);
+                            // console.log('final result', result_text);
 
                             if (result_text.includes('no') || result_text.includes('nope') || result_text.includes("don't")) {
                                 isFinalResult = true;
@@ -234,7 +234,7 @@ class DefaultActionBlocks {
                         }
 
                         function onEndVoiceRecognition() {
-                            console.log('end');
+                            // console.log('end');
                         }
                     }
                 }

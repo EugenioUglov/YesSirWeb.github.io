@@ -43,21 +43,25 @@ class SearchView {
         $('#input_field_request')[0].value = '';
     }
 
+    focusInputFieldPlusTags() {
+        $('.input_field_plus_tags').focus();
+    }
+
     focusInputFieldMinusTags() {
         $('.input_field_minus_tags').focus();
     }
 
     bindClickBtnEnterRequest(handler) {
-        console.log('bindClickBtnEnterRequest');
+        // console.log('bindClickBtnEnterRequest');
         const that = this;
-        $('#btn_accept_input_field_request')[0].addEventListener('click', () => { 
+        $('#btn_accept_input_field_request').on('click', () => { 
             that.setTextColorInInputField('black'); 
             handler();
         });
     }
     
     bindClickBtnClearRequestField(handler) {
-        $('#btn_clear_input_field_request')[0].addEventListener('click', () => {
+        $('#btn_clear_input_field_request').on('click', () => {
             handler();
             $("#input_field_request")[0].focus();
         });
@@ -65,7 +69,7 @@ class SearchView {
 
     bindKeyUpRequestField(handler) {
         // Execute a function when the user releases a key on the keyboard.
-        $('#input_field_request')[0].addEventListener('keyup', function(e) {
+        $('#input_field_request').on('keyup', function(e) {
             const request = $('#input_field_request')[0].value;
             handler(request, e.keyCode);
         });
@@ -76,19 +80,43 @@ class SearchView {
             handler(this.getPlusTags(), this.getMinusTags());
         });
 
-        $('.input_field_minus_tags').keypress((event) => {
-            // Enter.
-            if (event.keyCode == 13) {
-                event.preventDefault();
-                handler(this.getPlusTags(), this.getMinusTags());
-            }
-        });
+        // $('.input_field_minus_tags').keypress((event) => {
+        //     // Enter.
+        //     if (event.keyCode == 13) {
+        //         event.preventDefault();
+        //         handler(this.getPlusTags(), this.getMinusTags());
+        //     }
+        // });
     }
 
 
     bindKeypressInputFieldPlusTags(handler) {
-        $('.input_field_plus_tags').keypress(function(event) {
-            handler(event);
+        const that = this;
+
+        $('.input_field_plus_tags').on('keyup', function(event) {
+            if (event.keyCode == 13)  {
+                event.preventDefault();
+    
+                // that.focusInputFieldMinusTags();
+            }
+            else {
+                handler(event);
+            }
+        });
+    }
+
+    bindKeypressInputFieldMinusTags(handler) {
+        const that = this;
+
+        $('.input_field_minus_tags').on('keyup', function(event) {
+            if (event.keyCode == 13)  {
+                event.preventDefault();
+    
+                // that.focusInputFieldPlusTags();  
+            }
+            else {
+                handler(event);
+            }
         });
     }
 
@@ -96,7 +124,7 @@ class SearchView {
         const that = this;
 
         /*execute a function when someone writes in the text field:*/
-        $('#input_field_request')[0].addEventListener('input', function(e) {
+        $('#input_field_request').on('input', function(e) {
             const lastCharacter = e.data;
             
             $('#input_field_request')[0].style.color = 'gray';
@@ -105,11 +133,11 @@ class SearchView {
         
         $('#btn_advanced_settings_for_search').click(function() {
             if ($('#advanced_settings').is(':visible')) {
-                console.log('#advanced_settings hide');
+                // console.log('#advanced_settings hide');
                 $('#advanced_settings').hide();
             }
             else {
-                console.log('#advanced_settings show');
+                // console.log('#advanced_settings show');
                 $('#advanced_settings').show();
             }
         });
@@ -123,11 +151,6 @@ class SearchView {
             $("#autocomplete").hide();
             $("#search_by_tags_container").show();
         });
-
-
-
-    
-
 
         $("#input_field_request")[0].onfocus = () => {
             $("#autocomplete")[0].style.boxShadow = "0px 0px 5px 1px #4285f4"; 

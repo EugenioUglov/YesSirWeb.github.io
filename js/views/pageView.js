@@ -11,7 +11,7 @@ class PageView {
     }
 
     hideShowedElements() {
-        console.log('hide elements', this.#showed_elements);
+        // console.log('hide elements', this.#showed_elements);
         this.#showed_elements.forEach(element => element.hide());
         this.#showed_elements = [];
     }

@@ -33,7 +33,7 @@ class ActionBlockView {
     }
 
     updatePreview() {
-        console.log('Update preview');
+        // // console.log('Update preview');
         const actionBlock_preview = {
             title: $('#settings_actionBlock_container').find('.input_field_title')[0].value,
             imageURL: $('#settings_actionBlock_container').find('.input_field_image_URL')[0].value
@@ -119,7 +119,7 @@ class ActionBlockView {
         // Set value dropdown.
         $('#settings_actionBlock_container').find('.type_actionBlock_container').show();
         settings_actionBlock_container.find('.dropdown_select_action').val(action_name_of_actionBlock);
-        console.log('dropdown select action', settings_actionBlock_container.find('.dropdown_select_action').val());
+        // console.log('dropdown select action', settings_actionBlock_container.find('.dropdown_select_action').val());
         // DropDown to choose action of Action-Block hide.
         
         // Set value content.
@@ -156,6 +156,8 @@ class ActionBlockView {
         // Show button to add ActionBlock.
         $('#fixed_btn_plus').show();
         $('#btn_create_default_actionBlocks').hide();
+        $('#btn_back').hide();
+        $('#btn_close').hide();
     }
 
     onOpenMainPageWithoutActionBlocks() {
@@ -242,7 +244,7 @@ class ActionBlockView {
                 // var title = $(this).closest('.infoBlock').attr('value');
                 // var title = $(this).closest('.infoBlock').closest('.title').val();
                 const title = $(this).closest('.infoBlock').find('.title').text();
-                console.log('onClickBtnShowSettings', title);
+                // console.log('onClickBtnShowSettings', title);
                 settingsActionBlockClickHandler(title);
             }
         }
@@ -252,15 +254,15 @@ class ActionBlockView {
             if (is_mouse_enter_settings) return false;
             // const title = $(this).attr('value');
             const title = $(this).text();
-            console.log('clicked action-block', title);
             
             actionBlockClickHandler(title);
         });
     }
 
     bindClickBtnRewriteActionBlocks(handler) {
-        $('#dialog_upload_actionBloks_from_file').find('.btn_rewrite_actionBlocks')[0].addEventListener('click', function() {
-            handler();
+        $('#dialog_upload_actionBloks_from_file').find('.btn_rewrite_actionBlocks')[0].
+            addEventListener('click', function() {
+                handler();
         });
     }
 
@@ -316,6 +318,7 @@ class ActionBlockView {
 
     bindClickBtnCreateActionBlock(handler) {
         $('#btn_create_actionBlock').on('click', () => {
+            
             const settings_actionBlock_container = $('#settings_actionBlock_container');
 
             // Get title value.
@@ -424,16 +427,16 @@ class ActionBlockView {
             // Delete empty symbols from sides in text.
             for (const i_tag in tags) {
                 tags[i_tag] = tags[i_tag].trim();
-                console.log(tags[i_tag]);
+                // console.log(tags[i_tag]);
             }
-            console.log('tags array", tags);
+            // console.log('tags array", tags);
         
             // Delete same tags.
             let tags_set = new Set(tags);
-            console.log('tags_set", tags_set);
+            // console.log('tags_set", tags_set);
             
             tags = Array.from(tags_set);
-            console.log('tags array from set", tags);
+            // console.log('tags array from set", tags);
             */
         
             // Action.
@@ -469,7 +472,7 @@ class ActionBlockView {
             // Clear executed content.
             $('#content_executed_from_actionBlock').hide();
             const title = $('#content_executed_from_actionBlock').find('.title').text();
-            console.log('bindClickBtnOpenActionBlockSettings', title);
+            // console.log('bindClickBtnOpenActionBlockSettings', title);
             handler(title);
         });
     }
@@ -542,7 +545,7 @@ class ActionBlockView {
             $(".black_background").show();
         } else {
             alert(content);
-            console.log('WARNING! The <dialog> API is not supported by this browser');
+            // console.log('WARNING! The <dialog> API is not supported by this browser');
         }
     }
 
@@ -570,7 +573,7 @@ class ActionBlockView {
         let title_html = '';
 
         if ( ! id) {
-            console.log('ERROR! Id must be defined to create infoBlock'); 
+            // console.log('ERROR! Id must be defined to create infoBlock'); 
             return;
         }
 
@@ -609,7 +612,7 @@ class ActionBlockView {
     
         let first_part_infoBlock_html = '';
 
-        first_part_infoBlock_html = '<div id="' + id_html +  '" class="infoBlock" value="' + id + '">';
+        first_part_infoBlock_html = '<div id="' + id_html + '" name="' + title + '" class="infoBlock" value="' + id + '">';
 
         // Set padding from settings button.
         /*

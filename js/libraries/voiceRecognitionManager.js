@@ -46,17 +46,13 @@ class VoiceRecognitionManager {
 
             // Option for recognizing even before user stop to talk.
             this.#recognizer.interimResults = true;
-            
-            // Language for recognizing.
-            // this.#recognizer.lang = 'en-En';
         }
         else {
             console.log('Warning! Speech recognition is not supported in this browser');
         }
     }
 
-    
-    startRecognizing = (parameter = {
+    startRecognizing = (option = {
         callbackStart: undefined,
         callbackInterimTranscript: undefined, 
         callbackFinalTranscript: undefined, 
@@ -65,12 +61,12 @@ class VoiceRecognitionManager {
         language: undefined}) => {    
             const that = this;
 
-            const callbackStart = parameter.callbackStart;
-            const callbackInterimTranscript = parameter.callbackInterimTranscript;
-            const callbackFinalTranscript = parameter.callbackFinalTranscript;
-            const callbackEnd = parameter.callbackEnd;
-            const callbackError = parameter.callbackError;
-            const recognition_language = parameter.language != undefined ? parameter.language : 'en-En';
+            const callbackStart = option.callbackStart;
+            const callbackInterimTranscript = option.callbackInterimTranscript;
+            const callbackFinalTranscript = option.callbackFinalTranscript;
+            const callbackEnd = option.callbackEnd;
+            const callbackError = option.callbackError;
+            const recognition_language = option.language != undefined ? option.language : 'en-US';
 
             let is_final_result = false;
             
@@ -101,7 +97,7 @@ class VoiceRecognitionManager {
 
         this.#recognizer.onend = function() {
             if (is_final_result === false && that.#is_recognizing) { 
-                that.startRecognizing(parameter);
+                that.startRecognizing(option);
             }
             else {
                 that.#is_recognizing = false;

@@ -21,7 +21,7 @@ class AutocompleteService {
                 event.keyCode === 18 ||
                 event.keyCode === 32
             ) {
-                console.log('clicked', event.keyCode);
+                // console.log('clicked', event.keyCode);
                 return;    
             }
 
@@ -30,7 +30,7 @@ class AutocompleteService {
                 event.keyCode === $.ui.keyCode.TAB &&
                     $(this).autocomplete('instance').menu.active
             ) {
-                console.log('autocomplete');
+                // console.log('autocomplete');
                 event.preventDefault();
             }
         })
@@ -51,7 +51,7 @@ class AutocompleteService {
                 return false;
             },
             select: function(event, ui) {
-                console.log('select', event);
+                // console.log('select', event);
                 let text_from_input_field = this.value;
 
                 text_from_input_field.trim();

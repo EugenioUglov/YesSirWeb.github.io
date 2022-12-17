@@ -1,11 +1,10 @@
 class ActionBlockController {
     constructor(actionBlockService, loadingService, dialogWindow, 
-        scrollService, searchService, pageService, noteService
+         searchService, pageService, noteService
     ) {
         this.actionBlockService = actionBlockService;
         this.loadingService = loadingService;
         this.dialogWindow = dialogWindow;
-        this.scrollService = scrollService;
         this.searchService = searchService;
         this.pageService = pageService;
         this.noteService = noteService;
@@ -26,8 +25,17 @@ class ActionBlockController {
     };
 
     #onClickBtnCreateActionBlock = (title, tags_plus_title, action, content, image_URL) => {
-        this.actionBlockService.createActionBlock(title, tags_plus_title, action, content, image_URL);
+        const is_actionBlock_created = this.actionBlockService.createActionBlock(title, tags_plus_title, action, content, image_URL);
+
+      
+        if (is_actionBlock_created === false){ 
+            // console.log('yess ' + is_actionBlock_created);
+            
+            return false;
+        }
+        
         this.pageService.openMainPage();
+        
     };
 
     #bindViewEvenets() {

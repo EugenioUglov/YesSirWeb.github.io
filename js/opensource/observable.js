@@ -7,7 +7,7 @@ var observable = new Observable();
 
 observable.listen('myEvent', function(observable, eventType, data) {
     // Handle myEvent.
-    console.log('Listener hear: ' + data);
+    // console.log('Listener hear: ' + data);
 });
 
 // Subject.

@@ -25,6 +25,7 @@ class PageService {
         const PAGE_NAME_ENUM = {
             main: 'main',
             request: 'request',
+            publicActionBlocks: 'publicActionBlocks',
             createActionBlock: 'createactionblock',
             createNote: 'createnote',
             createLink: 'createlink',
@@ -45,7 +46,6 @@ class PageService {
     }
 
     #setCurrenPageName(new_page_name) {
-        console.log('set current page: ' + new_page_name);
         this.#current_page_name = new_page_name;
     }
 
@@ -59,7 +59,6 @@ class PageService {
 
     setHashMain() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        console.log("hash_previous = " + this.#hash_previous);
         this.#setCurrenPageName(this.getPageNameEnum().name);
         window.location.hash = this.getPageNameEnum().name;
     }
@@ -83,7 +82,6 @@ class PageService {
             DEFAULT_PARAMETER.is_listen_text;
 
         this.#hash_previous = this.getNormalizedCurrentHash();
-        console.log("hash_previous = " + this.#hash_previous);
         
         if (request_value === undefined || request_value === '') {
             this.openMainPage();
@@ -98,12 +96,10 @@ class PageService {
 
     setPreviousHash(new_hash_previous) {
         this.#hash_previous = new_hash_previous != undefined ? new_hash_previous : window.location.hash;
-        console.log("hash_previous = " + this.#hash_previous);
     }
 
     setHashCreateActionBlock() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        console.log("hash_previous = " + this.#hash_previous);
 
         this.#setCurrenPageName(this.getPageNameEnum().createActionBlock);
         window.location.hash = this.getPageNameEnum().createActionBlock;
@@ -111,7 +107,6 @@ class PageService {
 
     setHashCreateNote() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        console.log("hash_previous = " + this.#hash_previous);
 
         this.#setCurrenPageName(this.getPageNameEnum().createNote);
         window.location.hash = this.getPageNameEnum().createNote;
@@ -119,7 +114,6 @@ class PageService {
 
     setHashCreateLink() {
         this.#hash_previous = this.getNormalizedCurrentHash();
-        console.log("hash_previous = " + this.#hash_previous);
 
         this.#setCurrenPageName(this.getPageNameEnum().createLink);
         window.location.hash = this.getPageNameEnum().createLink;
@@ -153,12 +147,17 @@ class PageService {
         window.location.hash = this.getPageNameEnum().main;
     }
 
+    openPublicActionBlocksPage() {
+        window.location.hash = this.getPageNameEnum().publicActionBlocks;
+    }
+
     openActionBlockPage(title) {
         this.#hash_previous = window.location.hash;
-        window.location.hash = this.getPageNameEnum().request + '=' + title + '&' + this.getPageOptionNameEnum().executebytitle + '=true';
-        
-        this.setPageName('contentActionBlock');
+        window.location.hash = this.getPageNameEnum().request + '=' + title + '&' + 
+            this.getPageOptionNameEnum().executebytitle + '=true';
     }
+
+
 
     openSettingsActionBlockPage(title) {
         this.#hash_previous = window.location.hash;
@@ -170,10 +169,18 @@ class PageService {
     openPreviousPage() {
         if (
             this.#hash_previous && 
-            this.#hash_previous.includes(this.getPageNameEnum().editActionBlock) === false && 
-            this.#hash_previous.includes('&' + this.getPageOptionNameEnum().executebytitle + '=true') === false
+            this.#hash_previous.includes(this.getPageNameEnum().editActionBlock) === false
         ) {
-            window.location.hash = this.#hash_previous;
+            let hash_to_open = this.#hash_previous;
+
+            const is_previous_hash_includes_execute_by_title = (this.#hash_previous.includes('&' + this.getPageOptionNameEnum().executebytitle)) && (this.#hash_previous.includes('&' + this.getPageOptionNameEnum().executebytitle + "=false") === false);
+           
+            if (is_previous_hash_includes_execute_by_title) {
+                const i_start_word_execute_by_title = this.#hash_previous.indexOf('&' + this.getPageOptionNameEnum().executebytitle);
+                hash_to_open = this.#hash_previous.substring(0, i_start_word_execute_by_title);
+            }
+            
+            window.location.hash = hash_to_open;
         }
         else {
             this.openMainPage();
@@ -206,15 +213,14 @@ class PageService {
         const that = this;
         
         const hash_converted_to_object = this.#getConvertedHashToObject();
-        console.log('hash_converted_to_object', hash_converted_to_object);
-        console.log('hash_converted_to_object.hasOwnProperty("request")', 
-            hash_converted_to_object.hasOwnProperty(this.getPageNameEnum().request));
+        // console.log('hash_converted_to_object', hash_converted_to_object);
+        // console.log('hash_converted_to_object.hasOwnProperty("request")', hash_converted_to_object.hasOwnProperty(this.getPageNameEnum().request));
         if (this.noteSpeakerService.isSpeaking) this.noteSpeakerService.stopSpeak();
 
         this.hideShowedElements();
         if (this.getHashChangeListenerActiveState() === false) return;
-        console.log('handleHash', this.getNormalizedCurrentHash());
-        console.log('edit page', this.getPageNameEnum().editActionBlock);
+        // console.log('handleHash', this.getNormalizedCurrentHash());
+        // console.log('edit page', this.getPageNameEnum().editActionBlock);
         
         this.#actionBlockService.view.clear();
 

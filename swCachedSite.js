@@ -5,7 +5,7 @@ self.addEventListener('install', function(e) {
 });
 
 self.addEventListener('activate', function(e) {
-    console.log('Service worker is activated');
+    // console.log('Service worker is activated');
 
     // Remove unwanted caches.
     e.waitUntil(
@@ -13,7 +13,7 @@ self.addEventListener('activate', function(e) {
             return Promise.all(
                 cacheNames.map(cache => {
                     if (cache !== cacheName) {
-                        console.log('Service working clearing old cache ' + cache);
+                        // console.log('Service working clearing old cache ' + cache);
                         return caches.delete(cache);
                     }
                 })
@@ -24,7 +24,7 @@ self.addEventListener('activate', function(e) {
 
 // Call fetch event
 self.addEventListener('fetch', e => {
-    console.log('Service Worker: Fetching');
+    // console.log('Service Worker: Fetching');
     e.respondWith(
         fetch(e.request).then(res => {
             // Make copy / clone of responce.

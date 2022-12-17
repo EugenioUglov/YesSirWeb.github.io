@@ -9,7 +9,7 @@ class NoteSpeakerService {
 
     speak = () => {
         const that = this;
-        console.log('speak content', this.view.getContent());
+        // console.log('speak content', this.view.getContent());
         this.speakerManager.speak(this.view.getContent(), onEndSpeak);
         this.view.changeTextForSpeakButton('Stop');
 

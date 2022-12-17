@@ -17,8 +17,7 @@ class NoteController {
 
     #onClose = () => {
         this.noteService.close();
-        
-        if (window.location.hash.includes('#editActionBlock')) {
+        if (window.location.hash.toUpperCase().includes('#editActionBlock'.toUpperCase())) {
             this.actionBlockService.setDefaultValuesForSettingsElementsActionBlock();
         }
 

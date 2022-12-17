@@ -10,6 +10,7 @@ class HashController {
         const that = this;
 
         window.onhashchange = function() {
+            console.log('hash changed');
             that.#onHashChanged();
         }
     }

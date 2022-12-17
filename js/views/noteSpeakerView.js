@@ -28,7 +28,7 @@ class NoteSpeakerView {
     
     getContent() {
         const content = $("#content_executed_from_actionBlock").find('.content').text();
-        console.log(content);
+        // console.log(content);
         return content;
     }
 }

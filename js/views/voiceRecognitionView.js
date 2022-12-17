@@ -21,11 +21,11 @@ class VoiceRecognitionView {
         });
     }
 
-    showRecognitionInProgress() {
+    showProgressRecognition() {
         $('#img_voice_recognition').attr('src', './icons/mic-animate.gif');
     }
 
-    showRecognitionStop() {
+    showStopRecognition() {
         $('#img_voice_recognition').attr('src', './icons/mic.gif');
     }
 }

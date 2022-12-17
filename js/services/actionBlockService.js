@@ -23,7 +23,13 @@ class ActionBlockService {
         this.#dateManager = dateManager;
         
         this.model = new ActionBlockModel(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, this.#dateManager);
-        this.view = new ActionBlockView(this.model.getActionNameEnum(), this.model.getContentTypeDescriptionByActionEnum(), this.model.action_description_by_action_name, fileManager, textManager, dropdownManager);
+        this.view = new ActionBlockView(this.model.getActionNameEnum(), 
+            this.model.getContentTypeDescriptionByActionEnum(), 
+            this.model.action_description_by_action_name, 
+            fileManager, 
+            textManager, 
+            dropdownManager
+        );
         
 
         this.init();
@@ -32,12 +38,11 @@ class ActionBlockService {
     #index_last_showed_actionBlock = 0;
 
     init() {
-        console.log(this.pageService);
+        // console.log(this.pageService);
         this.pageService.setActionBlockService(this);
     }
 
     createActionBlock = (title, tags, action, content, image_URL) => {
-        console.log('create action block');
         this.loadingService.startLoading();
 
         const actionBlock =
@@ -49,11 +54,12 @@ class ActionBlockService {
             imageURL: image_URL
         };
 
-        console.log('create', actionBlock);
+        // console.log('create', actionBlock);
 
         const is_created = this.model.add(actionBlock);
 
-        if ( ! is_created) {
+        if (is_created === false) {
+            // console.log('is not created');
             return false;
         }
 
@@ -84,7 +90,7 @@ class ActionBlockService {
     }
 
     showSettingsToCreateNote = () => {
-        console.log('showSettingsToCreateNote');
+        // console.log('showSettingsToCreateNote');
         this.showSettingsToCreateActionBlock(this.model.getActionNameEnum().showInfo);
         
         if (this.model.is_menu_create_type_actionBlock_open) {
@@ -127,8 +133,6 @@ class ActionBlockService {
     showActionBlocks(actionBlocks_to_show, count_actionBlocks_to_show_at_time = 50) {
         const that = this;
 
-        // Scroll top.
-        this.scrollService.scrollTo();
         this.loadingService.startLoading();
         this.view.hideActionBlocksContainer();
 
@@ -197,6 +201,7 @@ class ActionBlockService {
             that.logsService.showLog(log);
         }
     }
+
 
     showActionBlocksByTags(user_plus_tags, user_minus_tags) {
         // Get command text from input field and find possible search data.
@@ -323,15 +328,15 @@ class ActionBlockService {
         // if (this.is_actionBlock_executed) return;
         
         const actionBlock = this.model.getActionBlockByTitle(title);
+        // console.log('I took action block by title ' + title);
+        // console.log(actionBlock);
         
         let action_name_of_actionBlock = actionBlock.action;
    
         let content = actionBlock.content;
 
         if (content === undefined) { 
-            console.log('Warning! Something wrong with contant. ' +
-                'Maybe you use "content" instead "info" for ' +
-                'Action-Blocks or content is undefined');
+            // console.log('Warning! Something wrong with contant. ' + 'Maybe you use "content" instead "info" for ' + 'Action-Blocks or content is undefined');
             content = actionBlock.info;
         }
     
@@ -348,7 +353,6 @@ class ActionBlockService {
 
             // open in new tab.
             let new_tab = window.open(url, '_blank');
-            console.log('open url');
 
             this.pageService.openPreviousPage();
 
@@ -366,7 +370,6 @@ class ActionBlockService {
         }
         // Action alertInfo must to include info option.
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showInfo) {
-            console.log('showinfo');
             const isHTML = false;
 
             this.onPageContentChange();
@@ -375,13 +378,11 @@ class ActionBlockService {
             this.view.hidePage();
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
-           
-
             this.onPageContentChange();
             const isHTML = true;
             this.noteService.openNote(content, actionBlock.title, isHTML);
             $('#content_executed_from_actionBlock').show();
-            console.log(content);
+            // console.log(content);
             
             // Set position top.
             that.scrollService.setPosition(0, 0);
@@ -400,7 +401,7 @@ class ActionBlockService {
         }
         */
         else {
-            console.log('ERROR! Action of Action-Block doesn\'t exist. action_name: ', action_name_of_actionBlock);
+            // console.log('ERROR! Action of Action-Block doesn\'t exist. action_name: ', action_name_of_actionBlock);
             return;
         }
     }
@@ -417,7 +418,7 @@ class ActionBlockService {
         
         let i;
 
-        console.log('this.#index_last_showed_actionBlock', this.#index_last_showed_actionBlock);
+        // console.log('this.#index_last_showed_actionBlock', this.#index_last_showed_actionBlock);
 
         for (i = this.#index_last_showed_actionBlock; i < actionBlocks.length; i++) {
             if (count_actionBlocks_curr >= max_count_actionBlocks_to_add_on_page) {
@@ -441,7 +442,7 @@ class ActionBlockService {
         this.showActionBlocks();
     
         // Scroll top.
-        this.scrollService.scrollTo();
+        // this.scrollService.scrollTo();
     }
 
     save(actionBlocks) {
@@ -461,7 +462,7 @@ class ActionBlockService {
         }
         catch(error) {
             alert('Content of file is not correct. File must contain an Action-Blocks data.');
-            console.log(error);
+            // console.log(error);
             return;
         }
         
@@ -517,7 +518,7 @@ class ActionBlockService {
         }
         catch(error) {
             alert('Content of file is not correct. File must contain an Action-Blocks data.');
-            console.log(error);
+            // console.log(error);
             this.modalLoadingService.hide();
             return;
         }
@@ -525,6 +526,7 @@ class ActionBlockService {
 
         this.view.closeSettings();
         this.model.setActionBlocks(actionBlocks_from_file);
+        this.scrollService.setPositionTop();
         this.showActionBlocks();
         this.searchService.clearInputField();
         this.modalLoadingService.hide();
@@ -552,6 +554,7 @@ class ActionBlockService {
             that.modalLoadingService.show();
             $('#dialog_database_manager')[0].close();
             that.model.setActionBlocks(that.model.actionBlocks_from_database);
+            this.scrollService.setPositionTop();
             that.showActionBlocks();
             that.modalLoadingService.hide();
 
@@ -581,6 +584,7 @@ class ActionBlockService {
         this.scrollService.scrollTo();
         this.view.updatePage();
         // Refresh Action-Blocks on page.
+        this.scrollService.setPositionTop();
         this.showActionBlocks();
         this.modalLoadingService.hide();
     };
@@ -599,6 +603,7 @@ class ActionBlockService {
         
         // Create default Action-Blocks.
         createDefaultActionBlocks();
+        this.scrollService.setPositionTop();
         this.showActionBlocks();
 
         return;
@@ -638,14 +643,18 @@ class ActionBlockService {
     };
 
     openFolder(actionBlock_title) {
-        const actionBlocks = this.model.getActionBlocks();
-        const actionBlock = actionBlocks.get(actionBlock_title);
+        // !!! not tested
+        // OLD
+        // const actionBlocks = this.model.getActionBlocks();
+        // const actionBlock = actionBlocks.get(actionBlock_title);
+        // NEW
+        const actionBlock = this.model.getActionBlockByTitle(actionBlock_title);
         const tags_to_search = actionBlock.content;
 
         let actionBlocks_to_show;
 
         if ( ! tags_to_search) {
-            console.log('Warning! Tags for folder don\'t exist');
+            // console.log('Warning! Tags for folder don\'t exist');
             return;
         }
       
@@ -657,7 +666,8 @@ class ActionBlockService {
         // if (i_actionBlock >= 0) {
         //     actionBlocks_to_show.splice(i_actionBlock, 1);
         // }
-
+        
+        this.scrollService.setPositionTop();
         this.showActionBlocks(actionBlocks_to_show);
         
         /*
@@ -679,11 +689,9 @@ class ActionBlockService {
 
     #onClickBtnShowSettingsActionBlock = (title) => {
         this.pageService.openSettingsActionBlockPage(title);
-        // window.location.hash = '#editActionBlock=' + title;
     };
 
     showSettingsToCreateActionBlock = (action_name) => {
-        console.log('showSettingsToCreateActionBlock');
         this.model.action_for_new_actionBlock = action_name;
 
         this.view.showSettingsToCreateActionBlock(action_name);
@@ -693,9 +701,12 @@ class ActionBlockService {
     openActionBlockSettings = (title) => {
         this.pageService.hideShowedElements();
         const that = this;
-        const actionBlocks = this.model.getActionBlocks();
-        const actionBlock = actionBlocks.get(title);
-
+        /// !!!
+        // OLD
+        // const actionBlocks = this.model.getActionBlocks();
+        // const actionBlock = actionBlocks.get(title);
+        // NEW
+        const actionBlock = this.model.getActionBlockByTitle(title);
         this.pageService.openSettingsActionBlockPage(title);
         this.model.title_actionBlock_before_update = title;
         this.onPageContentChange();
@@ -704,9 +715,7 @@ class ActionBlockService {
 
         elements_to_show.forEach(element => {
              that.pageService.showElement(element);
-        }); 
-
-        console.log('show elements', elements_to_show);
+        });
     }
 
     clearAllSettingsFields() {

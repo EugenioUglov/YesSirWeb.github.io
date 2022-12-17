@@ -35,7 +35,7 @@ class NoteView {
                 $('#content_executed_from_actionBlock').find('.content').html(content);
             }
             else {
-                console.log('not html');
+                // console.log('not html');
                 $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap')
                 // this.textManager.getConvertedTextToHTML(content);
                 $('#content_executed_from_actionBlock').find('.content').text(content);

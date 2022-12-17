@@ -1,6 +1,4 @@
 class YesSir {
-    #dialogWindow;
-
     constructor() {
         const inputDeviceManager = new InputDeviceManager();
         this.textManager = new TextManager();
@@ -12,6 +10,7 @@ class YesSir {
         this.mapDataStructure = new MapDataStructure();
         this.dbManager = new DBManager();
         this.arrayManager = new ArrayManager();
+        this.blockManager = new BlockManager();
 
         this.keyCodeByKeyName = inputDeviceManager.getKeyCodeByKeyName();
         this.dialogWindow = new DialogWindow();
@@ -76,7 +75,7 @@ let yesSir;
         const noteSpeakerController = new NoteSpeakerController(yesSir.noteSpeakerService, noteService);
         const loadingController = new LoadingController();
         const actionBlockController = new ActionBlockController(actionBlockService,
-            loadingService, dialogWindow, scrollService, searchService, pageService, noteService);
+            loadingService, dialogWindow, searchService, pageService, noteService);
         const autocompleteController = new AutocompleteController(pageService, actionBlockService, autocompleteService);
         const voiceRecognitionController = new VoiceRecognitionController(voiceRecognitionService, observable, pageService);
         const scrollController = new ScrollController(scrollService, actionBlockService);

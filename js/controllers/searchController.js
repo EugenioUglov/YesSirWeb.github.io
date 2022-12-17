@@ -6,32 +6,22 @@ class SearchController {
         this.textManager = textManager;
         this.keyCodeByKeyName = keyCodeByKeyName;
 
-        //this.searchService.view = new SearchView(this, textManager);
-        console.log('searchService', this.searchService);
-
         this.#setEventListeners();
         this.#bindViewEvenets();
-
-        this.init();
-    }
-
-    init() {
-        const that = this;
-        this.searchService.view.bindClickBtnSearchByTags((user_plus_tags, user_minus_tags) => onClickBtnSearchByTags(user_plus_tags, user_minus_tags));
-        
-        function onClickBtnSearchByTags(user_plus_tags, user_minus_tags) {
-            that.actionBlockService.showActionBlocksByTags(user_plus_tags, user_minus_tags);
-        }
     }
 
     onEnter = () => {
-        this.searchService.view.setTextColorInInpurField('black');
+        this.searchService.view.setTextColorInInputField('black');
         const user_request = this.searchService.view.getTextFromMainInputField();
         
-        this.searchService.setHashRequest({
-            request_value: user_request, 
-            is_execute_actionBlock_by_title: true
-        });
+        // this.searchService.setHashRequest({
+        //     request_value: user_request, 
+        //     is_execute_actionBlock_by_title: true
+        // });
+
+        let is_execute_actionBlock_by_title = true;
+
+        this.#searchActionBlocks(user_request, is_execute_actionBlock_by_title);
     }
 
     onClickBtnClear = () => {
@@ -41,19 +31,21 @@ class SearchController {
 
 
     #onKeypressInputFieldPlusTags = (event) => {
-        const that = this;
-        // Enter.
-        if (event.keyCode == 13)  {
-            event.preventDefault();
+        window.scrollTo(0, 0);
+        this.actionBlockService.showActionBlocksByTags(this.searchService.view.getPlusTags(), 
+            this.searchService.view.getMinusTags());
+    }
 
-            that.searchService.view.focusInputFieldMinusTags();
-        }
+    #onKeypressInputFieldMinusTags = (event) => {
+        window.scrollTo(0, 0);
+        this.actionBlockService.showActionBlocksByTags(this.searchService.view.getPlusTags(), 
+            this.searchService.view.getMinusTags());
     }
 
     #setEventListeners() {
         const that = this;
 
-        document.addEventListener('keyup', function(event) {
+        $(document).keyup(function(event) {
             if (event.code == 'Slash') {
                 that.searchService.view.focus();
             }
@@ -72,15 +64,26 @@ class SearchController {
                 is_execute_actionBlock_by_title = false;
             }
 
-            that.pageService.setHashRequest({
-                request_value: request, 
-                is_execute_actionBlock_by_title: is_execute_actionBlock_by_title
-            });
+            this.#searchActionBlocks(request, is_execute_actionBlock_by_title);
+        };
+
+        function onClickBtnSearchByTags(user_plus_tags, user_minus_tags) {
+            window.scrollTo(0, 0);
+            that.actionBlockService.showActionBlocksByTags(user_plus_tags, user_minus_tags);
         }
 
         this.searchService.view.bindClickBtnClearRequestField(this.onClickBtnClear);
         this.searchService.view.bindClickBtnEnterRequest(this.onEnter);
         this.searchService.view.bindKeyUpRequestField(onKeyUpRequestField);
         this.searchService.view.bindKeypressInputFieldPlusTags(this.#onKeypressInputFieldPlusTags);
+        this.searchService.view.bindKeypressInputFieldMinusTags(this.#onKeypressInputFieldMinusTags);
+        this.searchService.view.bindClickBtnSearchByTags((user_plus_tags, user_minus_tags) => onClickBtnSearchByTags(user_plus_tags, user_minus_tags));
+    }
+
+    #searchActionBlocks(request, is_execute_actionBlock_by_title) {
+        this.pageService.setHashRequest({
+            request_value: request, 
+            is_execute_actionBlock_by_title: is_execute_actionBlock_by_title
+        });
     }
 }
