@@ -25,6 +25,7 @@ class AutocompleteController {
 
         function onSelect() {
             if (that.pageService.getCurrentPageName() === that.pageService.getPageNameEnum().main) {
+                window.scrollTo(0, 0);
                 const actionBlocks_to_show = that.actionBlockService.getActionBlocksByPhrase($('#input_field_request').val());
                 that.actionBlockService.showActionBlocks(actionBlocks_to_show);
             }

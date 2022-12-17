@@ -1,4 +1,4 @@
-class PageController {
+class HashController {
     constructor(pageService) {
         this.pageService = pageService;
 
