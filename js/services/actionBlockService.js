@@ -63,13 +63,24 @@ class ActionBlockService {
             return false;
         }
 
+        if (window.location.href.includes('#main&speechrecognition')) {
+            this.modalLoadingService.hide();
+            
+            return true;
+        }
+
         this.view.closeSettings();
         this.view.clearAllSettingsFields();
         this.pageService.openPreviousPage();
         this.loadingService.stopLoading();
         this.updatePage();
+        
     
         return true;
+    }
+
+    getActionBlockByTitle(title) {
+        return this.model.getActionBlockByTitle(title);
     }
 
     setDefaultValuesForSettingsElementsActionBlock() {

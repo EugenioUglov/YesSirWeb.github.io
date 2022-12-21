@@ -1,6 +1,8 @@
 class YesSir {
     constructor() {
         const inputDeviceManager = new InputDeviceManager();
+        this.googleSpeechRecognition = new GoogleSpeechRecognition();
+        this.googleTextToSpeech = new GoogleTextToSpeech();
         this.textManager = new TextManager();
         this.fileManager = new FileManager(this.textManager);
         this.dateManager = new DateManager();
@@ -83,7 +85,93 @@ let yesSir;
         const searchController = new SearchController(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName);
         const noteController = new NoteController(actionBlockService, noteService, pageService);
         const dataStorageController = new DataStorageController(actionBlockService, dataStorageService, pageService);
+        const speechRecognitionController = new SpeechRecognitionController();
 
+
+        $('.btn_speech_recognition_info').click(function() {
+            yesSir.googleTextToSpeech.speak(
+                'Per salvare le informazioni puoi cliccare sul pulsante Salva informazioni con assistente vocale. Per ottenere informazioni clicca sul pulsante Trova informazioni con l\'assistente vocale. Grazie e buona fortuna!', 
+                'it-IT'
+                // ,
+                // () => {
+                //     yesSir.googleTextToSpeech.speak(
+                //         'Ciao, sono il tuo assistente vocale. Posso salvare le tue informazioni e ricordarti quando ne hai bisogno. Può essere più semplice utilizzare il riconoscimento vocale piuttosto che salvarlo digitando del testo.', 'it-IT'
+                //     );
+                // }
+            );
+        });
+
+        $('.btn_speech_recognition_saver').click(function(){
+            let title_for_actionBlock = '';
+            let content_for_actionBlock = '';
+
+            yesSir.googleTextToSpeech.speak(
+                'Dimmi un\'informazione che vuoi salvare.', 
+                'it-IT',
+                () => {
+                    yesSir.googleSpeechRecognition.startRecognizing({
+                        language: 'it-IT',
+                        callbackFinalTranscript: function(final_transcript) {
+                            content_for_actionBlock = final_transcript;
+                            console.log(content_for_actionBlock);
+                        },
+                        callbackEnd: function() {
+                            yesSir.googleTextToSpeech.speak(
+                                'Grazie. Dimmi cosa mi chiederai per ricevere quest\'informazione?', 
+                                'it-IT',
+                                () => {
+                                    yesSir.googleSpeechRecognition.startRecognizing({
+                                        language: 'it-IT',
+                                        callbackFinalTranscript(final_transcript) {
+                                            title_for_actionBlock = final_transcript;
+                                            console.log(title_for_actionBlock);
+                                        },
+                                        callbackEnd: function() {
+                                            const is_created = actionBlockService.createActionBlock(title_for_actionBlock, title_for_actionBlock, 'showInfo', content_for_actionBlock, '');
+
+                                            if (is_created === false) {
+                                                yesSir.googleTextToSpeech.speak('Mi dispiace ma per qualsiasi motivo le informazioni non sono state salvate. Contattare lo sviluppatore per avvisare di questo problema. Grazie per la comprensione.', 'it-IT');
+                                            }
+                                            else {
+                                                yesSir.googleTextToSpeech.speak('Perfetto! Quando fai clic sul pulsante \"Trova informazioni con l\'assistente vocale\" e me lo chiederai ' + title_for_actionBlock + ' .Te lo dirò ' + content_for_actionBlock, 'it-IT');
+                                            }
+                                        }
+                                    })
+                                }
+                            );
+                        }
+                    });
+                }
+            );
+        });
+
+        $('.btn_speech_recognition_searcher').click(function() {
+            yesSir.googleTextToSpeech.speak(
+                'Chiedimi cosa vuoi trovare.', 
+                'it-IT',
+                () => {
+                    yesSir.googleSpeechRecognition.startRecognizing({
+                        language: 'it-IT',
+                        callbackFinalTranscript: function(final_transcript) {
+                            console.log(final_transcript);
+                            const actionBlock = actionBlockService.getActionBlockByTitle(final_transcript);
+                            console.log(actionBlock);
+                            if (actionBlock === undefined) {
+                                yesSir.googleTextToSpeech.speak(
+                                    'Mi dispiace ma non riesco a trovare nessuna informazione come ' + final_transcript, 
+                                    'it-IT'
+                                );
+                            } else {
+                                yesSir.googleTextToSpeech.speak(
+                                    actionBlock.content, 
+                                    'it-IT'
+                                );
+                            }
+                        }
+                    });
+                }
+            );
+        });
         
         //autocompleteController.bindApplyTags(onAutocompleteItemSelected);
         actionBlockService.showActionBlocksFromStorage();

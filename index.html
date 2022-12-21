@@ -27,6 +27,7 @@
  	-->
 
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/voiceRecognition.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./css/speechRecognition.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/actionBlock.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css/dataManager.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="./css//jquery-ui.css">
@@ -273,7 +274,7 @@
 						<br>
 						<div class="flex_container">
 							<img src="./icons/tag.png" class="image img_left_of_text" width="20px" height="18px" alt="tags icon">
-							<div class="text_title_for_input_field" title="Words to find an information from the search field.">Tags</div>
+							<div class="text_title_for_input_field" title="Words to find an information from the search field.">Tags - words that you can use to find this information</div>
 						</div>
 						<!--<select name="topic" id="dropdown_select_language" style="width:227px">
 						</select>-->
@@ -430,6 +431,14 @@
 		</div>
 	</div>
 	
+	<div class = "speech_recognition_container" style = "align-items: center; display: flex; justify-content: center; flex-direction: column; padding-top: 20px;">
+		<button class="btn_speech_recognition_info" style="border-radius: 200px; background-color: #2b4078b8; color: white; display: flex; flex-direction: column; align-items: center; text-align: center; width: 250px; height: 250px; font-size: 18px; padding: 10px; padding-top:60px">Fare clic su questo pulsante per ottenere informazioni su questa applicazione</button>
+
+		<!-- Save information with the voice assistant -->
+		<button class="btn_speech_recognition_saver" style="margin-top: 20px; border-radius: 200px; background-color: #2b4078b8; color: white; display: flex; flex-direction: column; align-items: center; width: 250px; height: 250px; font-size: 18px; padding: 10px; text-align: center; padding-top:40px"><img class="img_speech_recognition" src="./icons/mic.gif" alt="Start" style="width: 50px; filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(25deg) brightness(95%) contrast(80%);">Salva le informazioni con l'assistente vocale</button>
+
+		<button class="btn_speech_recognition_searcher" style="margin-top: 20px; border-radius: 200px; background-color: #2b4078b8; color: white; display: flex; flex-direction: column; align-items: center; width: 250px; height: 250px; font-size: 18px; padding: 10px; text-align: center; padding-top:40px"><img class="img_speech_recognition" src="./icons/mic.gif" alt="Start" style="width: 50px; filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(25deg) brightness(95%) contrast(80%);">Trova informazioni con l'assistente vocale</button>
+	</div>
 	
 	<div class="fixed_elements">
 		<div id="list_of_type_actionBlocks_to_create" style="display: none;">
@@ -537,6 +546,8 @@
 	<script src="./js/libraries/hashManager.js"></script>
 	<script src="./js/libraries/blockManager.js"></script>
 	<script src="./js/libraries/defaultActionBlocks.js"></script>
+	<script src="./js/libraries/googleSpeechRecognition.js"></script>
+	<script src="./js/libraries/googleTextToSpeech.js"></script>
 	
 	<script src="./js/services/actionBlockService.js"></script>
 	<script src="./js/services/searchSevice.js"></script>
@@ -590,6 +601,8 @@
 	<script src="./js/controllers/autocompleteController.js"></script>
 	<!--<script src="./js/controllers/dialogWindows/databaseDialogController.js"></script> -->
 	<script src="./js/controllers/loadingController.js"></script>
+	<script src="./js/controllers/speechRecognitionController.js"></script>
+	
 
 	
 	<script src="./js/main.js"></script>

@@ -5,6 +5,7 @@ class PageService {
         this.textManager = textManager;
         this.noteSpeakerService = noteSpeakerService;
         this.searchService = searchService;
+        this.#view = new PageView();
 
         this.#hash_previous;
     }
@@ -12,7 +13,7 @@ class PageService {
     #actionBlockService;
     #is_hash_change_listener_active_state_enabled = false;
     #current_page_name;
-    #view = new PageView();
+    #view;
 
 
     init() {
@@ -38,15 +39,12 @@ class PageService {
 
     getPageOptionNameEnum() {
         const PAGE_OPTION_NAME_ENUM = {
-            listen: 'listen',
-            executebytitle: 'executebytitle'
+            executebytitle: 'executebytitle',
+            speechRecognition: 'speechrecognition',
+            listen: 'listen'
         };
 
         return PAGE_OPTION_NAME_ENUM;
-    }
-
-    #setCurrenPageName(new_page_name) {
-        this.#current_page_name = new_page_name;
     }
 
     getCurrentPageName() {
@@ -224,21 +222,31 @@ class PageService {
         
         this.#actionBlockService.view.clear();
 
-        if (this.getNormalizedCurrentHash() === '#main' || 
-            this.getNormalizedCurrentHash() === '' || 
-            this.getNormalizedCurrentHash() === '#undefined') {
-                this.setPageName('main');
-                this.searchService.clearInputField();
 
-                if (that.#actionBlockService.model.getActionBlocks().size > 0) {
-                    that.#actionBlockService.view.onOpenMainPageWithActionBlocks();
-                    that.#actionBlockService.showActionBlocks();
-                }
-                else {
-                    that.#actionBlockService.view.onOpenMainPageWithoutActionBlocks();
-                }
-                
-                that.#actionBlockService.view.onShowMainPage();
+        if (
+            this.getNormalizedCurrentHash() === '#' + this.getPageNameEnum().main || 
+            this.getNormalizedCurrentHash() === '' || 
+            this.getNormalizedCurrentHash() === '#undefined'
+        ) {
+            this.setPageName(this.getPageNameEnum().main);
+            this.searchService.clearInputField();
+
+            if (that.#actionBlockService.model.getActionBlocks().size > 0) {
+                that.#actionBlockService.view.onOpenMainPageWithActionBlocks();
+                that.#actionBlockService.showActionBlocks();
+            }
+            else {
+                that.#actionBlockService.view.onOpenMainPageWithoutActionBlocks();
+            }
+            
+            that.#actionBlockService.view.onShowMainPage();
+        }
+        else if (
+            this.getNormalizedCurrentHash().includes('#' + this.getPageNameEnum().main) &&
+            window.location.hash.includes(this.getPageOptionNameEnum().speechRecognition)
+        ) {
+            $('.content').hide();
+            $('.fixed_elements').hide();
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().request)) {
             let request = '';
@@ -289,6 +297,10 @@ class PageService {
         else {
             window.location.hash === this.getPageNameEnum().main;
         }
+    }
+
+    #setCurrenPageName(new_page_name) {
+        this.#current_page_name = new_page_name;
     }
 
     #getConvertedHashToObject() {
