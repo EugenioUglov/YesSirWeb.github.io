@@ -355,8 +355,8 @@ class ActionBlockService {
         }
     
         // Support old version with old action names.
-        if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = this.model.getActionNameEnum().showInfo;
-        else if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = this.model.getActionNameEnum().openURL;
+        // if (action_name_of_actionBlock === 'showAlert') action_name_of_actionBlock = this.model.getActionNameEnum().showInfo;
+        // else if (action_name_of_actionBlock === 'openUrl') action_name_of_actionBlock = this.model.getActionNameEnum().openURL;
         
     
         if (
@@ -390,7 +390,7 @@ class ActionBlockService {
             this.view.showContentOfActionBlock();
             this.noteService.openNote(content, actionBlock.title, isHTML);
             this.view.hidePage();
-            setPositionTop();
+            that.scrollService.setPositionTop();
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
             this.onPageContentChange();

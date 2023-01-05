@@ -26,7 +26,7 @@ class YesSir {
         this.scrollService = new ScrollService();
         this.logsService = new LogsService(this.fileManager, this.dateManager);
         this.autocompleteService = new AutocompleteService(this.textManager);
-        this.pageService = new PageService(this.textManager, this.noteSpeakerService, this.searchService);
+        this.pageService = new PageService(this.textManager, this.noteSpeakerService, this.searchService, this.scrollService);
         this.voiceRecognitionService = new VoiceRecognitionService(this.voiceRecognitionManager, this.pageService);
         this.loadingService = new LoadingService();
         this.noteService = new NoteService(this.noteSpeakerService, this.pageService);

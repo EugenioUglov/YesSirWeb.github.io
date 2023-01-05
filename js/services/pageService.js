@@ -1,10 +1,12 @@
 class PageService {
     #hash_previous;
 
-    constructor(textManager, noteSpeakerService, searchService) {
+    constructor(textManager, noteSpeakerService, searchService, scrollService) {
         this.textManager = textManager;
         this.noteSpeakerService = noteSpeakerService;
         this.searchService = searchService;
+        this.searchService = searchService;
+        this.scrollService = scrollService;
         this.#view = new PageView();
 
         this.#hash_previous;
@@ -306,6 +308,8 @@ class PageService {
         else {
             window.location.hash === this.getPageNameEnum().main;
         }
+
+        this.scrollService.setPositionTop();
     }
 
     #setCurrenPageName(new_page_name) {

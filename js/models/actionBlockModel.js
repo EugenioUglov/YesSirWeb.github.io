@@ -269,7 +269,7 @@ class ActionBlockModel {
             let actionBlock = this.getActionBlockByTitle(title_actionBlock);
             const priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
 
-            actionBlock.priority = priority_actionBlock;
+            // actionBlock.priority = priority_actionBlock;
     
             if (priority_actionBlock > 0) {
                 // Push current obj.
@@ -350,7 +350,7 @@ class ActionBlockModel {
             let actionBlock = this.getActionBlockByTitle(title_actionBlock);
             const priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
 
-            actionBlock.priority = priority_actionBlock;
+            // actionBlock.priority = priority_actionBlock;
     
             if (priority_actionBlock > 0) {
                 // Push current obj
