@@ -390,6 +390,7 @@ class ActionBlockService {
             this.view.showContentOfActionBlock();
             this.noteService.openNote(content, actionBlock.title, isHTML);
             this.view.hidePage();
+            setPositionTop();
         }
         else if (action_name_of_actionBlock === this.model.getActionNameEnum().showHTML) {
             this.onPageContentChange();
