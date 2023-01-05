@@ -23,9 +23,15 @@ body {
     font: 16px Arial;  
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #18181a;
-    color: #84b737;
-    color: #bdbfba;
+    /* background: #18181a; */
+    background: #ffffff;
+    /* color: #84b737; */
+    /* color: #bdbfba; */
+    color: #b4b5b4;
+}
+
+.note_title {
+  color: #4e4e4d;
 }
 
 .in_one_line {
@@ -190,7 +196,7 @@ div#welcome_page {
 #content_executed_from_actionBlock .content {
   font-size: 15px;
   text-align: center;
-  color: #a7a7a7;
+  color: #858383;
   display: none;
   /*
   white-space: pre-wrap;
