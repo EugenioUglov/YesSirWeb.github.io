@@ -249,7 +249,8 @@ class ActionBlockView {
             }
         }
         
-        // On click Action-Block.
+        $('.infoBlock').unbind('click');
+
         $('.infoBlock').on('click', function() {
             if (is_mouse_enter_settings) return false;
             // const title = $(this).attr('value');

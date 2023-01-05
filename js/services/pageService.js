@@ -151,6 +151,7 @@ class PageService {
 
     openActionBlockPage(title) {
         this.#hash_previous = window.location.hash;
+
         window.location.hash = this.getPageNameEnum().request + '=' + title + '&' + 
             this.getPageOptionNameEnum().executebytitle + '=true';
     }
@@ -209,7 +210,10 @@ class PageService {
 
     handleHash() {
         const that = this;
-        
+        $('.speech_recognition_container').hide();
+        $('.content').show();
+        $('.fixed_elements').show();
+
         const hash_converted_to_object = this.#getConvertedHashToObject();
         // console.log('hash_converted_to_object', hash_converted_to_object);
         // console.log('hash_converted_to_object.hasOwnProperty("request")', hash_converted_to_object.hasOwnProperty(this.getPageNameEnum().request));
@@ -247,6 +251,7 @@ class PageService {
         ) {
             $('.content').hide();
             $('.fixed_elements').hide();
+            $('.speech_recognition_container').show();
         }
         else if (this.getNormalizedCurrentHash().includes(this.getPageNameEnum().request)) {
             let request = '';
@@ -255,15 +260,19 @@ class PageService {
 
             let is_execute_actionBlock_by_title = false;
 
-            if (window.location.hash.includes(this.getPageOptionNameEnum().executebytitle + '=false')) {
+            if (
+                window.location.hash.includes(this.getPageOptionNameEnum().executebytitle + '=false')
+            ) {
                 const to_character_request = '&' + this.getPageOptionNameEnum().executebytitle;
                 request = that.textManager.getCuttedText(text_to_cut, from_character_request, to_character_request);
             }
-            else if (window.location.hash.includes(this.getPageOptionNameEnum().executebytitle + '=true') || 
-                window.location.hash.includes(this.getPageOptionNameEnum().executebytitle)) {
-                    is_execute_actionBlock_by_title = true;
-                    const to_character_request = '&' + this.getPageOptionNameEnum().executebytitle;
-                    request = that.textManager.getCuttedText(text_to_cut, from_character_request, to_character_request);
+            else if (
+                window.location.hash.includes(this.getPageOptionNameEnum().executebytitle + '=true') || 
+                window.location.hash.includes(this.getPageOptionNameEnum().executebytitle)
+            ) {
+                is_execute_actionBlock_by_title = true;
+                const to_character_request = '&' + this.getPageOptionNameEnum().executebytitle;
+                request = that.textManager.getCuttedText(text_to_cut, from_character_request, to_character_request);
             }
             else {
                 request = that.textManager.getCuttedText(text_to_cut, from_character_request);

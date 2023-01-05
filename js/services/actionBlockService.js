@@ -144,6 +144,8 @@ class ActionBlockService {
     showActionBlocks(actionBlocks_to_show, count_actionBlocks_to_show_at_time = 50) {
         const that = this;
 
+        console.log('showActionBlocks');
+
         this.loadingService.startLoading();
         this.view.hideActionBlocksContainer();
 
@@ -187,6 +189,7 @@ class ActionBlockService {
         }
 
         that.#index_last_showed_actionBlock = i;
+
 
         this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickBtnShowSettingsActionBlock);
         
@@ -422,12 +425,18 @@ class ActionBlockService {
             return;
         }
 
+        console.log('addOnPageNextActionBlocks');
+
+
         let count_actionBlocks_curr = 0;
         let max_count_actionBlocks_to_add_on_page = 50;
 
         const actionBlocks = this.model.actionBlocks_to_show;
         
         let i;
+
+        
+        this.loadingService.startLoading();
 
         // console.log('this.#index_last_showed_actionBlock', this.#index_last_showed_actionBlock);
 
@@ -443,6 +452,7 @@ class ActionBlockService {
         this.#index_last_showed_actionBlock = i;
 
         this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickBtnShowSettingsActionBlock);
+        this.loadingService.stopLoading();
     }
 
 
@@ -693,6 +703,7 @@ class ActionBlockService {
 
 
     #onClickActionBlock = (title) => {
+        console.log('click action-block');
         this.pageService.openActionBlockPage(title);
         
         if (this.model.is_menu_create_type_actionBlock_open) this.switchStateMenuTypeActionBlocksToCreate();
