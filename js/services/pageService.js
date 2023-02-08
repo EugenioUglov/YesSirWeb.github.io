@@ -43,7 +43,8 @@ class PageService {
         const PAGE_OPTION_NAME_ENUM = {
             executebytitle: 'executebytitle',
             speechRecognition: 'speechrecognition',
-            listen: 'listen'
+            listen: 'listen',
+            fileManager: 'filemanager'
         };
 
         return PAGE_OPTION_NAME_ENUM;
@@ -213,6 +214,7 @@ class PageService {
     handleHash() {
         const that = this;
         $('.speech_recognition_container').hide();
+        $('#elements_for_file_manager').hide();
         $('.content').show();
         $('.fixed_elements').show();
 
@@ -246,6 +248,40 @@ class PageService {
             }
             
             that.#actionBlockService.view.onShowMainPage();
+        }
+        else if (this.getNormalizedCurrentHash().includes('#' + this.getPageNameEnum().main) &&
+            window.location.hash.includes(this.getPageOptionNameEnum().fileManager)) {
+                $('.content').hide();
+                $('.fixed_elements').hide();
+
+                $('.btn_upload_actionBlocks').on('change', (event) => {
+                    yesSir.fileManager.uploadFile(onFileLoaded);
+            
+                    function onFileLoaded(content_of_file) {
+                        yesSir.actionBlockService.saveActionBlocksFromFile(content_of_file);
+            
+                        // Give possibility to load the same file again.
+                        $('.btn_upload_actionBlocks').value = '';
+            
+                        window.location.hash = "main";
+                    }
+                });
+            
+                $('.btn_download_actionBlocks')[0].addEventListener('click', () => {
+                    yesSir.actionBlockService.downloadFileWithActionBlocks();
+                });
+
+                $('#elements_for_file_manager').show();
+
+                // $('.actionBlocks_container').first().append(
+                //     `
+                        
+                        
+                //         <script>
+                       
+                //         </script>
+                //     `
+                // );
         }
         else if (
             this.getNormalizedCurrentHash().includes('#' + this.getPageNameEnum().main) &&

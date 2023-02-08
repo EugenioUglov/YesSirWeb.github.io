@@ -365,10 +365,26 @@ class ActionBlockService {
         ) {
             const url = getValidURL(content);
 
-            // open in new tab.
+            // var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            // if (isSafari) {
+            //     location.href = url;
+            // }
+            // else {
+            //     let new_tab = window.open(url, '_blank');
+            // }
+
             let new_tab = window.open(url, '_blank');
+   
+            if(!new_tab || new_tab.closed || typeof new_tab.closed=='undefined') {
+                // Popup is blocked.
+
+                location.href = url;
+            }
 
             this.pageService.openPreviousPage();
+
+
 
             function getValidURL(url) {
                 let valid_url = url;

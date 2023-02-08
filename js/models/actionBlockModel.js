@@ -269,7 +269,7 @@ class ActionBlockModel {
             let actionBlock = this.getActionBlockByTitle(title_actionBlock);
             const priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
 
-            // actionBlock.priority = priority_actionBlock;
+            actionBlock.priority = priority_actionBlock;
     
             if (priority_actionBlock > 0) {
                 // Push current obj.
@@ -284,6 +284,7 @@ class ActionBlockModel {
     
         // Sort by priority.
         const actionBlocks_sorted_by_priority = this.#getSortedActionBlocksByProperty(found_actionBlocks, property_in_actionBlock_for_sort, is_sort_from_A_to_Z);
+        
     
         return actionBlocks_sorted_by_priority;
     
@@ -350,7 +351,7 @@ class ActionBlockModel {
             let actionBlock = this.getActionBlockByTitle(title_actionBlock);
             const priority_actionBlock = this.#getPriorityActionBlockByPhrase(actionBlock, user_phrase);
 
-            // actionBlock.priority = priority_actionBlock;
+            actionBlock.priority = priority_actionBlock;
     
             if (priority_actionBlock > 0) {
                 // Push current obj
