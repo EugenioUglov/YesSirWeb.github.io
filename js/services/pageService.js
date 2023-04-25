@@ -5,7 +5,6 @@ class PageService {
         this.textManager = textManager;
         this.noteSpeakerService = noteSpeakerService;
         this.searchService = searchService;
-        this.searchService = searchService;
         this.scrollService = scrollService;
         this.#view = new PageView();
 
@@ -340,6 +339,12 @@ class PageService {
 
             title = decodeURIComponent(title);
             this.#actionBlockService.openActionBlockSettings(title);
+        }
+        else if (this.getNormalizedCurrentHash().includes("savetodatabase")) {
+            this.#actionBlockService.saveToDatabase();
+        }
+        else if (this.getNormalizedCurrentHash().includes("getfromdatabase")) {
+            this.#actionBlockService.getFromDatabase();
         }
         else {
             window.location.hash === this.getPageNameEnum().main;

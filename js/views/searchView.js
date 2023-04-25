@@ -75,6 +75,14 @@ class SearchView {
         });
     }
 
+    bindChangeInputRequestField(handler) {
+        // Execute a function when the user releases a key on the keyboard.
+        $('#input_field_request').on('change keydown paste input', function(e) {
+            const request = $('#input_field_request')[0].value;
+            handler(request, e.keyCode);
+        });
+    }
+
     bindClickBtnSearchByTags(handler) {
         $('#btn_search_by_tags').click(() => {
             handler(this.getPlusTags(), this.getMinusTags());

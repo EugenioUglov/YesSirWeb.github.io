@@ -483,6 +483,15 @@ class ActionBlockService {
         // this.scrollService.scrollTo();
     }
 
+    saveToDatabase() {
+        this.model.saveToDatabaseFirebase();
+        this.pageService.openMainPage();
+    }
+
+    getFromDatabase() {
+        this.model.getFromDatabaseFirebaseAsync((received_actionBlocks)=>{this.model.setActionBlocks(received_actionBlocks); this.pageService.openMainPage();});
+    }
+
     save(actionBlocks) {
         this.model.saveAsync(actionBlocks);
     }

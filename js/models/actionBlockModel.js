@@ -619,6 +619,7 @@ class ActionBlockModel {
         
 
         let isSavedInLocalStorage = this.saveInLocalStorage(actionBlocks);
+
     
         if (this.dataStorageService.getUserStorage() === that.dataStorageService.getStorageNameEnum().database)
         {
@@ -628,6 +629,42 @@ class ActionBlockModel {
         else {
             if (callBackSavedSuccessfully) callBackSavedSuccessfully();
         }
+    }
+
+
+    getFromDatabaseFirebaseAsync(onGetActionBlocks) {
+        const that = this;
+        const dbRef = firebase.database().ref();
+        const databaseTable = dbRef.child('actionBlocks');
+        let actionBlocks = "";
+
+        databaseTable.on('value',(snapshot) => {
+            actionBlocks = snapshot.val()[1];
+            console.log("get from firebase database completed:");
+            console.log(actionBlocks);
+            actionBlocks = this.mapDataStructure.getParsed(actionBlocks);
+            onGetActionBlocks(actionBlocks);
+        });
+    }
+
+    saveToDatabaseFirebase(actionBlocks_map_to_save) {
+        if (actionBlocks_map_to_save === undefined) {
+            actionBlocks_map_to_save = this.getActionBlocks();
+        }
+        
+        
+       var actionBlocks_to_save = this.mapDataStructure.getStringified(actionBlocks_map_to_save);
+       var dbRef = firebase.database().ref();
+       var databaseTable = dbRef.child('actionBlocks');
+
+        const newdata = {
+            1: actionBlocks_to_save
+        };
+
+        databaseTable.update(newdata);
+
+        console.log("save to firebase database completed:");
+        console.log(actionBlocks_to_save);
     }
 
     saveInDatabase() {
