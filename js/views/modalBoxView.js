@@ -82,7 +82,5 @@ class ModalBoxView {
                 if (handler) handler();
             }
         }
-
     }
-
 }
