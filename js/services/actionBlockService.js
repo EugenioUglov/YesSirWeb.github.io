@@ -1,7 +1,8 @@
 class ActionBlockService {
     #dateManager;
 
-    constructor(dbManager, fileManager, textManager, 
+    constructor(
+        dbManager, fileManager, textManager, 
         dropdownManager, dataStorageService, mapDataStructure, logsService, dialogWindow, 
         keyCodeByKeyName, scrollService, searchService, loadingService, pageService, noteService, 
         dateManager, modalLoadingService
@@ -141,7 +142,7 @@ class ActionBlockService {
         return this.model.getByPhrase(phrase);
     }
 
-    showActionBlocks(actionBlocks_to_show, count_actionBlocks_to_show_at_time = 50) {
+    showActionBlocks(actionBlocks_to_show, count_actionBlocks_to_show_at_time = 1000) {
         const that = this;
 
         console.log('showActionBlocks');
@@ -179,9 +180,10 @@ class ActionBlockService {
         let i = 0;
         
         for (const [key, actionBlock] of that.model.actionBlocks_to_show.entries()) {
-            if (i >= count_actionBlocks_to_show_at_time - 1) {
-                break;
-            }
+            // !!!
+            // if (i >= count_actionBlocks_to_show_at_time - 1) {
+            //     break;
+            // }
 
             that.showActionBlock(actionBlock);
 
@@ -189,7 +191,6 @@ class ActionBlockService {
         }
 
         that.#index_last_showed_actionBlock = i;
-
 
         this.bindClickActionBlock(this.#onClickActionBlock, this.#onClickBtnShowSettingsActionBlock);
         
@@ -363,7 +364,7 @@ class ActionBlockService {
             action_name_of_actionBlock === this.model.getActionNameEnum().openURL || 
             action_name_of_actionBlock === this.model.getActionNameEnum().openUrl
         ) {
-            const url = getValidURL(content);
+            const url = this.#getValidURL(content);
 
             // var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
@@ -376,25 +377,13 @@ class ActionBlockService {
 
             let new_tab = window.open(url, '_blank');
    
-            if(!new_tab || new_tab.closed || typeof new_tab.closed=='undefined') {
+            if(!new_tab || new_tab.closed || typeof new_tab.closed == 'undefined') {
                 // Popup is blocked.
 
                 location.href = url;
             }
 
             this.pageService.openPreviousPage();
-
-
-
-            function getValidURL(url) {
-                let valid_url = url;
-
-                if (url.toLowerCase().includes('http') === false) {
-                    valid_url = 'http://'+ url;
-                }
-
-                return valid_url;
-            }
 
             return;
         }
@@ -729,8 +718,22 @@ class ActionBlockService {
 
 
     #onClickActionBlock = (title) => {
-        console.log('click action-block');
-        this.pageService.openActionBlockPage(title);
+        let actionBlock = this.model.getActionBlockByTitle(title);
+        if (actionBlock.action === this.model.getActionNameEnum().openURL ||
+        actionBlock.action === this.model.getActionNameEnum().openUrl
+        ) {
+            const url = this.#getValidURL(actionBlock.content);
+            let new_tab = window.open(url, '_blank');
+   
+            if(!new_tab || new_tab.closed || typeof new_tab.closed == 'undefined') {
+                // Popup is blocked.
+
+                location.href = url;
+            }
+        }
+        else {
+            this.pageService.openActionBlockPage(title);
+        }
         
         if (this.model.is_menu_create_type_actionBlock_open) this.switchStateMenuTypeActionBlocksToCreate();
     };
@@ -745,6 +748,16 @@ class ActionBlockService {
         this.view.showSettingsToCreateActionBlock(action_name);
         this.onPageContentChange();
     };
+
+    #getValidURL(url) {
+        let valid_url = url;
+
+        if (url.toLowerCase().includes('http') === false) {
+            valid_url = 'http://'+ url;
+        }
+
+        return valid_url;
+    }
 
     openActionBlockSettings = (title) => {
         this.pageService.hideShowedElements();
