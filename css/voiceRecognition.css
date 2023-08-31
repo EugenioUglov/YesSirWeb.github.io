@@ -1,16 +1,7 @@
 * {
     font-family: Verdana, Arial, sans-serif;
 }
-a:link {
-    color:#000;
-    text-decoration: none;
-}
-a:visited {
-    color:#000;
-}
-a:hover {
-    color:#33F;
-}
+
 .button {
     background: -webkit-linear-gradient(top,#008dfd 0,#0370ea 100%);
     border: 1px solid #076bd2;

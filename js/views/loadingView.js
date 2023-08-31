@@ -5,11 +5,15 @@ class LoadingView {
 
 
     startLoading() {
-        $('.icon_spinner').show();
+        $('.multiColorCircleLoader').show();
     }
 
     stopLoading() {
-        $('.icon_spinner').hide();
+        $('.multiColorCircleLoader').hide();
+        $('.multiColorCircleLoader').find('.text-info').text('');
     }
     
+    setText(new_text) {
+        $('.multiColorCircleLoader').find('.text-info').text(new_text);
+    }
 }

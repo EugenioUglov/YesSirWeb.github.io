@@ -1,13 +1,12 @@
 #label_help {
   position: relative;
   /* padding-left: 0px; */
-  top: 75px;
+  /* top: 75px; */
   /* margin-left: 10px; */
   font-size: 13px;
   /* color: thistle; */
   /* text-align: left; */
   pointer-events: none;
-  /* padding-right: 400px; */
 }
 
 #elements_for_file_manager p {

@@ -1,7 +1,7 @@
 class NoteService {
-    constructor(noteSpeakerService, pageService) {
+    constructor(noteSpeakerService, hashService) {
         this.noteSpeakerService = noteSpeakerService;
-        this.pageService = pageService;
+        this.hashService = hashService;
 
         this.model = new NoteModel();
         this.view = new NoteView();
@@ -12,14 +12,14 @@ class NoteService {
         const elements_to_show = this.view.showInfo(content, title, isHTML);
 
         elements_to_show.forEach(element_to_show => {
-            that.pageService.showElement(element_to_show);
+            that.hashService.showElement(element_to_show);
         });
         
 
         if (isHTML === false) {
             const BTN_SPEAKER = this.noteSpeakerService.showBtnSpeaker();
             
-            this.pageService.showElement(BTN_SPEAKER);
+            this.hashService.showElement(BTN_SPEAKER);
         }
 
         if (window.location.hash.includes('&listen')) {

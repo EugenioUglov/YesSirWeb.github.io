@@ -37,9 +37,9 @@
   transform: rotate(225deg);
 }
 
-.icon_spinner {
+/* .icon_spinner {
   animation: icon_spinner 1.3s linear infinite;
-}
+} */
 
 @keyframes icon_spinner {
   to {

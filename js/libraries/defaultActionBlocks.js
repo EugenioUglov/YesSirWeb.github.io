@@ -27,6 +27,22 @@ class DefaultActionBlocks {
             content: getContentActionBlockOpenFileManager(),
             imageURL: 'https://icon-library.com/images/file-download-icon/file-download-icon-19.jpg'
         };
+        
+        const actionBlock_delete_all_actionBlocks = {
+            title: 'Delete all Action-Blocks',
+            tags: 'Remove, clear',
+            action: 'showHTML',
+            content: getContentActionBlockDeleteAllActionBlocks(),
+            imageURL: 'https://pngimg.com/uploads/trash_can/trash_can_PNG18457.png'
+        };
+
+        const actionBlock_open_speeh_assistant = {
+            title: 'Open speech assistant',
+            tags: 'speech assistant, voice recognition',
+            action: 'showHTML',
+            content: getContentActionBlockSpeechAssistant(),
+            imageURL: 'https://images.assetsdelivery.com/compings_v2/rashadashurov/rashadashurov1911/rashadashurov191100457.jpg'
+        };
     
         const actionBlock_open_data_storage_manager = {
             title: 'Open Data Storage Manager',
@@ -68,12 +84,41 @@ class DefaultActionBlocks {
             imageURL: 'https://walkthechat.com/wp-content/uploads/2015/02/voice-recognition.jpg'
         };
 
+        const actionBlock_login = {
+            title: 'Login',
+            tags: 'login, register, database',
+            action: 'showHTML',
+            content: getContentActionBlockLogin(),
+            imageURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcjwBjErg0BEdVO88E6_a4KxB-3nsdwn41NQ&usqp=CAU'
+        };
+
+        const actionBlock_get_from_database = {
+            title: 'GetFrom database in Live',
+            tags: 'get from database in Live',
+            action: 'showHTML',
+            content: getContentActionBlockGetFromDatabase(),
+            imageURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS647trQFxA8PHI7gxQuuC5kM_IGkD6u65N7CHyhTFToOP-RBhlXE0F_ZBw3GIkXk3mOpA&usqp=CAU'
+        };
+
+        const actionBlock_save_to_database = {
+            title: 'Save Action-Blocks to database',
+            tags: 'Save Action-Blocks to database',
+            action: 'showHTML',
+            content: getContentActionBlockSaveToDatabase(),
+            imageURL: 'https://static.vecteezy.com/system/resources/previews/015/433/950/original/database-save-illustration-on-a-background-premium-quality-symbols-icons-for-concept-and-graphic-design-vector.jpg'
+        };
+
         const default_actionBlocks = [
             // actionBlock_create,
             // actionBlock_create_note,
             actionBlock_facebook_of_developer, 
             actionBlock_email_of_developer,
             actionBlock_open_file_manager,
+            actionBlock_delete_all_actionBlocks,
+            actionBlock_open_speeh_assistant,
+            actionBlock_login,
+            actionBlock_get_from_database,
+            actionBlock_save_to_database,
             // actionBlock_open_data_storage_manager,
             // actionBlock_logs,
             // actionBlock_voiceRecognitionSettings
@@ -125,7 +170,7 @@ class DefaultActionBlocks {
             return `
                 <script>
                 yesSir.actionBlockService.showSettingsToCreateActionBlock('showInfo');
-                yesSir.pageService.setHashCreateNote();
+                yesSir.hashService.setHashCreateNote();
 
                 // const dropdown_select_action = $('#settings_actionBlock_container').find('.dropdown_select_action');
                 // dropdown_select_action.val('showInfo');
@@ -138,7 +183,7 @@ class DefaultActionBlocks {
                     yesSir.speakerManager.speak('Please, tell the text of the note', onEndSpeak);
                 
                     function onEndSpeak() {
-                        if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
+                        if (yesSir.hashService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
 
                         // Начинаем слушать микрофон и распознавать голос
                         yesSir.voiceRecognitionService.startRecognizing({
@@ -169,7 +214,7 @@ class DefaultActionBlocks {
                     yesSir.speakerManager.speak('Please, tell the command that opens this note', onEndSpeak);
                 
                     function onEndSpeak() {
-                        if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
+                        if (yesSir.hashService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
 
                         yesSir.voiceRecognitionService.startRecognizing({
                             callbackInterimTranscript: onInterimTranscript, 
@@ -197,7 +242,7 @@ class DefaultActionBlocks {
                     yesSir.speakerManager.speak('Do you want to save this note?', onEndSpeak);
                 
                     function onEndSpeak() {
-                        if (yesSir.pageService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
+                        if (yesSir.hashService.getCurrentPageName() != yesSir.getPageNameEnum().createNote) return;
                         
                         yesSir.voiceRecognitionService.startRecognizing({
                             callbackInterimTranscript: onInterimTranscript, 
@@ -242,6 +287,36 @@ class DefaultActionBlocks {
             `;
         }
 
+        function getContentActionBlockDeleteAllActionBlocks() {
+            return `<script>
+                yesSir.actionBlockService.deleteAllActionBlocks();
+            </script>`;
+        }
+
+        function getContentActionBlockSpeechAssistant() {
+            return `<script>
+                yesSir.hashService.setHashSpeechAssistant();
+            </script>`;
+        }
+
+        function getContentActionBlockLogin() {
+            return `<script>
+                yesSir.hashService.setHashLogin();
+            </script>`;
+        }
+
+        function getContentActionBlockGetFromDatabase() {
+            return `<script>
+                yesSir.hashService.setHashGetFromDatabase();
+            </script>`;
+        }
+        
+        function getContentActionBlockSaveToDatabase() {
+            return `<script>
+                yesSir.hashService.setHashSaveToDatabase();
+            </script>`;
+        }
+        
         return default_actionBlocks;
     }
 }

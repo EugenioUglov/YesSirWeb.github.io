@@ -2,10 +2,13 @@
   box-sizing: border-box;
 }
 
-*:invalid {
+/* *:invalid {
   box-shadow: 0 0 5px 2px red;
-}
+} */
 
+#head {
+  margin-top: 10px;
+}
 
 span {
   display: block;
@@ -18,17 +21,78 @@ body {
 
     display: grid;
     */
+    min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "myriad-pro", sans-serif;
     font-weight: 400;
     font: 16px Arial;  
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* background: #18181a; */
-    background: #ffffff;
+    background: #0c192c;
     /* color: #84b737; */
     /* color: #bdbfba; */
     color: #b4b5b4;
+
+    /* position: relative;
+    width:100%;
+    height: 100vh; 
+    overflow: hidden;*/
 }
+
+a:link {
+  /* color: rgb(115 115 245); */
+  color:rgb(115 115 245);
+  text-decoration: underline;
+}
+a:visited {
+  color:#555768;
+}
+a:hover {
+  color: #a5a2cdf5;
+}
+
+.loader-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.background {
+
+}
+
+.bubbles-background {
+  display: relative;
+  display: flex;
+}
+
+.bubbles-background span {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  background: #4fc3dc;
+  margin: 0 4px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px #4fc3dc44, 0 0 50px #4fc3dc, 0 0 100px #4fc3dc;
+  animation: animate 15s linear infinite;
+  animation-duration: calc(125s / var(--i));
+}
+
+.bubbles-background span:nth-child(even) {
+  background: #ff2d75;
+  box-shadow: 0 0 0 10px #ff2d7544, 0 0 50px #ff2d75, 0 0 100px #ff2d75;
+}
+
+
+/* @keyframes animate {
+  0% {
+    transform: translateY(100vh) scale(0);
+  }
+  100% {
+    transform: translateY(-10vh) scale(1);
+  }
+} */
 
 .note_title {
   color: #4e4e4d;
@@ -369,7 +433,7 @@ div#welcome_page {
   position: relative;
   padding: 10px;
   margin: auto;
-
+  top: 80px;
   height: 350px;
   max-width: 680px;
 }
@@ -458,8 +522,8 @@ input {
   border: 1px solid transparent;
   background-color: #f1f1f1; 
   */
-  padding: 10px;
-  font-size: 16px;
+  /* padding: 10px;
+  font-size: 16px; */
 }
 
 
@@ -639,7 +703,7 @@ ul li.checked::before {
 }
 
 /* Style the input */
-input {
+/* input {
   margin: 0;
   border: none;
   border-radius: 0;
@@ -647,7 +711,7 @@ input {
   padding: 10px;
   float: left;
   font-size: 16px;
-}
+} */
 
 scroll-container {
   display: block;

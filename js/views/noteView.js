@@ -29,22 +29,32 @@ class NoteView {
             // Append title and html elements.
             //document.getElementById('content_executed_from_actionBlock').innerHTML = content_to_show;
             // $('#content_executed_from_actionBlock').find('.content').show();
-        
-            if (isHTML) {
-                $('#content_executed_from_actionBlock').find('.content').css('white-space', '')
-                $('#content_executed_from_actionBlock').find('.content').html(content);
+
+            function getContentWithHighlightedURLs(text) {
+                var urlRegex = /(https?:\/\/[^\s]+)/g;
+                return text.replace(urlRegex, function(url) {
+                  return '<a href="' + url + '">' + url + '</a>';
+                });
+                // or alternatively
+                // return text.replace(urlRegex, '<a href="$1">$1</a>')
             }
-            else {
-                // console.log('not html');
-                $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap')
-                // this.textManager.getConvertedTextToHTML(content);
-                $('#content_executed_from_actionBlock').find('.content').text(content);
-            }
+
+            // if (isHTML) {
+                $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap');
+                $('#content_executed_from_actionBlock').find('.content').html(getContentWithHighlightedURLs(content));
+            // }
+            // else {
+            //     // console.log('not html');
+            //     $('#content_executed_from_actionBlock').find('.content').css('white-space', 'pre-wrap');
+            //     // this.textManager.getConvertedTextToHTML(content);
+            //     $('#content_executed_from_actionBlock').find('.content').text(content);
+            // }
         
             $('#content_executed_from_actionBlock').find('.content').show();
         }
     
         showContentOnPage(content, isHTML);
+
 
         return [$('.btn_open_settings_actionBlock'), $('#content_executed_from_actionBlock'),
             $('#content_executed_from_actionBlock').find('.content'), ]

@@ -167,7 +167,6 @@ if (!('webkitSpeechRecognition' in window)) {
 		//final_span.innerHTML = linebreak(final_transcript);
 		//interim_span.innerHTML = linebreak(interim_transcript);
 		continuos_speech_text = interim_transcript;
-
 	};
 }
 

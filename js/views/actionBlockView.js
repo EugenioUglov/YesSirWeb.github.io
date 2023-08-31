@@ -611,28 +611,28 @@ class ActionBlockView {
 
         let perspective_container_html = '<div id="' + id_html + '" class="perspective_img_effect_container">';
     
-        let first_part_infoBlock_html = '';
+        let first_part_actionBlock_html = '';
 
-        first_part_infoBlock_html = '<div id="' + id_html + '" name="' + title + '" class="infoBlock" value="' + id + '">';
+        first_part_actionBlock_html = '<div id="' + id_html + '" name="' + title + '" class="infoBlock" value="' + id + '">';
 
         // Set padding from settings button.
         /*
         if (is_padding_top) {
-            first_part_infoBlock_html = '<div id="' + id_html +  '" class="infoBlock" style="padding-top:30px">';
+            first_part_actionBlock_html = '<div id="' + id_html +  '" class="infoBlock" style="padding-top:30px">';
         }
         else {
-            first_part_infoBlock_html = '<div id="' + id_html +  '" class="infoBlock">';
+            first_part_actionBlock_html = '<div id="' + id_html +  '" class="infoBlock">';
         }
         */
 
         if (isEditable) {
-            this.infoBlock_html = first_part_infoBlock_html + folder_elem + settings_html + img_div_html  + title_html +'</div>';
+            this.actionBlock_html = first_part_actionBlock_html + folder_elem + settings_html + img_div_html  + title_html +'</div>';
         }
         else {
-            this.infoBlock_html = first_part_infoBlock_html + folder_elem + img_div_html  + title_html +'</div>';
+            this.actionBlock_html = first_part_actionBlock_html + folder_elem + img_div_html  + title_html +'</div>';
         }
 
-        return this.infoBlock_html;
+        return this.actionBlock_html;
     }
 
     #onDropdownActionValueChange() {

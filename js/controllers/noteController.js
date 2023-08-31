@@ -1,8 +1,8 @@
 class NoteController {
-    constructor(actionBlockService, noteService, pageService) {
+    constructor(actionBlockService, noteService, hashService) {
         this.actionBlockService = actionBlockService;
         this.noteService = noteService;
-        this.pageService = pageService;
+        this.hashService = hashService;
 
         this.model = new NoteModel();
         this.view = new NoteView();
@@ -17,10 +17,12 @@ class NoteController {
 
     #onClose = () => {
         this.noteService.close();
+        console.log('last scroll pos: ' + yesSir.actionBlockService.getScrollPositionOnExecuteBlock());
         if (window.location.hash.toUpperCase().includes('#editActionBlock'.toUpperCase())) {
             this.actionBlockService.setDefaultValuesForSettingsElementsActionBlock();
         }
 
-        this.pageService.openPreviousPage();
+        this.hashService.setHashMainPrevious();
+        // this.hashService.openPreviousPage();
     }
 }

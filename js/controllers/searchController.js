@@ -1,8 +1,8 @@
 class SearchController {
-    constructor(searchService, actionBlockService, pageService, textManager, keyCodeByKeyName) {
+    constructor(searchService, actionBlockService, hashService, textManager, keyCodeByKeyName) {
         this.searchService = searchService;
         this.actionBlockService = actionBlockService;
-        this.pageService = pageService;
+        this.hashService = hashService;
         this.textManager = textManager;
         this.keyCodeByKeyName = keyCodeByKeyName;
 
@@ -26,7 +26,7 @@ class SearchController {
 
     onClickBtnClear = () => {
         this.searchService.view.clear();
-        this.pageService.openMainPage();
+        this.hashService.openMainPage();
     }
 
 
@@ -76,7 +76,15 @@ class SearchController {
                 is_execute_actionBlock_by_title = false;
             }
 
+            const time_before_search = new Date().getTime();
+
             this.#searchActionBlocks(request, is_execute_actionBlock_by_title);
+
+            const time_after_search = new Date().getTime();
+
+            const time_spent_for_search = time_after_search - time_before_search;
+
+            console.log('time_spent_for_search: ' + time_spent_for_search);
         };
 
         function onClickBtnSearchByTags(user_plus_tags, user_minus_tags) {
@@ -94,7 +102,7 @@ class SearchController {
     }
 
     #searchActionBlocks(request, is_execute_actionBlock_by_title) {
-        this.pageService.setHashRequest({
+        this.hashService.setHashRequest({
             request_value: request, 
             is_execute_actionBlock_by_title: is_execute_actionBlock_by_title
         });

@@ -18,6 +18,5 @@ class ScrollController {
                 that.actionBlockService.addOnPageNextActionBlocks();
             }
         }
-
     }
 }

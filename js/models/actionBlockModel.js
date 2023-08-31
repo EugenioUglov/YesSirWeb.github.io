@@ -27,7 +27,6 @@ class ActionBlockModel {
     }
     
 
-
     #actionBlocks_map;
     #titles_actionBlocksMap_by_tag = {};
     
@@ -633,39 +632,31 @@ class ActionBlockModel {
 
 
     getFromDatabaseFirebaseAsync(onGetActionBlocks) {
+        console.log("getFromDatabaseFirebaseAsync()");
         const that = this;
         const dbRef = firebase.database().ref();
         const databaseTable = dbRef.child('actionBlocks');
-        let actionBlocks = "";
 
-        databaseTable.on('value',(snapshot) => {
-            actionBlocks = snapshot.val()[1];
+        dbRef.on('value',(snapshot) => {
+            const databaseObject = snapshot.val();
+            console.log(databaseObject);
+            const actionBlocksString = databaseObject.actionBlocks[0];
             console.log("get from firebase database completed:");
-            console.log(actionBlocks);
-            actionBlocks = this.mapDataStructure.getParsed(actionBlocks);
+            // console.log(actionBlocks);
+
+            yesSir.modalBoxService.show({header_text:'Success', body_text:'Receiving data from firebase database has been completed.'});
+
+            setTimeout(() => {
+                yesSir.modalBoxService.hide();
+            }, "3000");
+            
+
+            const actionBlocks = this.mapDataStructure.getParsed(actionBlocksString);
             onGetActionBlocks(actionBlocks);
         });
     }
 
-    saveToDatabaseFirebase(actionBlocks_map_to_save) {
-        if (actionBlocks_map_to_save === undefined) {
-            actionBlocks_map_to_save = this.getActionBlocks();
-        }
-        
-        
-       var actionBlocks_to_save = this.mapDataStructure.getStringified(actionBlocks_map_to_save);
-       var dbRef = firebase.database().ref();
-       var databaseTable = dbRef.child('actionBlocks');
-
-        const newdata = {
-            1: actionBlocks_to_save
-        };
-
-        databaseTable.update(newdata);
-
-        console.log("save to firebase database completed:");
-        console.log(actionBlocks_to_save);
-    }
+  
 
     saveInDatabase() {
         const that = this;
@@ -785,6 +776,8 @@ class ActionBlockModel {
 
     deleteActionBlocks() {
         this.#actionBlocks_map = new Map();
+
+        this.#onUpdateVarialbeWithActionBlocks();
     }
 
     #onUpdateVarialbeWithActionBlocks() {

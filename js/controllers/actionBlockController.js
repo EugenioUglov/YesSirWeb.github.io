@@ -1,27 +1,27 @@
 class ActionBlockController {
     constructor(actionBlockService, loadingService, dialogWindow, 
-         searchService, pageService, noteService
+         searchService, hashService, noteService
     ) {
         this.actionBlockService = actionBlockService;
         this.loadingService = loadingService;
         this.dialogWindow = dialogWindow;
         this.searchService = searchService;
-        this.pageService = pageService;
+        this.hashService = hashService;
         this.noteService = noteService;
 
         this.#bindViewEvenets();
     }
     
     #onClickBtnShowSettingsToCreateAdvancedActionBlock = () => {
-        this.pageService.setHashCreateActionBlock();
+        this.hashService.setHashCreateActionBlock();
     };
 
     #onClickBtnShowSettingsToCreateNote = () => {
-        this.pageService.openPageSettingsToCreateNote();
+        this.hashService.openPageSettingsToCreateNote();
     };
 
     #onClickBtnShowSettingsToCreateLink = () => {
-        this.pageService.openPageSettingsToCreateLink();
+        this.hashService.openPageSettingsToCreateLink();
     };
 
     #onClickBtnCreateActionBlock = (title, tags_plus_title, action, content, image_URL) => {
@@ -33,9 +33,8 @@ class ActionBlockController {
             
             return false;
         }
-        
-        this.pageService.openMainPage();
-        
+
+        this.hashService.openMainPage();
     };
 
     #bindViewEvenets() {
