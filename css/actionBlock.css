@@ -1,6 +1,6 @@
 .actionBlocks_container {
    display: grid;
-   margin-top: 50px;
+   margin-top: 10px;
    /*  grid-template-columns: repeat(auto-fit, 300px); */
    grid-template-columns: repeat(auto-fit, 12.31rem );
    justify-content: center;  
