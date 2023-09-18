@@ -279,7 +279,7 @@
 
 @media (max-width: 1300px) {
    .actionBlocks_container {
-      grid-template-columns: repeat(auto-fit, 7.1rem); 
+      grid-template-columns: repeat(auto-fit, 7.2rem); 
       /* grid-template-columns: repeat(auto-fit, 125px); */
       /* grid-template-columns: repeat(auto-fit, 150px); */
       padding-left: 0px;
