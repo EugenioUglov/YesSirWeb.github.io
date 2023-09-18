@@ -28,10 +28,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* background: #18181a; */
-    background: #0c192c;
+    /* background: #0c192c; */
+    background: #efefef;
     /* color: #84b737; */
     /* color: #bdbfba; */
-    color: #b4b5b4;
+    /* color: #b4b5b4; */
+    color: #efefeff7;
 
     /* position: relative;
     width:100%;
