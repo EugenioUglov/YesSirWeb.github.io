@@ -5,14 +5,7 @@ class NoteView {
     
 
     showInfo(content, title, isHTML) {
-        $('#showJustContentButton').show();
-        $('#showJustContentButton').on('click', () => {
-            $('.note_title').hide();
-            $("button").each(function (index) {
-                $(this).hide();
-            });
-            $('#btn_close').show();
-        });
+ 
         // $('.btn_open_settings_actionBlock').show();
 
         // Title text.
@@ -62,6 +55,17 @@ class NoteView {
         }
     
         showContentOnPage(content, isHTML);
+
+        $('.note_title').show();
+        
+        $('#showJustContentButton').on('click', () => {
+            $('.note_title').hide();
+            $("button").each(function (index) {
+                $(this).hide();
+            });
+            $('#btn_close').show();
+        });
+        $('#showJustContentButton').show();
 
 
         return [$('.btn_open_settings_actionBlock'), $('#content_executed_from_actionBlock'),
