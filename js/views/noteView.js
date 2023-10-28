@@ -5,7 +5,7 @@ class NoteView {
     
 
     showInfo(content, title, isHTML) {
-        $('.modal_header').html('<button id="showJustContentButton">Show just content</button>' + $('.modal_header').html());
+        $('#showJustContentButton').show();
         $('#showJustContentButton').on('click', () => {
             $('.note_title').hide();
             $("button").each(function (index) {
