@@ -155,7 +155,7 @@
 						</label>
 					</form>
 				</div>
-				<div style="position: relative;color: black; font-size: 13px;">v1</div>
+				<div id="version" style="position: relative;color: black; font-size: 13px;">v3</div>
 				<div id="label_help"></div>
 
 				<!--
@@ -221,20 +221,22 @@
 
 			
 				<div class="modal_header">
-						<button id="btn_close" class="btn btn_right" title="Close" style="cursor: pointer; display: none;" >
+					<div class="buttons"style="display: flex; justify-content: flex-end; flex-flow: row wrap;">
+
+						<button class="btn_open_settings_actionBlock btn" type="button" style="display: none;">Edit</button>
+						<button class="btn_content_speaker btn" type="button" style="display: none;">Listen</button>
+						<button id="showJustContentButton" class="btn" type="button" style="display: none;">Show just content</button>
+						<button id="btn_close" class="btn" title="Close" style="cursor: pointer; display: none;" >
 							<!-- Get search button from site-->
 							<div id="icon_close" class="image" style="border-radius: 10px;">
 							</div>
 						</button>
+					</div>
 
-						<button class="btn_open_settings_actionBlock btn btn_right" type="button" style="display: none;">Edit</button>
-						<button class="btn_content_speaker btn btn_right" type="button" style="display: none;">Listen</button>
-						<button id="showJustContentButton" class="btn btn_right" type="button" style="display: none;">Show just content</button>
-
-						<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
-							<b></b><div class="title note_title center" style="font-size:30px"></div></b>
-							<div class="content"></div>
-						</div>
+					<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
+						<b></b><div class="title note_title center" style="font-size:30px"></div></b>
+						<div class="content"></div>
+					</div>
 				</div>
 
 				<div id="elements_to_create_action-block" class="elements_for_executed_actionBlock" style="display: none; padding-top: 50px;" disabled>
@@ -652,6 +654,7 @@
     <script src="./js/controllers/loginController.js"></script>
 	<script src="./js/login.js"></script>
 	<script src="./js/actionBlockSpeechAssistant.js"></script>
+	<script src="./js/editActionBlockDataHolder.js"></script>
 	
 	<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-database.js"></script>

@@ -98,5 +98,6 @@ class NoteView {
         $('#content_executed_action-block_container').hide();
         $('#btn_close').hide();
         $('#btn_back').hide();
+        $('#showJustContentButton').hide();
     }
 }

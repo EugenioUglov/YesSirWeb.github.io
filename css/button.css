@@ -4,6 +4,7 @@ button {
 
 .btn {
     /* width: 120px; */
+    margin: 5px;
     padding: 10px;
     /* height: 50px; */
     cursor: pointer;
@@ -188,7 +189,7 @@ div#btn_search_by_tags {
     justify-content: center;
     display: relative;
     position: relative;
-    float: right;
+    /* float: right; */
     margin-left: 20px;
 
     width: 45px;

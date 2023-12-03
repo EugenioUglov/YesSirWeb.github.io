@@ -488,7 +488,7 @@ div#welcome_page {
   flex: 100%;
   -webkit-tap-highlight-color: transparent;
   margin-left: 10px;
-  font-size: 16px;
+  font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
