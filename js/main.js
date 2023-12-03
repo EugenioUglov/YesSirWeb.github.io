@@ -94,6 +94,7 @@ let yesSir;
         const speechRecognitionController = new SpeechRecognitionController();
         const hashController = new HashController(hashService);
 
+        
 
         $('.btn_speech_recognition_info').click(function() {
             yesSir.googleTextToSpeech.speak(

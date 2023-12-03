@@ -5,6 +5,7 @@ class NoteView {
     
 
     showInfo(content, title, isHTML) {
+ 
         // $('.btn_open_settings_actionBlock').show();
 
         // Title text.
@@ -55,9 +56,20 @@ class NoteView {
     
         showContentOnPage(content, isHTML);
 
+        $('.note_title').show();
+        
+        $('#showJustContentButton').on('click', () => {
+            $('.note_title').hide();
+            $("button").each(function (index) {
+                $(this).hide();
+            });
+            $('#btn_close').show();
+        });
+        $('#showJustContentButton').show();
+
 
         return [$('.btn_open_settings_actionBlock'), $('#content_executed_from_actionBlock'),
-            $('#content_executed_from_actionBlock').find('.content'), ]
+            $('#content_executed_from_actionBlock').find('.content'), ];
     }
 
     
@@ -86,5 +98,6 @@ class NoteView {
         $('#content_executed_action-block_container').hide();
         $('#btn_close').hide();
         $('#btn_back').hide();
+        $('#showJustContentButton').hide();
     }
 }

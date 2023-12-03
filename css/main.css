@@ -28,10 +28,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* background: #18181a; */
-    background: #0c192c;
+    /* background: #0c192c; */
+    background: #efefef;
     /* color: #84b737; */
     /* color: #bdbfba; */
-    color: #b4b5b4;
+    /* color: #b4b5b4; */
+    /* color: #efefeff7; */
 
     /* position: relative;
     width:100%;
@@ -486,7 +488,7 @@ div#welcome_page {
   flex: 100%;
   -webkit-tap-highlight-color: transparent;
   margin-left: 10px;
-  font-size: 16px;
+  font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

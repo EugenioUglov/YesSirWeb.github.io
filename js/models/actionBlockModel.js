@@ -656,6 +656,17 @@ class ActionBlockModel {
         });
     }
 
+    getFromDatabaseFirebaseAsyncNoRealTimeTest(onGetActionBlocks) {
+        console.log("getFromDatabaseFirebaseAsync()");
+        const that = this;
+        const dbRef = firebase.database().ref();
+        const databaseTable = dbRef.child('actionBlocks');
+
+        dbRef.get().then(function(results){
+            console.log(results.data());
+
+        });
+    }
   
 
     saveInDatabase() {
