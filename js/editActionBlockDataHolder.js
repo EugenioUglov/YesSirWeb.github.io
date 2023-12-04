@@ -53,7 +53,7 @@ class EditActionBlockDataHolder {
             return false;
         }
 
-        lastSavedInputData = JSON.parse(localStorage['lastSavedInputData']);
+        const lastSavedInputData = JSON.parse(localStorage['lastSavedInputData']);
         
         const inputs = document.getElementsByTagName('input');
         const selects = document.getElementsByTagName('select');
