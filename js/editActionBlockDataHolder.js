@@ -53,6 +53,7 @@ class EditActionBlockDataHolder {
             return false;
         }
 
+        lastSavedInputData = JSON.parse(localStorage['lastSavedInputData']);
         
         const inputs = document.getElementsByTagName('input');
         const selects = document.getElementsByTagName('select');
@@ -62,19 +63,19 @@ class EditActionBlockDataHolder {
         for (let index = 0; index < inputs.length; ++index) {
             if (inputs[index].value === undefined) continue;
 
-            inputs[index].value = localStorage['lastSavedInputData']['inputValues'][index];
+            inputs[index].value = lastSavedInputData['inputValues'][index];
         }
 
         for (let index = 0; index < selects.length; ++index) {
             if (selects[index].value === undefined) continue;
 
-            selects[index].value = localStorage['lastSavedInputData']['selectValues'][index];
+            selects[index].value = lastSavedInputData['selectValues'][index];
         }
 
         for (let index = 0; index < textareas.length; ++index) {
             if (textareas[index].value === undefined) continue;
 
-            textareas[index].value = localStorage['lastSavedInputData']['textareaValues'][index];
+            textareas[index].value = lastSavedInputData['textareaValues'][index];
         }
     }
 
