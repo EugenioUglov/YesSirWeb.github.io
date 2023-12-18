@@ -467,7 +467,7 @@ class HashService {
             // window.location.hash === this.getPageNameEnum().main;
         }
         
-        new EditActionBlockDataHolder(hashService);
+        new EditActionBlockDataHolder(this);
     }
 
     #setCurrenPageName(new_page_name) {

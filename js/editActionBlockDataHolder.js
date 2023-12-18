@@ -27,15 +27,15 @@ class EditActionBlockDataHolder {
         const textareas = document.getElementsByTagName('textarea');
         
 
-        for (index = 0; index < inputs.length; ++index) {
+        for (let index = 0; index < inputs.length; ++index) {
             inputValues[index] = inputs[index].value;
         }
 
-        for (index = 0; index < selects.length; ++index) {
+        for (let index = 0; index < selects.length; ++index) {
             selectValues[index] = selects[index].value;
         }
 
-        for (index = 0; index < textareas.length; ++index) {
+        for (let index = 0; index < textareas.length; ++index) {
             textareaValues[index] = textareas[index].value;
         }
 
@@ -53,28 +53,29 @@ class EditActionBlockDataHolder {
             return false;
         }
 
+        const lastSavedInputData = JSON.parse(localStorage['lastSavedInputData']);
         
         const inputs = document.getElementsByTagName('input');
         const selects = document.getElementsByTagName('select');
         const textareas = document.getElementsByTagName('textarea');
         
 
-        for (index = 0; index < inputs.length; ++index) {
+        for (let index = 0; index < inputs.length; ++index) {
             if (inputs[index].value === undefined) continue;
 
-            inputs[index].value = localStorage['lastSavedInputData']['inputValues'][index];
+            inputs[index].value = lastSavedInputData['inputValues'][index];
         }
 
-        for (index = 0; index < selects.length; ++index) {
+        for (let index = 0; index < selects.length; ++index) {
             if (selects[index].value === undefined) continue;
 
-            selects[index].value = localStorage['lastSavedInputData']['selectValues'][index];
+            selects[index].value = lastSavedInputData['selectValues'][index];
         }
 
-        for (index = 0; index < textareas.length; ++index) {
+        for (let index = 0; index < textareas.length; ++index) {
             if (textareas[index].value === undefined) continue;
 
-            textareas[index].value = localStorage['lastSavedInputData']['textareaValues'][index];
+            textareas[index].value = lastSavedInputData['textareaValues'][index];
         }
     }
 
@@ -83,19 +84,19 @@ class EditActionBlockDataHolder {
         const selects = document.getElementsByTagName('select');
         const textareas = document.getElementsByTagName('textarea');
     
-        for (index = 0; index < inputs.length; ++index) {
+        for (let index = 0; index < inputs.length; ++index) {
             inputs[index].addEventListener('input', ()=>{
                 this.#saveInputValues();
             });
         }
     
-        for (index = 0; index < selects.length; ++index) {
+        for (let index = 0; index < selects.length; ++index) {
             selects[index].addEventListener('input', ()=>{
                 this.#saveInputValues();
             });
         }
     
-        for (index = 0; index < textareas.length; ++index) {
+        for (let index = 0; index < textareas.length; ++index) {
             textareas[index].addEventListener('input', ()=>{
                 this.#saveInputValues();
             });

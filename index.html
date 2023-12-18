@@ -221,16 +221,18 @@
 
 			
 				<div class="modal_header">
-					<div class="buttons"style="display: flex; justify-content: flex-end; flex-flow: row wrap;">
-
-						<button class="btn_open_settings_actionBlock btn" type="button" style="display: none;">Edit</button>
-						<button class="btn_content_speaker btn" type="button" style="display: none;">Listen</button>
-						<button id="showJustContentButton" class="btn" type="button" style="display: none;">Show just content</button>
+					<div class="btn-close-container"style="display: flex; justify-content: flex-end; flex-flow: row wrap;">
 						<button id="btn_close" class="btn" title="Close" style="cursor: pointer; display: none;" >
 							<!-- Get search button from site-->
 							<div id="icon_close" class="image" style="border-radius: 10px;">
 							</div>
 						</button>
+					</div>
+					<div class="buttons"style="display: flex; justify-content: flex-end; flex-flow: row wrap;">
+
+						<button class="btn_open_settings_actionBlock btn" type="button" style="display: none;">Edit</button>
+						<button class="btn_content_speaker btn" type="button" style="display: none;">Listen</button>
+						<button id="showJustContentButton" class="btn" type="button" style="display: none;">Show just content</button>
 					</div>
 
 					<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
@@ -258,7 +260,7 @@
 					<div class="title_actionBlock" style="font-size:30px; padding: 20px;"></div>
 				</div>
 
-				<div id="settings_actionBlock_container" class="elements_for_executed_actionBlock" style="display: none; margin-bottom: 150px;" disabled>
+				<div id="settings_actionBlock_container" class="elements_for_executed_actionBlock" style="display: none;" disabled>
 					<div style="outline: 1px solid gray; padding: 10px; border-radius: 10px;">
 						<div class="text_title_for_input_field" title="A uniq phrase in the title. In wirting command the same with this title, the information will be found directly">Title / Command</div> 
 						<div><textarea class="input_field_title interactive_field resize_field" placeholder="" rows="1" cols="50" max-width="20px" required></textarea> </div>
@@ -315,13 +317,46 @@
 						</div>
 					</div>
 
-					
-					<div class="bottom_buttons" style="margin-top: 50px; margin-bottom: 180px;">
-						<button id="btn_create_actionBlock" class="btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
-						<button id="" class="btn_update_actionBlock btn btn_save btn_right" style="margin-top: 10px; margin-left: 20px;" type="button">Save</button>
-						<button id="btn_create_default_actionBlocks" class="btn btn_right" style="margin-top: 10px; margin-left: 20px; display: none;" type="button">Create default Action-Blocks</button>
-						<button id="btn_delete_actionBlock" class="btn btn_right" style="margin-top: 10px;" type="button">Delete</button>
-						<button id="btn_cancel" class="btn_back btn btn_right" style="margin-top: 10px;" type="button">Cancel</button></div>
+					<div style="
+						height: 60px;
+						width: 110%;
+						background-color: #dfdfdf;
+						position: fixed;
+						bottom: 0px;
+						left: 0;
+					"></div>
+					<div class="bottom_buttons">
+						<button id="btn_create_actionBlock" class="btn btn_save btn_right" style="
+							position: fixed;
+							bottom: 0;
+							right: 5px;
+							margin-top: 10px;
+							margin-left: 20px;	
+						" type="button">Save</button>
+						<button id="" class="btn_update_actionBlock btn btn_save btn_right" style="
+							position: fixed;
+							bottom: 0;
+							right: 5px;
+							margin-top: 10px;
+							margin-left: 20px;
+						" type="button">Save</button>
+						<button id="btn_create_default_actionBlocks" class="btn btn_right" style="
+							margin-top: 10px; 
+							margin-left: 20px;
+						" type="button">Create default Action-Blocks</button>
+						<button id="btn_delete_actionBlock" class="btn btn_right" style="
+							position: fixed;
+							bottom: 0;
+							right: 85px;
+							margin-top: 10px;
+							margin-left: 20px;
+						" type="button">Delete</button>
+						<button id="btn_cancel" class="btn_back btn btn_right" style="
+							position: fixed;
+							bottom: 0;
+							right: 235px;
+							margin-top: 10px;
+						" type="button">Cancel</button></div>
 					</div>
 				</div>
 
@@ -435,7 +470,11 @@
 					</div>
 				</div>
 
-				<button id="btn_back" class="btn_back btn btn_right" type="button" style="margin-bottom: 50px; display: none;">Back</button>
+				<button id="btn_back" class="btn_back btn btn_right" type="button" style="
+					display: none;
+					visibility: hidden; 
+					margin-bottom: 50px;
+				">Back</button>
 				
 				<div class="modal_container"></div>
 		</div>
@@ -454,7 +493,7 @@
 	
 	<div class="fixed_elements">
 		<div id="list_of_type_actionBlocks_to_create" style="display: none;">
-			<div class="title" style="padding: 10px;font-size: 25px;text-transform: uppercase;"><b>Create</b></div>
+			<div class="title" style="padding: 10px;font-size: 25px;text-transform: uppercase;"><b style="color: cornflowerblue;">Create</b></div>
 			<ul id="myUL">
 				<li id="btn_settings_to_create_note" title="Text information" value="showInfo">Note</li>
 				<li id="btn_settings_to_create_link" title="URL to web page" value="openURL">Link to web page</li>
