@@ -86,36 +86,36 @@ class ActionBlockService {
       }
     });
 
-    let result = await promise;
+    let result = await promise.then((resolve) => {
+      const actionBlock = {
+        title: title,
+        tags: tags,
+        action: action,
+        content: content,
+        imageURL: image_URL,
+      };
 
-    const actionBlock = {
-      title: title,
-      tags: tags,
-      action: action,
-      content: content,
-      imageURL: image_URL,
-    };
+      const is_created = this.model.add(actionBlock);
 
-    const is_created = this.model.add(actionBlock);
+      if (is_created === false) {
+        // console.log('is not created');
+        return false;
+      }
 
-    if (is_created === false) {
-      // console.log('is not created');
-      return false;
-    }
+      if (window.location.href.includes("#main&speechrecognition")) {
+        yesSir.loadingService.stopLoading();
+        return true;
+      }
 
-    if (window.location.href.includes("#main&speechrecognition")) {
-      yesSir.loadingService.stopLoading();
+      this.view.closeSettings();
+      this.view.clearAllSettingsFields();
+      this.hashService.openPreviousPage();
+      this.loadingService.stopLoading();
+      this.updatePage();
+      this.#onActionBlocksStorageUpdated();
+
       return true;
-    }
-
-    this.view.closeSettings();
-    this.view.clearAllSettingsFields();
-    this.hashService.openPreviousPage();
-    this.loadingService.stopLoading();
-    this.updatePage();
-    this.#onActionBlocksStorageUpdated();
-
-    return true;
+    });
   };
 
   getActionBlockByTitle(title) {
