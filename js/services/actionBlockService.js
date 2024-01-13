@@ -85,6 +85,8 @@ class ActionBlockService {
         resolve(image_URL);
       }
     });
+      
+      return;
 
     let result = await promise.then((resolve) => {
       const actionBlock = {
