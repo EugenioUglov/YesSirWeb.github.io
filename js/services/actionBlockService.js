@@ -77,13 +77,13 @@ class ActionBlockService {
               image_URL = image_from_unsplash;
               console.log(image_from_unsplash);
 
-              return image_URL;
+              resolve(image_URL);
             }
           }
         );
+      } else {
+        resolve(image_URL);
       }
-
-      return "";
     });
 
     let result = await promise;
