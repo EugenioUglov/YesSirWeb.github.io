@@ -105,13 +105,13 @@ class ActionBlockService {
 
       if (is_created === false) {
         // console.log('is not created');
-        if (onEnd != undefined) onEnd();
+        if (onEnd != undefined) onEnd(false);
         return false;
       }
 
       if (window.location.href.includes("#main&speechrecognition")) {
         yesSir.loadingService.stopLoading();
-        if (onEnd != undefined) onEnd();
+        if (onEnd != undefined) onEnd(true);
         return true;
       }
 
@@ -121,7 +121,7 @@ class ActionBlockService {
       this.loadingService.stopLoading();
       this.updatePage();
       this.#onActionBlocksStorageUpdated();
-      if (onEnd != undefined) onEnd();
+      if (onEnd != undefined) onEnd(true);
 
       return true;
     });

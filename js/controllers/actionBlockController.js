@@ -36,16 +36,14 @@ class ActionBlockController {
     content,
     image_URL
   ) => {
-    const is_actionBlock_created = this.actionBlockService.createActionBlock(
+    this.actionBlockService.createActionBlock(
       title,
       tags_plus_title,
       action,
       content,
       image_URL,
-      () => {
+      (is_actionBlock_created) => {
         if (is_actionBlock_created === false) {
-          // console.log('yess ' + is_actionBlock_created);
-
           return false;
         }
 
