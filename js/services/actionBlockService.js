@@ -68,10 +68,10 @@ class ActionBlockService {
     //  Get image rom unspash IF uer didn't set image.
     if (image_URL === undefined || image_URL === "") {
       const unspash_image_searcher = new UnsplashImageSearcher();
-      const image_from_unsplash = unspash_image_searcher.getImageByKeyword(
+      unspash_image_searcher.getImageByKeyword(
         title,
         1,
-        () => {
+        (image_from_unsplash) => {
           console.log(image_from_unsplash);
           if (image_from_unsplash != undefined && image_from_unsplash != "") {
             image_URL = image_from_unsplash;
