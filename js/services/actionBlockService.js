@@ -72,6 +72,7 @@ class ActionBlockService {
         title,
         1,
         () => {
+          console.log(image_from_unsplash);
           if (image_from_unsplash != undefined && image_from_unsplash != "") {
             image_URL = image_from_unsplash;
           }
