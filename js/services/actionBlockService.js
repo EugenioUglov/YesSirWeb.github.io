@@ -62,7 +62,14 @@ class ActionBlockService {
     this.hashService.setActionBlockService(this);
   }
 
-  createActionBlock = async (title, tags, action, content, image_URL) => {
+  createActionBlock = async (
+    title,
+    tags,
+    action,
+    content,
+    image_URL,
+    onEnd
+  ) => {
     this.loadingService.startLoading();
 
     //  Get image rom unspash IF uer didn't set image.
@@ -75,7 +82,6 @@ class ActionBlockService {
           (image_from_unsplash) => {
             if (image_from_unsplash != undefined && image_from_unsplash != "") {
               image_URL = image_from_unsplash;
-              console.log(image_from_unsplash);
 
               resolve(image_URL);
             }
@@ -85,8 +91,6 @@ class ActionBlockService {
         resolve(image_URL);
       }
     });
-      
-      return;
 
     let result = await promise.then((resolve) => {
       const actionBlock = {
@@ -101,11 +105,13 @@ class ActionBlockService {
 
       if (is_created === false) {
         // console.log('is not created');
+        if (onEnd != undefined) onEnd();
         return false;
       }
 
       if (window.location.href.includes("#main&speechrecognition")) {
         yesSir.loadingService.stopLoading();
+        if (onEnd != undefined) onEnd();
         return true;
       }
 
@@ -115,6 +121,7 @@ class ActionBlockService {
       this.loadingService.stopLoading();
       this.updatePage();
       this.#onActionBlocksStorageUpdated();
+      if (onEnd != undefined) onEnd();
 
       return true;
     });

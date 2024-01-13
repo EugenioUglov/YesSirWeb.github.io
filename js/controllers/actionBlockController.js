@@ -1,54 +1,95 @@
 class ActionBlockController {
-    constructor(actionBlockService, loadingService, dialogWindow, 
-         searchService, hashService, noteService
-    ) {
-        this.actionBlockService = actionBlockService;
-        this.loadingService = loadingService;
-        this.dialogWindow = dialogWindow;
-        this.searchService = searchService;
-        this.hashService = hashService;
-        this.noteService = noteService;
+  constructor(
+    actionBlockService,
+    loadingService,
+    dialogWindow,
+    searchService,
+    hashService,
+    noteService
+  ) {
+    this.actionBlockService = actionBlockService;
+    this.loadingService = loadingService;
+    this.dialogWindow = dialogWindow;
+    this.searchService = searchService;
+    this.hashService = hashService;
+    this.noteService = noteService;
 
-        this.#bindViewEvenets();
-    }
-    
-    #onClickBtnShowSettingsToCreateAdvancedActionBlock = () => {
-        this.hashService.setHashCreateActionBlock();
-    };
+    this.#bindViewEvenets();
+  }
 
-    #onClickBtnShowSettingsToCreateNote = () => {
-        this.hashService.openPageSettingsToCreateNote();
-    };
+  #onClickBtnShowSettingsToCreateAdvancedActionBlock = () => {
+    this.hashService.setHashCreateActionBlock();
+  };
 
-    #onClickBtnShowSettingsToCreateLink = () => {
-        this.hashService.openPageSettingsToCreateLink();
-    };
+  #onClickBtnShowSettingsToCreateNote = () => {
+    this.hashService.openPageSettingsToCreateNote();
+  };
 
-    #onClickBtnCreateActionBlock = (title, tags_plus_title, action, content, image_URL) => {
-        const is_actionBlock_created = this.actionBlockService.createActionBlock(title, tags_plus_title, action, content, image_URL);
+  #onClickBtnShowSettingsToCreateLink = () => {
+    this.hashService.openPageSettingsToCreateLink();
+  };
 
-      
-        if (is_actionBlock_created === false){ 
-            // console.log('yess ' + is_actionBlock_created);
-            
-            return false;
+  #onClickBtnCreateActionBlock = (
+    title,
+    tags_plus_title,
+    action,
+    content,
+    image_URL
+  ) => {
+    const is_actionBlock_created = this.actionBlockService.createActionBlock(
+      title,
+      tags_plus_title,
+      action,
+      content,
+      image_URL,
+      () => {
+        if (is_actionBlock_created === false) {
+          // console.log('yess ' + is_actionBlock_created);
+
+          return false;
         }
 
         this.hashService.openMainPage();
-    };
+      }
+    );
+  };
 
-    #bindViewEvenets() {
-        this.actionBlockService.view.bindClickBtnFixedPlus(this.actionBlockService.switchStateMenuTypeActionBlocksToCreate);
-        this.actionBlockService.view.bindClickBtnCreateActionBlock(this.#onClickBtnCreateActionBlock);
-        this.actionBlockService.view.bindClickBtnOpenActionBlockSettings(this.actionBlockService.openActionBlockSettings);
-        this.actionBlockService.view.bindClickBtnSaveEditedActionBlock(this.actionBlockService.updateActionBlock);
-        this.actionBlockService.view.bindClickBtnDeleteActionBlock(this.actionBlockService.deleteActionBlock);
-        this.actionBlockService.view.bindClickBtnRewriteActionBlocks(this.actionBlockService.rewriteActionBlocks);
-        this.actionBlockService.view.bindClickBtnCreateDefaultActionBlocks(this.actionBlockService.updateDefaultActionBlocks);        
-        this.actionBlockService.view.bindClickBtnShowSettingsToCreateNote(this.#onClickBtnShowSettingsToCreateNote);
-        this.actionBlockService.view.bindClickBtnShowSettingsToCreateLink(this.#onClickBtnShowSettingsToCreateLink);
-        this.actionBlockService.view.bindClickBtnShowSettingsToCreateFolder(this.actionBlockService.showSettingsToCreateFolder);
-        this.actionBlockService.view.bindClickBtnShowSettingsToCreateAdvancedActionBlock(this.#onClickBtnShowSettingsToCreateAdvancedActionBlock);
-        this.actionBlockService.view.bindClickBtnCancelSettings(this.actionBlockService.closeActionBlockSettings);
-    }
+  #bindViewEvenets() {
+    this.actionBlockService.view.bindClickBtnFixedPlus(
+      this.actionBlockService.switchStateMenuTypeActionBlocksToCreate
+    );
+    this.actionBlockService.view.bindClickBtnCreateActionBlock(
+      this.#onClickBtnCreateActionBlock
+    );
+    this.actionBlockService.view.bindClickBtnOpenActionBlockSettings(
+      this.actionBlockService.openActionBlockSettings
+    );
+    this.actionBlockService.view.bindClickBtnSaveEditedActionBlock(
+      this.actionBlockService.updateActionBlock
+    );
+    this.actionBlockService.view.bindClickBtnDeleteActionBlock(
+      this.actionBlockService.deleteActionBlock
+    );
+    this.actionBlockService.view.bindClickBtnRewriteActionBlocks(
+      this.actionBlockService.rewriteActionBlocks
+    );
+    this.actionBlockService.view.bindClickBtnCreateDefaultActionBlocks(
+      this.actionBlockService.updateDefaultActionBlocks
+    );
+    this.actionBlockService.view.bindClickBtnShowSettingsToCreateNote(
+      this.#onClickBtnShowSettingsToCreateNote
+    );
+    this.actionBlockService.view.bindClickBtnShowSettingsToCreateLink(
+      this.#onClickBtnShowSettingsToCreateLink
+    );
+    this.actionBlockService.view.bindClickBtnShowSettingsToCreateFolder(
+      this.actionBlockService.showSettingsToCreateFolder
+    );
+    this.actionBlockService.view.bindClickBtnShowSettingsToCreateAdvancedActionBlock(
+      this.#onClickBtnShowSettingsToCreateAdvancedActionBlock
+    );
+    this.actionBlockService.view.bindClickBtnCancelSettings(
+      this.actionBlockService.closeActionBlockSettings
+    );
+  }
 }
