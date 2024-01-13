@@ -62,23 +62,31 @@ class ActionBlockService {
     this.hashService.setActionBlockService(this);
   }
 
-  createActionBlock = (title, tags, action, content, image_URL) => {
+  createActionBlock = async (title, tags, action, content, image_URL) => {
     this.loadingService.startLoading();
 
     //  Get image rom unspash IF uer didn't set image.
-    if (image_URL === undefined || image_URL === "") {
-      const unspash_image_searcher = new UnsplashImageSearcher();
-      unspash_image_searcher.getImageByKeyword(
-        title,
-        1,
-        (image_from_unsplash) => {
-          console.log(image_from_unsplash);
-          if (image_from_unsplash != undefined && image_from_unsplash != "") {
-            image_URL = image_from_unsplash;
+    let promise = new Promise((resolve, reject) => {
+      if (image_URL === undefined || image_URL === "") {
+        const unspash_image_searcher = new UnsplashImageSearcher();
+        unspash_image_searcher.getImageByKeyword(
+          title,
+          1,
+          (image_from_unsplash) => {
+            if (image_from_unsplash != undefined && image_from_unsplash != "") {
+              image_URL = image_from_unsplash;
+              console.log(image_from_unsplash);
+
+              return image_URL;
+            }
           }
-        }
-      );
-    }
+        );
+      }
+
+      return "";
+    });
+
+    let result = await promise;
 
     const actionBlock = {
       title: title,
