@@ -398,7 +398,7 @@ class ActionBlockView {
       // Get title value.
       const input_field_title =
         settings_actionBlock_container.find(".input_field_title");
-      const title = this.textManager.getTextInOneLine(input_field_title.val());
+      let title = this.textManager.getTextInOneLine(input_field_title.val());
 
       // Get content.
       const input_field_info_container = settings_actionBlock_container.find(
