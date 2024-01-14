@@ -36,6 +36,9 @@ class ActionBlockController {
     content,
     image_URL
   ) => {
+    // Disable all buttons.
+    $(":submit, :button").attr("disabled", "disabled");
+    yesSir.loadingService.startLoading();
     this.actionBlockService.createActionBlock(
       title,
       tags_plus_title,
@@ -43,6 +46,11 @@ class ActionBlockController {
       content,
       image_URL,
       (is_actionBlock_created) => {
+        yesSir.loadingService.stopLoading();
+
+        // Enable all buttons.
+        $(":submit, :button").attr("disabled", false);
+
         if (is_actionBlock_created === false) {
           return false;
         }
