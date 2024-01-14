@@ -278,6 +278,7 @@ class HashService {
             this.getNormalizedCurrentHash() === '' || 
             this.getNormalizedCurrentHash() === '#undefined'
         ) {
+            console.log('yes');
             this.setPageName(this.getPageNameEnum().main);
             this.searchService.clearInputField();
             yesSir.noteService.close();
