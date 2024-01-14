@@ -26,14 +26,14 @@ class UnsplashImageSearcher {
     const response = await fetch(url);
     const data = await response.json();
     const results = data.results;
+    let first_image = "";
     // Returns irst image.
     if (results[0] != undefined) {
-      const first_image = results[0].urls.small;
-      if (onDone != undefined) onDone(first_image);
-      return first_image;
-    } else {
-      return "";
+      first_image = results[0].urls.small;
     }
+
+    if (onDone != undefined) onDone(first_image);
+    return first_image;
 
     // Loop for 10 images.
     // results.map((result) => {
