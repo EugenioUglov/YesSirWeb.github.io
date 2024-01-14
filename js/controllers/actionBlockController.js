@@ -41,7 +41,7 @@ class ActionBlockController {
     yesSir.loadingService.startLoading();
     this.actionBlockService
       .createActionBlock(title, tags_plus_title, action, content, image_URL)
-      .then((result) => {
+      .then((is_actionBlock_created) => {
         yesSir.loadingService.stopLoading();
 
         // Enable all buttons.
