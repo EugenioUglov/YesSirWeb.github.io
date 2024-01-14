@@ -82,9 +82,8 @@ class ActionBlockService {
           (image_from_unsplash) => {
             if (image_from_unsplash != undefined && image_from_unsplash != "") {
               image_URL = image_from_unsplash;
-
-              resolve(image_URL);
             }
+            resolve(image_URL);
           }
         );
       } else {
