@@ -280,6 +280,7 @@ class HashService {
         ) {
             this.setPageName(this.getPageNameEnum().main);
             this.searchService.clearInputField();
+            yesSir.noteSe
 
             if (that.#actionBlockService.model.getActionBlocks().size > 0) {
                 that.#actionBlockService.view.onOpenMainPageWithActionBlocks();
