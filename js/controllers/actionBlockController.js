@@ -39,13 +39,9 @@ class ActionBlockController {
     // Disable all buttons.
     $(":submit, :button").attr("disabled", "disabled");
     yesSir.loadingService.startLoading();
-    this.actionBlockService.createActionBlock(
-      title,
-      tags_plus_title,
-      action,
-      content,
-      image_URL,
-      (is_actionBlock_created) => {
+    this.actionBlockService
+      .createActionBlock(title, tags_plus_title, action, content, image_URL)
+      .then((result) => {
         yesSir.loadingService.stopLoading();
 
         // Enable all buttons.
@@ -56,8 +52,7 @@ class ActionBlockController {
         }
 
         this.hashService.openMainPage();
-      }
-    );
+      });
   };
 
   #bindViewEvenets() {
