@@ -428,7 +428,7 @@ class ActionBlockView {
         settings_actionBlock_container.find(".input_field_tags")[0];
       let tags_from_field = input_field_tags.value;
 
-      let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, "");
+      let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, " ");
 
       let tags_plus_title = "";
 
