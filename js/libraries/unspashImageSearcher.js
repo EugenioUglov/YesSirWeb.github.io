@@ -23,13 +23,20 @@ class UnsplashImageSearcher {
     const url = `https://api.unsplash.com/search/photos?page=${page}&query=${keyword}&client_id=${
       this.#ACCESS_KEY
     }`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const results = data.results;
+
     let first_image = "";
-    // Returns irst image.
-    if (results[0] != undefined) {
-      first_image = results[0].urls.small;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const results = data.results;
+
+      // Returns irst image.
+      if (results[0] != undefined) {
+        first_image = results[0].urls.small;
+      }
+    } catch (error) {
+      console.log(error);
     }
 
     if (onDone != undefined) onDone(first_image);
