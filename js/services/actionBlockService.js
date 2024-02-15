@@ -73,7 +73,7 @@ class ActionBlockService {
     this.loadingService.startLoading();
 
     //  Get image rom unspash IF uer didn't set image.
-    let promise = new Promise((resolve, reject) => {
+    let getImagePromise = new Promise((resolve, reject) => {
       if (image_URL === undefined || image_URL === "") {
         const unspash_image_searcher = new UnsplashImageSearcher();
         unspash_image_searcher.getImageByKeyword(
@@ -91,7 +91,7 @@ class ActionBlockService {
       }
     });
 
-    let result = await promise.then((resolve) => {
+    return await getImagePromise.then((resolve, reject) => {
       const actionBlock = {
         title: title,
         tags: tags,
