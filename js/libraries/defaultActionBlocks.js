@@ -13,67 +13,72 @@ class DefaultActionBlocks {
         };
 
         const actionBlock_create_note = {
-            title: 'Create a note by voice',
-            tags: 'create note, voice recognition, default',
-            action: 'showHTML',
-            content: getContentActionBlockCreateNote(),
-            imageURL: 'https://i.ibb.co/K6kqJQc/plus.png'
+          title: "Create a note by voice",
+          tags: "Create a note by voice, create note, voice recognition, default",
+          action: "showHTML",
+          content: getContentActionBlockCreateNote(),
+          imageURL: "https://i.ibb.co/K6kqJQc/plus.png",
         };
         
         const actionBlock_open_file_manager = {
             title: 'Open File Manager',
-            tags: 'File manager, save, upload, download, file, default',
+            tags: 'Open File manager, save, upload, download, file, default',
             action: 'showHTML',
             content: getContentActionBlockOpenFileManager(),
             imageURL: 'https://icon-library.com/images/file-download-icon/file-download-icon-19.jpg'
         };
         
         const actionBlock_delete_all_actionBlocks = {
-            title: 'Delete all Action-Blocks',
-            tags: 'Remove, clear',
-            action: 'showHTML',
-            content: getContentActionBlockDeleteAllActionBlocks(),
-            imageURL: 'https://pngimg.com/uploads/trash_can/trash_can_PNG18457.png'
+          title: "Delete all Action-Blocks",
+          tags: "Delete all Action-Blocks, Remove, clear",
+          action: "showHTML",
+          content: getContentActionBlockDeleteAllActionBlocks(),
+          imageURL:
+            "https://pngimg.com/uploads/trash_can/trash_can_PNG18457.png",
         };
 
         const actionBlock_open_speeh_assistant = {
             title: 'Open speech assistant',
-            tags: 'speech assistant, voice recognition',
+            tags: 'Open speech assistant, voice recognition',
             action: 'showHTML',
             content: getContentActionBlockSpeechAssistant(),
             imageURL: 'https://images.assetsdelivery.com/compings_v2/rashadashurov/rashadashurov1911/rashadashurov191100457.jpg'
         };
     
         const actionBlock_open_data_storage_manager = {
-            title: 'Open Data Storage Manager',
-            tags: 'Data Storage Manager, localstorage, database, default',
-            action: 'showHTML',
-            content: '<script>yesSir.dataStorageService.showDataStorageSettings()</script>',
-            imageURL: 'https://www.sostechgroup.com/wp-content/uploads/2016/08/ThinkstockPhotos-176551504.jpg'
+          title: "Open Data Storage Manager",
+          tags: "Open Data Storage Manager, localstorage, database, default",
+          action: "showHTML",
+          content:
+            "<script>yesSir.dataStorageService.showDataStorageSettings()</script>",
+          imageURL:
+            "https://www.sostechgroup.com/wp-content/uploads/2016/08/ThinkstockPhotos-176551504.jpg",
         };
     
         const actionBlock_facebook_of_developer = {
             title: 'Open Facebook page of developer',
-            tags: 'facebook, account, developer, contact, message, default',
+            tags: 'Open Facebook page of developer, account, contact, message, default',
             action: 'openURL',
             content: 'https://www.facebook.com/eugeniouglov',
             imageURL: 'https://i.ibb.co/QJ4y5v3/DEVELOPER-facebook.png'
         };
     
         const actionBlock_email_of_developer = {
-            title: 'Write email to developer - eugeniouglov@gmail.com',
-            tags: 'email, developer, contact, message, gmail, mail, default',
-            action: 'openURL',
-            content: 'mailto:eugeniouglov@gmail.com',
-            imageURL: 'https://i.ibb.co/dMHPk78/DEVELOPER-gmail.png'
+          title: "Write email to developer - eugeniouglov@gmail.com",
+          tags: "Write email to developer, contact, message, gmail, mail, default",
+          action: "openURL",
+          content: "mailto:eugeniouglov@gmail.com",
+          imageURL: "https://i.ibb.co/dMHPk78/DEVELOPER-gmail.png",
         };
     
         const actionBlock_logs = {
-            title: 'Show logs',
-            tags: 'logs, default',
-            action: 'showHTML',
-            content: '<script>yesSir.logsService.showContainerWithLogs()</script>',
-            imageURL: 'https://pbs.twimg.com/profile_banners/240696823/1528203940/1500x500'
+          title: "Show logs",
+          tags: "Show logs, default",
+          action: "showHTML",
+          content:
+            "<script>yesSir.logsService.showContainerWithLogs()</script>",
+          imageURL:
+            "https://pbs.twimg.com/profile_banners/240696823/1528203940/1500x500",
         };
     
         const actionBlock_voiceRecognitionSettings = {
