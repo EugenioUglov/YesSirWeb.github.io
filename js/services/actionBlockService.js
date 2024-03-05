@@ -201,8 +201,7 @@ class ActionBlockService {
 
   showActionBlocks(
     actionBlocks_to_show,
-    count_actionBlocks_to_show_at_time = 50,
-    actionBlocks_to_skip = []
+    count_actionBlocks_to_show_at_time = 50
   ) {
     const that = this;
 
@@ -243,22 +242,11 @@ class ActionBlockService {
       key,
       actionBlock,
     ] of that.model.actionBlocks_to_show.entries()) {
-      let is_skip_actionBlock = false;
-
       if (i >= count_actionBlocks_to_show_at_time - 1) {
         break;
       }
 
-      for (const actionBlock_to_skip of actionBlocks_to_skip) { 
-        if (actionBlock_to_skip.title === actionBlock.title) { 
-          is_skip_actionBlock = true;
-          break;
-        }
-      }
-      
-      if (is_skip_actionBlock === false) {
-        that.showActionBlock(actionBlock);
-      }
+      that.showActionBlock(actionBlock);
 
       i++;
     }
@@ -401,10 +389,13 @@ class ActionBlockService {
     // Get request text from input field and find possible search data.
     actionBlocks_to_show = this.model.getByPhrase(request);
 
-    // Set Action-Block by title at the beginning.
+    // Set Action-Block by title at the beginning. And remove this Action-Block from position where it was before.
     const actionBlock_by_title = this.model.getActionBlockByTitle(request);
 
     if (actionBlock_by_title) {
+      var index = actionBlocks_to_show.indexOf(actionBlock_by_title);
+      actionBlocks_to_show.splice(index, 1);
+
       actionBlocks_to_show.unshift(actionBlock_by_title);
     }
     //
@@ -428,12 +419,12 @@ class ActionBlockService {
       if (is_actionBlock_exist === false) {
         this.#index_last_showed_actionBlock = 0;
         // Show Action-Blocks separated by pages.
-        this.showActionBlocks(actionBlocks_to_show, 50, [actionBlock_by_title]);
+        this.showActionBlocks(actionBlocks_to_show);
       }
     } else {
       this.#index_last_showed_actionBlock = 0;
       // Show Action-Blocks separated by pages.
-      this.showActionBlocks(actionBlocks_to_show, 50, [actionBlock_by_title]);
+      this.showActionBlocks(actionBlocks_to_show);
     }
 
     // IF has been found just one infoObject THEN execute action.
