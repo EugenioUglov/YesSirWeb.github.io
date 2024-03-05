@@ -390,6 +390,14 @@ class ActionBlockService {
     // Get request text from input field and find possible search data.
     actionBlocks_to_show = this.model.getByPhrase(request);
 
+    // Set Action-Block by title at the beginning.
+    actionBlock_by_title = this.model.getActionBlockByTitle(request);
+
+    if (actionBlock_by_title) {
+      actionBlocks_to_show.shift(actionBlock_by_title);
+    }
+    //
+
     if (!actionBlocks_to_show) {
       actionBlocks_to_show = [];
     }
