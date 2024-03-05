@@ -391,7 +391,7 @@ class ActionBlockService {
     actionBlocks_to_show = this.model.getByPhrase(request);
 
     // Set Action-Block by title at the beginning.
-    actionBlock_by_title = this.model.getActionBlockByTitle(request);
+    const actionBlock_by_title = this.model.getActionBlockByTitle(request);
 
     if (actionBlock_by_title) {
       actionBlocks_to_show.shift(actionBlock_by_title);
