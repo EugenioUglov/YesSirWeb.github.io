@@ -62,6 +62,25 @@ class ActionBlockService {
     this.hashService.setActionBlockService(this);
   }
 
+  async getSingularWord(word_to_singularize, onDone) {
+    let singularized_word = "";
+    const url =
+      `https://yessirapi.onrender.com/singular?request=` + word_to_singularize;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const results = data.results;
+      console.log(results);
+      console.log(results.response);
+      singularized_word = results.response;
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (onDone != undefined) onDone(singularized_word);
+  }
+
   createActionBlock = async (
     title,
     tags,
@@ -72,8 +91,21 @@ class ActionBlockService {
   ) => {
     this.loadingService.startLoading();
 
+    const getSingularizedWordsPromise = new Promise((resolve, reject) => {
+      const singularized_words = [];
+      const titleWords = title.split(/[^a-z]+/i).filter(Boolean);
+
+      titleWords.forEach((titleWord) => {
+        this.getSingularWord(titleWord, (singularized_word) => {
+          singularized_words.push(singularized_word);
+        });
+      });
+
+      resolve(singularized_words);
+    });
+
     //  Get image rom unspash IF uer didn't set image.
-    let getImagePromise = new Promise((resolve, reject) => {
+    const getImagePromise = new Promise((resolve, reject) => {
       if (image_URL === undefined || image_URL === "") {
         const unspash_image_searcher = new UnsplashImageSearcher();
         unspash_image_searcher.getImageByKeyword(
@@ -91,39 +123,84 @@ class ActionBlockService {
       }
     });
 
-    return await getImagePromise.then((resolve, reject) => {
-      const actionBlock = {
-        title: title,
-        tags: tags,
-        action: action,
-        content: content,
-        imageURL: image_URL,
-      };
+    return await Promise.all([getSingularizedWordsPromise, getImagePromise])
+      .then((values) => {
+        let singularized_words = values[0];
+        let image_URL = values[1];
 
-      const is_created = this.model.add(actionBlock);
+        singularized_words.forEach((singularized_word) => {
+          if (singularized_word) tags += ", " + singularized_word;
+        });
 
-      if (is_created === false) {
-        // console.log('is not created');
-        if (onEnd != undefined) onEnd(false);
-        return false;
-      }
+        const actionBlock = {
+          title: title,
+          tags: tags,
+          action: action,
+          content: content,
+          imageURL: image_URL,
+        };
 
-      if (window.location.href.includes("#main&speechrecognition")) {
-        yesSir.loadingService.stopLoading();
+        const is_created = this.model.add(actionBlock);
+
+        if (is_created === false) {
+          // console.log('is not created');
+          if (onEnd != undefined) onEnd(false);
+          return false;
+        }
+
+        if (window.location.href.includes("#main&speechrecognition")) {
+          yesSir.loadingService.stopLoading();
+          if (onEnd != undefined) onEnd(true);
+          return true;
+        }
+
+        this.view.closeSettings();
+        this.view.clearAllSettingsFields();
+        this.hashService.openPreviousPage();
+        this.loadingService.stopLoading();
+        this.updatePage();
+        this.#onActionBlocksStorageUpdated();
         if (onEnd != undefined) onEnd(true);
+
         return true;
-      }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-      this.view.closeSettings();
-      this.view.clearAllSettingsFields();
-      this.hashService.openPreviousPage();
-      this.loadingService.stopLoading();
-      this.updatePage();
-      this.#onActionBlocksStorageUpdated();
-      if (onEnd != undefined) onEnd(true);
+    // return await getImagePromise.then((resolve, reject) => {
+    //   const actionBlock = {
+    //     title: title,
+    //     tags: tags,
+    //     action: action,
+    //     content: content,
+    //     imageURL: image_URL,
+    //   };
 
-      return true;
-    });
+    //   const is_created = this.model.add(actionBlock);
+
+    //   if (is_created === false) {
+    //     // console.log('is not created');
+    //     if (onEnd != undefined) onEnd(false);
+    //     return false;
+    //   }
+
+    //   if (window.location.href.includes("#main&speechrecognition")) {
+    //     yesSir.loadingService.stopLoading();
+    //     if (onEnd != undefined) onEnd(true);
+    //     return true;
+    //   }
+
+    //   this.view.closeSettings();
+    //   this.view.clearAllSettingsFields();
+    //   this.hashService.openPreviousPage();
+    //   this.loadingService.stopLoading();
+    //   this.updatePage();
+    //   this.#onActionBlocksStorageUpdated();
+    //   if (onEnd != undefined) onEnd(true);
+
+    //   return true;
+    // });
   };
 
   getActionBlockByTitle(title) {
