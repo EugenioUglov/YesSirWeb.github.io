@@ -394,7 +394,7 @@ class ActionBlockService {
     const actionBlock_by_title = this.model.getActionBlockByTitle(request);
 
     if (actionBlock_by_title) {
-      actionBlocks_to_show.shift(actionBlock_by_title);
+      actionBlocks_to_show.unshift(actionBlock_by_title);
     }
     //
 
