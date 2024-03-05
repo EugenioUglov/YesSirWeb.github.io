@@ -201,7 +201,8 @@ class ActionBlockService {
 
   showActionBlocks(
     actionBlocks_to_show,
-    count_actionBlocks_to_show_at_time = 50
+    count_actionBlocks_to_show_at_time = 50,
+    actionBlocks_to_skip = []
   ) {
     const that = this;
 
@@ -242,12 +243,22 @@ class ActionBlockService {
       key,
       actionBlock,
     ] of that.model.actionBlocks_to_show.entries()) {
-      // !!!
+      let is_skip_actionBlock = false;
+
       if (i >= count_actionBlocks_to_show_at_time - 1) {
         break;
       }
 
-      that.showActionBlock(actionBlock);
+      for (const actionBlock_to_skip of actionBlocks_to_skip) { 
+        if (actionBlock_to_skip.title === actionBlock.title) { 
+          is_skip_actionBlock = true;
+          break;
+        }
+      }
+      
+      if (is_skip_actionBlock === false) {
+        that.showActionBlock(actionBlock);
+      }
 
       i++;
     }
@@ -417,12 +428,12 @@ class ActionBlockService {
       if (is_actionBlock_exist === false) {
         this.#index_last_showed_actionBlock = 0;
         // Show Action-Blocks separated by pages.
-        this.showActionBlocks(actionBlocks_to_show);
+        this.showActionBlocks(actionBlocks_to_show, 50, [actionBlock_by_title]);
       }
     } else {
       this.#index_last_showed_actionBlock = 0;
       // Show Action-Blocks separated by pages.
-      this.showActionBlocks(actionBlocks_to_show);
+      this.showActionBlocks(actionBlocks_to_show, 50, [actionBlock_by_title]);
     }
 
     // IF has been found just one infoObject THEN execute action.
