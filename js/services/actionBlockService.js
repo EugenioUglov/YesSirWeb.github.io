@@ -62,23 +62,40 @@ class ActionBlockService {
     this.hashService.setActionBlockService(this);
   }
 
-  async getSingularWord(word_to_singularize, onDone) {
-    let singularized_word = "";
-    const url =
-      `https://yessirapi.onrender.com/singular?request=` + word_to_singularize;
+  async getSingularizedWord(word_to_singularize, onDone) {
+    fetch(
+      `https://yessirapi.onrender.com/singular?request=` + word_to_singularize
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (onDone != undefined) onDone(data.response);
+      })
+      .catch((error) => console.error("Error:", error));
+  }
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      const results = data.results;
-      console.log(results);
-      console.log(results.response);
-      singularized_word = results.response;
-    } catch (error) {
-      console.log(error);
-    }
+  async getSingularizedWords(words_to_singularize, onDone) {
+    let count_singularized_words = 0;
+    const singularized_words = [];
 
-    if (onDone != undefined) onDone(singularized_word);
+    await words_to_singularize.map(async (word_to_singularize) => {
+      await this.getSingularizedWord(
+        word_to_singularize,
+        (singularized_word) => {
+          console.log(singularized_word);
+          singularized_words.push(singularized_word);
+          count_singularized_words++;
+          if (count_singularized_words >= words_to_singularize.length) {
+            if (onDone != undefined) onDone(singularized_words);
+          }
+        }
+      );
+    });
+
+    //  words_to_singularize.forEach((word_to_singularize) => {
+    //    this.getSingularizedWord(word_to_singularize, (singularized_word) => {
+    //      singularized_words.push(singularized_word);
+    //    });
+    //  });
   }
 
   createActionBlock = async (
@@ -92,16 +109,11 @@ class ActionBlockService {
     this.loadingService.startLoading();
 
     const getSingularizedWordsPromise = new Promise((resolve, reject) => {
-      const singularized_words = [];
       const titleWords = title.split(/[^a-z]+/i).filter(Boolean);
 
-      titleWords.forEach((titleWord) => {
-        this.getSingularWord(titleWord, (singularized_word) => {
-          singularized_words.push(singularized_word);
-        });
+      this.getSingularizedWords(titleWords, (singularized_words) => { 
+        resolve(singularized_words);
       });
-
-      resolve(singularized_words);
     });
 
     //  Get image rom unspash IF uer didn't set image.
