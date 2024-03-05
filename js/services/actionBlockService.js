@@ -62,35 +62,53 @@ class ActionBlockService {
     this.hashService.setActionBlockService(this);
   }
 
-  async getSingularizedWord(word_to_singularize, onDone) {
+  async getSingularizedWord(word_to_singularize, onDone, onCatch) {
+    console.log("word_to_singularize", word_to_singularize);
     fetch(
       `https://yessirapi.onrender.com/singular?request=` + word_to_singularize
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("done");
+
         if (onDone != undefined) onDone(data.response);
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => {
+        console.log("error");
+        if (onCatch != undefined) onCatch(error);
+      });
   }
 
-  async getSingularizedWords(words_to_singularize, onDone) {
+  async getSingularizedWords(words_to_singularize, onDone, onCatch) {
     let count_singularized_words = 0;
     const singularized_words = [];
 
-    await words_to_singularize.map(async (word_to_singularize) => {
-      await this.getSingularizedWord(
-        word_to_singularize,
-        (singularized_word) => {
-          console.log(singularized_word);
-          singularized_words.push(singularized_word);
-          count_singularized_words++;
-          if (count_singularized_words >= words_to_singularize.length) {
-            if (onDone != undefined) onDone(singularized_words);
+    const getSingularizeWordsPromise = new Promise((resolve, reject) => {
+      words_to_singularize.map((word_to_singularize) => {
+        this.getSingularizedWord(
+          word_to_singularize,
+          (singularized_word) => {
+            singularized_words.push(singularized_word);
+            count_singularized_words++;
+            if (count_singularized_words >= words_to_singularize.length) {
+              resolve(singularized_words);
+            }
+          },
+          (error) => {
+            reject(error);
           }
-        }
-      );
+        );
+      });
     });
 
+    getSingularizeWordsPromise.then(
+      (singularized_words) => {
+        if (onDone != undefined) onDone(singularized_words);
+      },
+      (error) => {
+        if (onCatch != undefined) onCatch(error);
+      }
+    );
     //  words_to_singularize.forEach((word_to_singularize) => {
     //    this.getSingularizedWord(word_to_singularize, (singularized_word) => {
     //      singularized_words.push(singularized_word);
@@ -109,9 +127,9 @@ class ActionBlockService {
     this.loadingService.startLoading();
 
     const getSingularizedWordsPromise = new Promise((resolve, reject) => {
-      const titleWords = title.split(/[^a-z]+/i).filter(Boolean);
+      const title_words = title.split(/[^a-z]+/i).filter(Boolean);
 
-      this.getSingularizedWords(titleWords, (singularized_words) => { 
+      this.getSingularizedWords(title_words, (singularized_words) => { 
         resolve({status: 'success', singularized_words: singularized_words });
       }, (error) => { 
         resolve({ status: "error", message: error });
