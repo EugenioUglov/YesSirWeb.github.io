@@ -112,7 +112,9 @@ class ActionBlockService {
       const titleWords = title.split(/[^a-z]+/i).filter(Boolean);
 
       this.getSingularizedWords(titleWords, (singularized_words) => { 
-        resolve(singularized_words);
+        resolve({status: 'success', singularized_words: singularized_words });
+      }, (error) => { 
+        resolve({ status: "error", message: error });
       });
     });
 
@@ -137,12 +139,15 @@ class ActionBlockService {
 
     return await Promise.all([getSingularizedWordsPromise, getImagePromise])
       .then((values) => {
-        let singularized_words = values[0];
+        let singularized_words_obj = values[0];
+        
         let image_URL = values[1];
-
-        singularized_words.forEach((singularized_word) => {
-          if (singularized_word) tags += ", " + singularized_word;
-        });
+        if (singularized_words_obj.status === "success") {
+          const singularized_words = singularized_words_obj.singularized_words;
+          singularized_words.forEach((singularized_word) => {
+            if (singularized_word) tags += ", " + singularized_word;
+          });
+        }
 
         const actionBlock = {
           title: title,
