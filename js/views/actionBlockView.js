@@ -99,6 +99,7 @@ class ActionBlockView {
     $("#btn_close").show();
     $("#elements_to_create_action-block").show();
     $("#settings_actionBlock_container").show();
+    $("#btn_create_actionBlock_with_automation").show();
     $("#btn_create_actionBlock").show();
     $(".btn_update_actionBlock").hide();
     $("#btn_delete_actionBlock").hide();
@@ -137,6 +138,7 @@ class ActionBlockView {
     settings_actionBlock_container.find(".input_field_title")[0].focus();
 
     $("#btn_create_actionBlock").hide();
+    $("#btn_create_actionBlock_with_automation").hide();
     $(".btn_update_actionBlock").show();
     $("#btn_delete_actionBlock").show();
 
@@ -391,6 +393,86 @@ class ActionBlockView {
 
   bindClickBtnCreateActionBlock(handler) {
     $("#btn_create_actionBlock").on("click", () => {
+      const settings_actionBlock_container = $(
+        "#settings_actionBlock_container"
+      );
+
+      // Get title value.
+      const input_field_title =
+        settings_actionBlock_container.find(".input_field_title");
+      let title = this.textManager.getTextInOneLine(input_field_title.val());
+
+      // Get content.
+      const input_field_info_container = settings_actionBlock_container.find(
+        ".input_field_content"
+      );
+      let content = input_field_info_container.val();
+
+      if (!title) {
+        if (content === "") {
+          alert("Impossible to create Action-Block. Title field is empty");
+          return false;
+        }
+
+        const first_line_content = this.textManager.getFirstLine(content);
+        const first_ten_words_of_first_line_content = this.textManager.getWords(
+          first_line_content,
+          0,
+          10
+        );
+
+        title = first_ten_words_of_first_line_content;
+      }
+
+      // .Start tags.
+      // Get tags values.
+      let input_field_tags =
+        settings_actionBlock_container.find(".input_field_tags")[0];
+      let tags_from_field = input_field_tags.value;
+
+      let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, " ");
+
+      let tags_plus_title = "";
+
+      if (tags_from_field) tags_plus_title += tags_from_field + ", ";
+
+      // Add new tag getting text from title.
+      tags_plus_title += title + ", " + title_without_symbols;
+      // .End tags.
+
+      // Get action.
+      //let selected_action = settings_actionBlock_container.find('.dropdown_select_action').find(':selected')[0];
+      //let action_user_choose = selected_action.value;
+
+      // infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
+
+      // if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
+      //     infoBlockModel.action_for_new_actionBlock = $('.dropdown_select_action').find(':selected')[0].value;
+
+      //     if (infoBlockModel.action_for_new_actionBlock === undefined || infoBlockModel.action_for_new_actionBlock === null) {
+      //         alert('Impossible to create command.\nProbably dropdown menu for action has been broken.');
+      //     }
+
+      //     return false;
+      // }
+
+      if (content === "") {
+        // infoBlockModel.action_for_new_actionBlock = action_name.showInfo;
+        content = title;
+        // alert('Impossible to create command. content field for action is empty');
+        // return false;
+      }
+
+      const input_field_image_URL_container =
+        settings_actionBlock_container.find(".input_field_image_URL");
+      const image_URL = input_field_image_URL_container.val();
+
+      handler(title, tags_plus_title, this.getUserAction(), content, image_URL);
+    });
+  }
+
+  bindClickBtnCreateActionBlockWithAutomation(handler) {
+    $("#btn_create_actionBlock_with_automation").on("click", () => {
       const settings_actionBlock_container = $(
         "#settings_actionBlock_container"
       );

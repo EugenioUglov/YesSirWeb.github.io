@@ -116,24 +116,29 @@ class ActionBlockService {
     //  });
   }
 
-  createActionBlock = async (
+  async createActionBlockWithAutomation(
     title,
     tags,
     action,
     content,
     image_URL,
     onEnd
-  ) => {
-    this.loadingService.startLoading();
-
+  ) {
     const getSingularizedWordsPromise = new Promise((resolve, reject) => {
       const title_words = title.split(/[^a-z]+/i).filter(Boolean);
 
-      this.getSingularizedWords(title_words, (singularized_words) => { 
-        resolve({status: 'success', singularized_words: singularized_words });
-      }, (error) => { 
-        resolve({ status: "error", message: error });
-      });
+      this.getSingularizedWords(
+        title_words,
+        (singularized_words) => {
+          resolve({
+            status: "success",
+            singularized_words: singularized_words,
+          });
+        },
+        (error) => {
+          resolve({ status: "error", message: error });
+        }
+      );
     });
 
     //  Get image rom unspash IF uer didn't set image.
@@ -158,7 +163,7 @@ class ActionBlockService {
     return await Promise.all([getSingularizedWordsPromise, getImagePromise])
       .then((values) => {
         let singularized_words_obj = values[0];
-        
+
         let image_URL = values[1];
         if (singularized_words_obj.status === "success") {
           const singularized_words = singularized_words_obj.singularized_words;
@@ -178,7 +183,6 @@ class ActionBlockService {
         const is_created = this.model.add(actionBlock);
 
         if (is_created === false) {
-          // console.log('is not created');
           if (onEnd != undefined) onEnd(false);
           return false;
         }
@@ -202,40 +206,48 @@ class ActionBlockService {
       .catch((error) => {
         console.error(error);
       });
+  }
 
-    // return await getImagePromise.then((resolve, reject) => {
-    //   const actionBlock = {
-    //     title: title,
-    //     tags: tags,
-    //     action: action,
-    //     content: content,
-    //     imageURL: image_URL,
-    //   };
+  createActionBlock = async (
+    title,
+    tags,
+    action,
+    content,
+    image_URL,
+    onEnd
+  ) => {
+    this.loadingService.startLoading();
 
-    //   const is_created = this.model.add(actionBlock);
+    const actionBlock = {
+      title: title,
+      tags: tags,
+      action: action,
+      content: content,
+      imageURL: image_URL,
+    };
 
-    //   if (is_created === false) {
-    //     // console.log('is not created');
-    //     if (onEnd != undefined) onEnd(false);
-    //     return false;
-    //   }
+    const is_created = this.model.add(actionBlock);
 
-    //   if (window.location.href.includes("#main&speechrecognition")) {
-    //     yesSir.loadingService.stopLoading();
-    //     if (onEnd != undefined) onEnd(true);
-    //     return true;
-    //   }
+    if (is_created === false) {
+      if (onEnd != undefined) onEnd(false);
+      return false;
+    }
 
-    //   this.view.closeSettings();
-    //   this.view.clearAllSettingsFields();
-    //   this.hashService.openPreviousPage();
-    //   this.loadingService.stopLoading();
-    //   this.updatePage();
-    //   this.#onActionBlocksStorageUpdated();
-    //   if (onEnd != undefined) onEnd(true);
+    if (window.location.href.includes("#main&speechrecognition")) {
+      yesSir.loadingService.stopLoading();
+      if (onEnd != undefined) onEnd(true);
+      return true;
+    }
 
-    //   return true;
-    // });
+    this.view.closeSettings();
+    this.view.clearAllSettingsFields();
+    this.hashService.openPreviousPage();
+    this.loadingService.stopLoading();
+    this.updatePage();
+    this.#onActionBlocksStorageUpdated();
+    if (onEnd != undefined) onEnd(true);
+
+    return true;
   };
 
   getActionBlockByTitle(title) {
