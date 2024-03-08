@@ -70,8 +70,9 @@ class ActionBlockService {
     image_URL,
     onEnd
   ) {
+    this.loadingService.startLoading();
     const nounNumber = new NounNumber();
-    
+
     const getSingularizedWordsPromise = new Promise((resolve, reject) => {
       const title_words = title.split(/[^a-z]+/i).filter(Boolean);
 
@@ -120,43 +121,45 @@ class ActionBlockService {
           });
         }
 
-        const actionBlock = {
-          title: title,
-          tags: tags,
-          action: action,
-          content: content,
-          imageURL: image_URL,
-        };
+        createActionBlock(title, tags, action, content, image_URL);
 
-        const is_created = this.model.add(actionBlock);
+        // const actionBlock = {
+        //   title: title,
+        //   tags: tags,
+        //   action: action,
+        //   content: content,
+        //   imageURL: image_URL,
+        // };
 
-        if (is_created === false) {
-          if (onEnd != undefined) onEnd(false);
-          return false;
-        }
+        // const is_created = this.model.add(actionBlock);
 
-        if (window.location.href.includes("#main&speechrecognition")) {
-          yesSir.loadingService.stopLoading();
-          if (onEnd != undefined) onEnd(true);
-          return true;
-        }
+        // if (is_created === false) {
+        //   if (onEnd != undefined) onEnd(false);
+        //   return false;
+        // }
 
-        this.view.closeSettings();
-        this.view.clearAllSettingsFields();
-        this.hashService.openPreviousPage();
-        this.loadingService.stopLoading();
-        this.updatePage();
-        this.#onActionBlocksStorageUpdated();
-        if (onEnd != undefined) onEnd(true);
+        // if (window.location.href.includes("#main&speechrecognition")) {
+        //   yesSir.loadingService.stopLoading();
+        //   if (onEnd != undefined) onEnd(true);
+        //   return true;
+        // }
 
-        return true;
+        // this.view.closeSettings();
+        // this.view.clearAllSettingsFields();
+        // this.hashService.openPreviousPage();
+        // this.loadingService.stopLoading();
+        // this.updatePage();
+        // this.#onActionBlocksStorageUpdated();
+        // if (onEnd != undefined) onEnd(true);
+
+        // return true;
       })
       .catch((error) => {
         console.error(error);
       });
   }
 
-  createActionBlock = async (
+  createActionBlock = (
     title,
     tags,
     action,
@@ -164,8 +167,6 @@ class ActionBlockService {
     image_URL,
     onEnd
   ) => {
-    this.loadingService.startLoading();
-
     const actionBlock = {
       title: title,
       tags: tags,
