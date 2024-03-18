@@ -39,9 +39,13 @@ class ActionBlockController {
     // Disable all buttons.
     $(":submit, :button").attr("disabled", "disabled");
     yesSir.loadingService.startLoading();
-    this.actionBlockService
-      .createActionBlock(title, tags_plus_title, action, content, image_URL)
-      .then((is_actionBlock_created) => {
+    this.actionBlockService.createActionBlock(
+      title,
+      tags_plus_title,
+      action,
+      content,
+      image_URL,
+      (is_actionBlock_created) => {
         yesSir.loadingService.stopLoading();
 
         // Enable all buttons.
@@ -52,7 +56,11 @@ class ActionBlockController {
         }
 
         this.hashService.openMainPage();
-      });
+      }
+    );
+      // .then((is_actionBlock_created) => {
+
+      // });
   };
 
   
@@ -66,9 +74,13 @@ class ActionBlockController {
     // Disable all buttons.
     $(":submit, :button").attr("disabled", "disabled");
     yesSir.loadingService.startLoading();
-    this.actionBlockService
-      .createActionBlockWithAutomation(title, tags_plus_title, action, content, image_URL)
-      .then((is_actionBlock_created) => {
+    this.actionBlockService.createActionBlockWithAutomation(
+      title,
+      tags_plus_title,
+      action,
+      content,
+      image_URL,
+      (is_actionBlock_created) => {
         yesSir.loadingService.stopLoading();
 
         // Enable all buttons.
@@ -79,7 +91,11 @@ class ActionBlockController {
         }
 
         this.hashService.openMainPage();
-      });
+      }
+    );
+      // .then((is_actionBlock_created) => {
+
+      // });
   };
 
   #bindViewEvenets() {

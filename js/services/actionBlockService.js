@@ -70,6 +70,7 @@ class ActionBlockService {
     image_URL,
     onEnd
   ) {
+    const that = this;
     this.loadingService.startLoading();
     const nounNumber = new NounNumber();
 
@@ -121,7 +122,9 @@ class ActionBlockService {
           });
         }
 
-        createActionBlock(title, tags, action, content, image_URL);
+        that.createActionBlock(title, tags, action, content, image_URL);
+
+        if (onEnd != undefined) onEnd();
 
         // const actionBlock = {
         //   title: title,
@@ -155,18 +158,11 @@ class ActionBlockService {
         // return true;
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
       });
   }
 
-  createActionBlock = (
-    title,
-    tags,
-    action,
-    content,
-    image_URL,
-    onEnd
-  ) => {
+  createActionBlock = (title, tags, action, content, image_URL, onEnd) => {
     const actionBlock = {
       title: title,
       tags: tags,
