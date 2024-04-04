@@ -40,6 +40,7 @@ class UnsplashImageSearcher {
     }
 
     if (onDone != undefined) onDone(first_image);
+
     return first_image;
 
     // Loop for 10 images.

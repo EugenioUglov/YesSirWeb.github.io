@@ -1,6 +1,9 @@
 class ActionBlockService {
   #dateManager;
 
+  #index_last_showed_actionBlock = 0;
+  #scroll_position_on_execute_block = 0;
+
   constructor(
     dbManager,
     fileManager,
@@ -55,9 +58,6 @@ class ActionBlockService {
     this.init();
   }
 
-  #index_last_showed_actionBlock = 0;
-  #scroll_position_on_execute_block = 0;
-
   init() {
     this.hashService.setActionBlockService(this);
   }
@@ -73,6 +73,39 @@ class ActionBlockService {
     const that = this;
     this.loadingService.startLoading();
     const nounNumber = new NounNumber();
+
+    // !!!
+    // Cancel buttton in center.
+    const cancel_button = document.createElement("button");
+    cancel_button.appendChild(document.createTextNode("Cancel"));
+
+    let is_canceled = false;
+
+    $(cancel_button).css({
+      position: "fixed",
+      "z-index": "2000",
+      padding: "10px",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      cursor: "pointer",
+    });
+
+    $(cancel_button).on("click", () => {
+      is_canceled = true;
+      clearLoadingElmenets();
+      that.createActionBlock(title, tags, action, content, image_URL);
+
+      if (onEnd != undefined) onEnd();
+    });
+
+    document.body.appendChild(cancel_button);
+    //
+
+    $(".text-info").css("visibility", "visible");
+    $(".text-info").text(
+      "Automation can take a time.\nClick Cancel button to stop automation works."
+    );
 
     const getSingularizedWordsPromise = new Promise((resolve, reject) => {
       const title_words = title.split(/[^a-z]+/i).filter(Boolean);
@@ -110,8 +143,18 @@ class ActionBlockService {
       }
     });
 
+    getImagePromise
+      .then((received_image_URL) => {
+        console.log(received_image_URL);
+        console.log(image_URL);
+      })
+      .catch((err) => console.log(err));
+
     return await Promise.all([getSingularizedWordsPromise, getImagePromise])
       .then((values) => {
+        if (is_canceled) return false;
+
+        clearLoadingElmenets();
         let singularized_words_obj = values[0];
 
         let image_URL = values[1];
@@ -125,41 +168,16 @@ class ActionBlockService {
         that.createActionBlock(title, tags, action, content, image_URL);
 
         if (onEnd != undefined) onEnd();
-
-        // const actionBlock = {
-        //   title: title,
-        //   tags: tags,
-        //   action: action,
-        //   content: content,
-        //   imageURL: image_URL,
-        // };
-
-        // const is_created = this.model.add(actionBlock);
-
-        // if (is_created === false) {
-        //   if (onEnd != undefined) onEnd(false);
-        //   return false;
-        // }
-
-        // if (window.location.href.includes("#main&speechrecognition")) {
-        //   yesSir.loadingService.stopLoading();
-        //   if (onEnd != undefined) onEnd(true);
-        //   return true;
-        // }
-
-        // this.view.closeSettings();
-        // this.view.clearAllSettingsFields();
-        // this.hashService.openPreviousPage();
-        // this.loadingService.stopLoading();
-        // this.updatePage();
-        // this.#onActionBlocksStorageUpdated();
-        // if (onEnd != undefined) onEnd(true);
-
-        // return true;
       })
       .catch((error) => {
         console.log(error);
       });
+
+    function clearLoadingElmenets() {
+      cancel_button.parentNode.removeChild(cancel_button);
+      $(".text-info").css("visibility", "hidden");
+      $(".text-info").text("");
+    }
   }
 
   createActionBlock = (title, tags, action, content, image_URL, onEnd) => {

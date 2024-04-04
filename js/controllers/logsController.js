@@ -1,30 +1,41 @@
 class LogsController {
-    constructor(fileManager, dataStorageService) {
-        this.fileManager = fileManager;
-        this.dataStorageService = dataStorageService;
+  #fileManager;
+  #textManager;
 
-        this.model = new LogsModel();
-        this.view = new LogsView();
+  constructor() {
+    this.model = new LogsModel();
+    this.view = new LogsView();
+    this.#fileManager;
+    this.#textManager;
+  }
+
+  addLog(log) {
+    this.model.addLog(log);
+  }
+
+  getLogs() {
+    return this.model.getLogs();
+  }
+
+  downloadLogs() {
+    if (this.#fileManager === undefined) {
+      this.#textManager = new TextManager();
+      this.#fileManager = new FileManager(this.#textManager);
     }
 
-    addLog(log) {
-        this.model.addLog(log);
-    }
+    const data_for_file = this.model.getDataForFile();
+    this.#fileManager.downloadFile(
+      data_for_file.content,
+      data_for_file.name,
+      data_for_file.extension
+    );
+  }
 
-    getLogs() {
-        return this.model.getLogs();
-    }
+  showContainerWithLogs() {
+    this.view.showContainerWithLogs();
+  }
 
-    downloadLogs() {
-        const data_for_file = this.model.getDataForFile();
-        this.fileManager.downloadFile(data_for_file.content, data_for_file.name, data_for_file.extension);
-    }
-
-    showContainerWithLogs() {
-        this.view.showContainerWithLogs();
-    }
-
-    showLog(log) {
-        this.view.setLogForLabelHelp(log);
-    }
+  showLog(log) {
+    this.view.setLogForLabelHelp(log);
+  }
 }

@@ -58,12 +58,8 @@ class ActionBlockController {
         this.hashService.openMainPage();
       }
     );
-      // .then((is_actionBlock_created) => {
-
-      // });
   };
 
-  
   #onClickBtnCreateActionBlockWithAutomation = (
     title,
     tags_plus_title,
@@ -93,9 +89,6 @@ class ActionBlockController {
         this.hashService.openMainPage();
       }
     );
-      // .then((is_actionBlock_created) => {
-
-      // });
   };
 
   #bindViewEvenets() {
