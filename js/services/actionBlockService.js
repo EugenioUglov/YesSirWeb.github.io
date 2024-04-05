@@ -89,6 +89,11 @@ class ActionBlockService {
       left: "50%",
       transform: "translate(-50%, -50%)",
       cursor: "pointer",
+      "border-radius": "100px",
+      height: "150px",
+      width: "150px",
+      "background-color": "#a7a7a71f",
+      color: "wheat",
     });
 
     $(cancel_button).on("click", () => {
