@@ -107,8 +107,8 @@ class ActionBlockService {
     document.body.appendChild(cancel_button);
     //
 
-    $(".text-info").css("visibility", "visible");
-    $(".text-info").text(
+    $(".fixed-text-info").css("visibility", "visible");
+    $(".fixed-text-info").text(
       "Automation can take a time.\nClick Cancel button to stop automation works."
     );
 
@@ -180,8 +180,8 @@ class ActionBlockService {
 
     function clearLoadingElmenets() {
       cancel_button.parentNode.removeChild(cancel_button);
-      $(".text-info").css("visibility", "hidden");
-      $(".text-info").text("");
+      $(".fixed-text-info").css("visibility", "hidden");
+      $(".fixed-text-info").text("");
     }
   }
 
