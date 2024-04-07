@@ -98,7 +98,7 @@ class ActionBlockService {
 
     $(cancel_button).on("click", () => {
       is_canceled = true;
-      clearLoadingElmenets();
+      hideLoadingElmenets();
       that.createActionBlock(title, tags, action, content, image_URL);
 
       if (onEnd != undefined) onEnd();
@@ -107,10 +107,14 @@ class ActionBlockService {
     document.body.appendChild(cancel_button);
     //
 
-    $(".fixed-text-info-container").show();
-    $(".fixed-text-info").text(
-      "Automation can take a time.\nClick Cancel button to stop automation works."
-    );
+    const autmation_in_progress_text =
+      'Automation can take a time.\n\nYou can click "Cancel" button to skip automation works.';
+
+    let fixed_text_info_container_height = document.getElementsByClassName(
+      "fixed-text-info-container"
+    )[0].offsetHeight;
+
+    showLoadingElmenets();
 
     const getSingularizedWordsPromise = new Promise((resolve, reject) => {
       const title_words = title.split(/[^a-z]+/i).filter(Boolean);
@@ -153,13 +157,21 @@ class ActionBlockService {
         console.log(received_image_URL);
         console.log(image_URL);
       })
+      .catch((err) => console.log(err))
+      .finally(() => {});
+
+    getSingularizedWordsPromise
+      .then((received_image_URL) => {
+        console.log(received_image_URL);
+        console.log(image_URL);
+      })
       .catch((err) => console.log(err));
 
     return await Promise.all([getSingularizedWordsPromise, getImagePromise])
       .then((values) => {
         if (is_canceled) return false;
 
-        clearLoadingElmenets();
+        hideLoadingElmenets();
         let singularized_words_obj = values[0];
 
         let image_URL = values[1];
@@ -178,10 +190,29 @@ class ActionBlockService {
         console.log(error);
       });
 
-    function clearLoadingElmenets() {
+    function showLoadingElmenets() {
+      $(".fixed-text-info-container").show();
+      $(".gray-foreground").show();
+
+      setTextForFixedTextInfo(autmation_in_progress_text);
+    }
+
+    function hideLoadingElmenets() {
       cancel_button.parentNode.removeChild(cancel_button);
       $(".fixed-text-info-container").hide();
       $(".fixed-text-info").text("");
+      $(".gray-foreground").hide();
+    }
+
+    function setTextForFixedTextInfo(new_text) {
+      let fixed_text_info = $(".fixed-text-info").text(new_text);
+
+      fixed_text_info.html(fixed_text_info.html().replace(/\n/g, "<br/>"));
+
+      $(".fixed-text-info").css(
+        "margin-top",
+        fixed_text_info_container_height / 2
+      );
     }
   }
 
