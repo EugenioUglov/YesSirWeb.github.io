@@ -108,9 +108,9 @@ class ActionBlockService {
     //
 
     const autmation_in_progress_text =
-      'Automation can take a time.\n\nYou can click "Cancel" button to skip automation works.';
+      'Automation in progress. It can take a while.\n\nYou can click "Cancel" button to skip automation works.';
 
-    let fixed_text_info_container_height = document.getElementsByClassName(
+    let top_fixed_info_container_height = document.getElementsByClassName(
       "fixed-text-info-container"
     )[0].offsetHeight;
 
@@ -211,7 +211,7 @@ class ActionBlockService {
 
       $(".fixed-text-info").css(
         "margin-top",
-        fixed_text_info_container_height / 2
+        top_fixed_info_container_height / 2
       );
     }
   }
