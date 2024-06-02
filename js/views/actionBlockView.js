@@ -567,6 +567,35 @@ class ActionBlockView {
     });
   }
 
+  bindClickBtnSaveQuicklyEditedActionBlock(handler) {
+    $(".btn_update_actionBlock").on("click", () => {
+      // Get new title value.
+      const note_title_element = $("#content_executed_from_actionBlock").find(
+        ".note_title"
+      );
+
+      let title = note_title_element.text();
+
+      if ( ! title) {
+        alert("ERROR! Empty field for title.");
+        return;
+      }
+
+      // Get content.
+      const note_content_element = $("#content_executed_from_actionBlock").find(
+        ".content"
+      );
+      const content = note_content_element.text();
+
+      if ( ! content) {
+        alert("ERROR! Content is wrong.");
+        return false;
+      }
+      
+      handler(title, tags, selected_action, content, image_url);
+    });
+  }
+
   bindClickBtnSaveEditedActionBlock(handler) {
     $(".btn_update_actionBlock").on("click", () => {
       // Get new title value.
@@ -649,9 +678,11 @@ class ActionBlockView {
     $(".btn_open_settings_actionBlock").on("click", () => {
       // Clear executed content.
       $("#content_executed_from_actionBlock").hide();
+
       const title = $("#content_executed_from_actionBlock")
         .find(".title")
         .text();
+
       // console.log('bindClickBtnOpenActionBlockSettings', title);
       handler(title);
     });

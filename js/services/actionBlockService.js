@@ -875,8 +875,24 @@ class ActionBlockService {
     }
   };
 
+  onActionBlockUpdated = () => {
+    this.hashService.openPreviousPage();
+    this.loadingService.stopLoading();
+    this.view.closeSettings();
+    this.view.setDefaultValuesForSettingsElementsActionBlock();
+    // Scroll top.
+    this.scrollService.scrollTo();
+    this.view.updatePage();
+    // Refresh Action-Blocks on page.
+    this.scrollService.setPositionTop();
+    this.showActionBlocks();
+    this.modalLoadingService.hide();
+    this.#onActionBlocksStorageUpdated();
+  }
+
   updateActionBlock = (title, tags, selected_action, content, image_url) => {
     this.modalLoadingService.show();
+
     const is_updated = this.model.updateActionBlock(
       title,
       tags,
@@ -891,18 +907,34 @@ class ActionBlockService {
       return false;
     }
 
-    this.hashService.openPreviousPage();
-    this.loadingService.stopLoading();
-    this.view.closeSettings();
-    this.view.setDefaultValuesForSettingsElementsActionBlock();
-    // Scroll top.
-    this.scrollService.scrollTo();
-    this.view.updatePage();
-    // Refresh Action-Blocks on page.
-    this.scrollService.setPositionTop();
-    this.showActionBlocks();
-    this.modalLoadingService.hide();
-    this.#onActionBlocksStorageUpdated();
+    onActionBlockUpdated();
+  };
+
+  
+  updateQuicklyEditedActionBlock = ({title, content}) => {
+    this.modalLoadingService.show();
+
+    const actionBlockBeforeUpdate = this.model.getActionBlockByTitle(this.model.title_actionBlock_before_update);
+
+    const tags = actionBlockBeforeUpdate.tags;
+    const selected_action = actionBlockBeforeUpdate.action;
+    const image_url = actionBlockBeforeUpdate.image_url;
+
+    const is_updated = this.model.updateActionBlock(
+      title,
+      tags,
+      selected_action,
+      content,
+      image_url
+    );
+
+    if (is_updated === false) {
+      this.modalLoadingService.hide();
+
+      return false;
+    }
+
+    onActionBlockUpdated();
   };
 
   updateDefaultActionBlocks = () => {

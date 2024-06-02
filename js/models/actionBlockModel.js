@@ -758,7 +758,7 @@ class ActionBlockModel {
 
         const is_created = this.add(action_block);
     
-        if (! is_created) {
+        if ( ! is_created) {
             alert('ERROR! Action-Bclok hasn\'t been created.');
             return false;
         }

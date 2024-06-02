@@ -87,10 +87,12 @@ class HashService {
       parameter.request_value != undefined
         ? parameter.request_value
         : DEFAULT_PARAMETER.request_value;
+
     const is_execute_actionBlock_by_title =
       parameter.is_execute_actionBlock_by_title != undefined
         ? parameter.is_execute_actionBlock_by_title
         : DEFAULT_PARAMETER.is_execute_actionBlock_by_title;
+
     const is_listen_text =
       parameter.is_listen_text != undefined
         ? parameter.is_listen_text
@@ -426,7 +428,6 @@ class HashService {
           this.getPageOptionNameEnum().executebytitle
         )
       ) {
-        console.log("execute acion-block");
         is_execute_actionBlock_by_title = true;
         const to_character_request =
           "&" + this.getPageOptionNameEnum().executebytitle;
