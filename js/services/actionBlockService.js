@@ -875,7 +875,7 @@ class ActionBlockService {
     }
   };
 
-  onActionBlockUpdated = () => {
+  #onActionBlockUpdated = () => {
     this.hashService.openPreviousPage();
     this.loadingService.stopLoading();
     this.view.closeSettings();
@@ -907,7 +907,7 @@ class ActionBlockService {
       return false;
     }
 
-    onActionBlockUpdated();
+    this.#onActionBlockUpdated();
   };
 
   
@@ -934,7 +934,7 @@ class ActionBlockService {
       return false;
     }
 
-    onActionBlockUpdated();
+    this.#onActionBlockUpdated();
   };
 
   updateDefaultActionBlocks = () => {
