@@ -237,9 +237,14 @@
 						<button id="showJustContentButton" class="btn" type="button" style="display: none;">Show just content</button>
 					</div>
 
-					<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px; display: none;">
+					<input type="text" class="inputFieldWithSuggestions fixed-top" list="searherOptions" hidden />
+					<datalist id="searherOptions">
+					</datalist>
+
+					<div id="content_executed_from_actionBlock" style="margin-bottom: 30px; padding-top: 50px;  margin: 0 10px; display: none;">
 						<b></b><div class="title note_title center" style="font-size:30px"></div></b>
 						<div class="content"></div>
+						<button id="btn_quick_update_actionBlock" class="btn btn_save btn_right" type="button">Save</button>
 					</div>
 				</div>
 
@@ -328,26 +333,15 @@
 						left: 0;
 					"></div>
 					<div class="bottom_buttons">
-						<button id="btn_create_actionBlock_with_automation" class="btn btn_save btn_right" style="
-							position: fixed;
-							bottom: 0;
-							right: 5px;
-							margin-top: 10px;
-							margin-left: 20px;	
-						" type="button">Save</button>
+						<button id="btn_create_actionBlock_with_automation" class="btn btn_save btn_right"  type="button">Save</button>
+					
 						<!-- <button id="btn_create_actionBlock_with_automation" class="btn btn_save btn_right" style="
 							position: fixed;
 							bottom: 0;
 							right: 100px;
 							margin-top: 10px;
 						" type="button">Magic Save</button> -->
-						<button id="" class="btn_update_actionBlock btn btn_save btn_right" style="
-							position: fixed;
-							bottom: 0;
-							right: 5px;
-							margin-top: 10px;
-							margin-left: 20px;
-						" type="button">Save</button>
+						<button id="" class="btn_update_actionBlock btn btn_save btn_right" type="button">Save</button>
 						<button id="btn_create_default_actionBlocks" class="btn btn_right" style="
 							margin-top: 10px; 
 							margin-left: 20px;
@@ -625,6 +619,7 @@
 	<script src="./js/opensource/observable.js"></script>
 
 	
+	<script src="./js/libraries/inputFieldWithSuggestions.js"></script>
 	<script src="./js/libraries/mapDataStructure.js"></script>
 	<script src="./js/libraries/domElementManager.js"></script>
 	<script src="./js/libraries/dateManager.js"></script>

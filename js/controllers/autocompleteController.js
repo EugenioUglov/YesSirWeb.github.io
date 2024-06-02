@@ -8,7 +8,7 @@ class AutocompleteController {
     const that = this;
 
     /* Get tags */
-    if (!localStorage["indexes_actionBlocks_by_tag"]) {
+    if ( ! localStorage["indexes_actionBlocks_by_tag"]) {
       return;
     }
 

@@ -27,6 +27,7 @@ class NoteService {
   }
 
   close = () => {
+    $('.inputFieldWithSuggestions').hide();
     yesSir.voiceRecognitionService.stopRecognizing();
     this.noteSpeakerService.removeFromPage();
     this.view.close();

@@ -450,7 +450,7 @@ class HashService {
         request,
         is_execute_actionBlock_by_title
       );
-      // this.searchService.setTextToInputField(request);
+      this.searchService.setTextToInputField(request);
 
       this.scrollService.setPositionTop();
     } else if (

@@ -646,8 +646,13 @@ class ActionBlockService {
       this.onPageContentChange();
       this.view.showContentOfActionBlock();
       this.noteService.openNote(content, actionBlock.title, isHTML);
+
+      this.model.title_actionBlock_before_update = $('.note_title').text();
+
       this.view.hidePage();
       // that.scrollService.setPositionTop();
+
+      onNoteOpened();
     } else if (
       action_name_of_actionBlock === this.model.getActionNameEnum().showHTML
     ) {
@@ -658,6 +663,8 @@ class ActionBlockService {
       this.noteService.openNote(content, actionBlock.title, isHTML);
       
       this.model.title_actionBlock_before_update = $('.note_title').text();
+
+      onNoteOpened();
 
       $("#content_executed_from_actionBlock").show();
 
@@ -680,6 +687,52 @@ class ActionBlockService {
         */
       // console.log('ERROR! Action of Action-Block doesn\'t exist. action_name: ', action_name_of_actionBlock);
       return;
+    }
+
+    function onNoteOpened() {
+      const inputFieldWithSuggestions = new InputFieldWithSuggestions();
+
+      inputFieldWithSuggestions.removeAllOptions()
+
+      inputFieldWithSuggestions.create();
+
+      inputFieldWithSuggestions.addOption({
+        title: 'Open page to Edit Action-Block', 
+        clickHandler: () => {
+          // Clear executed content.
+          $("#content_executed_from_actionBlock").hide();
+
+          const title = $("#content_executed_from_actionBlock")
+            .find(".title")
+            .text();
+          
+          that.openActionBlockSettings(title);
+          
+          $('.inputFieldWithSuggestions').val('')
+        }
+      });
+    
+      inputFieldWithSuggestions.addOption({
+        title: 'Turn on quick edit', 
+        clickHandler: () => {
+          $('#btn_quick_update_actionBlock').show();
+
+          $('#content_executed_from_actionBlock .content').attr('contenteditable', 'true');
+
+          $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'true');
+        }
+      });
+
+      inputFieldWithSuggestions.addOption({
+        title: 'Turn off quick edit', 
+        clickHandler: () => {
+          $('#btn_quick_update_actionBlock').hide();
+
+          $('#content_executed_from_actionBlock .content').attr('contenteditable', 'false');
+
+          $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'false');
+        }
+      });
     }
   }
 
@@ -920,19 +973,16 @@ class ActionBlockService {
 
     const actionBlockBeforeUpdate = this.model.getActionBlockByTitle(this.model.title_actionBlock_before_update);
 
-    console.log('!!!');
-    console.log(this.model.title_actionBlock_before_update);
-
     const tags = actionBlockBeforeUpdate.tags;
     const selected_action = actionBlockBeforeUpdate.action;
-    const image_url = actionBlockBeforeUpdate.image_url;
+    const imageURL = actionBlockBeforeUpdate.imageURL;
 
     const is_updated = this.model.updateActionBlock(
       title,
       tags,
       selected_action,
       content,
-      image_url
+      imageURL
     );
 
     if (is_updated === false) {
@@ -940,6 +990,9 @@ class ActionBlockService {
 
       return false;
     }
+
+    ('#btn_quick_update_actionBlock').hide();
+    $('.inputFieldWithSuggestions').val('')
 
     this.#onActionBlockUpdated();
   };

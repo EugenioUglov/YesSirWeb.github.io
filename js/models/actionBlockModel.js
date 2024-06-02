@@ -729,7 +729,7 @@ class ActionBlockModel {
         const original_title = this.title_actionBlock_before_update;
   
         // Check new title validation.
-        if (original_title != title) {
+        if (original_title.toLowerCase() != title.toLowerCase()) {
             const is_actionBlock_exists_by_title = this.getActionBlockByTitle(title);
             
             if (is_actionBlock_exists_by_title) {
@@ -746,6 +746,9 @@ class ActionBlockModel {
             alert('ERROR! Action-Block hasn\'t been deleted');
             return false;
         }
+
+        console.log("!!! imageURL");
+        console.log(image_URL);
         
         const action_block =
         {
@@ -947,6 +950,11 @@ class ActionBlockModel {
     // }
 
     #getNormalizedTags(tags) {
+        if (Array.isArray(tags)) {
+            tags = tags.toString();
+        }
+
+        console.log(tags);
         let normalizedTags;
     
         // Change all new lines to symbol ',".

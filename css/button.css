@@ -42,6 +42,12 @@ button {
 }
 
 .btn_save {
+    position: fixed;
+    bottom: 0px;
+    right: 5px;
+    margin-top: 10px;
+    margin-left: 20px;
+    display: none;
     color: #8d8de5;
 }
 

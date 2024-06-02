@@ -646,7 +646,7 @@ class ActionBlockView {
   }
 
   bindClickBtnSaveQuicklyEditedActionBlock(handler) {
-    $(".btn_quick_update_actionBlock").on("click", () => {
+    $("#btn_quick_update_actionBlock").on("click", () => {
       // Get new title value.
       const note_title_element = $("#content_executed_from_actionBlock").find(
         ".note_title"
@@ -670,7 +670,7 @@ class ActionBlockView {
         return false;
       }
       
-      handler(title, tags, selected_action, content, image_url);
+      handler({title: title, content: content});
     });
   }
 
@@ -683,7 +683,6 @@ class ActionBlockView {
         .find(".title")
         .text();
 
-      // console.log('bindClickBtnOpenActionBlockSettings', title);
       handler(title);
     });
   }

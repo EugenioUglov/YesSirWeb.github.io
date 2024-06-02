@@ -42,6 +42,30 @@ body {
     overflow: hidden;*/
 }
 
+.inputFieldWithSuggestions {
+  padding: 10px;
+  width: 50%;
+  max-width: 500px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+
+.fixed-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+}
+
+.fixed-top {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+}
+
 a:link {
   /* color: rgb(115 115 245); */
   color: rgb(115 115 245);
@@ -511,10 +535,10 @@ input {
   font-size: 16px; */
 }
 
-input[type="text"] {
+/* input[type="text"] {
   background-color: #f1f1f1;
   width: 100%;
-}
+} */
 
 input[type="submit"] {
   /* background-color: DodgerBlue; */
