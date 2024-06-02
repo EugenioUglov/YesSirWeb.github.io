@@ -991,7 +991,7 @@ class ActionBlockService {
       return false;
     }
 
-    ('#btn_quick_update_actionBlock').hide();
+    $('#btn_quick_update_actionBlock').hide();
     $('.inputFieldWithSuggestions').val('')
 
     this.#onActionBlockUpdated();
