@@ -920,6 +920,9 @@ class ActionBlockService {
 
     const actionBlockBeforeUpdate = this.model.getActionBlockByTitle(this.model.title_actionBlock_before_update);
 
+    console.log('!!!');
+    console.log(this.model.title_actionBlock_before_update);
+
     const tags = actionBlockBeforeUpdate.tags;
     const selected_action = actionBlockBeforeUpdate.action;
     const image_url = actionBlockBeforeUpdate.image_url;
