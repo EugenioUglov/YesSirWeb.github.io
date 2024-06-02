@@ -653,9 +653,13 @@ class ActionBlockService {
     ) {
       this.onPageContentChange();
       const isHTML = true;
+      
+
       this.noteService.openNote(content, actionBlock.title, isHTML);
+      
+      this.model.title_actionBlock_before_update = $('.note_title').text();
+
       $("#content_executed_from_actionBlock").show();
-      // console.log(content);
 
       // Set position top.
       that.scrollService.setPosition(0, 0);

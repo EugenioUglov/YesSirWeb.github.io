@@ -567,35 +567,6 @@ class ActionBlockView {
     });
   }
 
-  bindClickBtnSaveQuicklyEditedActionBlock(handler) {
-    $(".btn_update_actionBlock").on("click", () => {
-      // Get new title value.
-      const note_title_element = $("#content_executed_from_actionBlock").find(
-        ".note_title"
-      );
-
-      let title = note_title_element.text();
-
-      if ( ! title) {
-        alert("ERROR! Empty field for title.");
-        return;
-      }
-
-      // Get content.
-      const note_content_element = $("#content_executed_from_actionBlock").find(
-        ".content"
-      );
-      const content = note_content_element.text();
-
-      if ( ! content) {
-        alert("ERROR! Content is wrong.");
-        return false;
-      }
-      
-      handler(title, tags, selected_action, content, image_url);
-    });
-  }
-
   bindClickBtnSaveEditedActionBlock(handler) {
     $(".btn_update_actionBlock").on("click", () => {
       // Get new title value.
@@ -670,6 +641,35 @@ class ActionBlockView {
       ).find(".input_field_image_URL");
       const image_url = input_field_image_URL_container.val();
 
+      handler(title, tags, selected_action, content, image_url);
+    });
+  }
+
+  bindClickBtnSaveQuicklyEditedActionBlock(handler) {
+    $(".btn_quick_update_actionBlock").on("click", () => {
+      // Get new title value.
+      const note_title_element = $("#content_executed_from_actionBlock").find(
+        ".note_title"
+      );
+
+      let title = note_title_element.text();
+
+      if ( ! title) {
+        alert("ERROR! Empty field for title.");
+        return;
+      }
+
+      // Get content.
+      const note_content_element = $("#content_executed_from_actionBlock").find(
+        ".content"
+      );
+      const content = note_content_element.text();
+
+      if ( ! content) {
+        alert("ERROR! Content is wrong.");
+        return false;
+      }
+      
       handler(title, tags, selected_action, content, image_url);
     });
   }

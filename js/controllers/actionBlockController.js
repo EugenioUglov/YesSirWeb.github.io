@@ -107,6 +107,9 @@ class ActionBlockController {
     this.actionBlockService.view.bindClickBtnSaveEditedActionBlock(
       this.actionBlockService.updateActionBlock
     );
+    this.actionBlockService.view.bindClickBtnSaveQuicklyEditedActionBlock(
+      this.actionBlockService.updateQuicklyEditedActionBlock
+    );
     this.actionBlockService.view.bindClickBtnDeleteActionBlock(
       this.actionBlockService.deleteActionBlock
     );
