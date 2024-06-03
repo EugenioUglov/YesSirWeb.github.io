@@ -708,7 +708,7 @@ class ActionBlockService {
           
           that.openActionBlockSettings(title);
           
-          $('.inputFieldWithSuggestions').val('')
+          onCommandEntered();
         }
       });
     
@@ -720,6 +720,8 @@ class ActionBlockService {
           $('#content_executed_from_actionBlock .content').attr('contenteditable', 'true');
 
           $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'true');
+          
+          onCommandEntered();
         }
       });
 
@@ -731,8 +733,14 @@ class ActionBlockService {
           $('#content_executed_from_actionBlock .content').attr('contenteditable', 'false');
 
           $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'false');
+          
+          onCommandEntered();
         }
       });
+
+      function onCommandEntered() {
+        $('.inputFieldWithSuggestions').val('');
+      }
     }
   }
 
