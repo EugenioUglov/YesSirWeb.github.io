@@ -74,7 +74,6 @@ class ActionBlockService {
     this.loadingService.startLoading();
     const nounNumber = new NounNumber();
 
-    // !!!
     // Cancel buttton in center.
     const cancel_button = document.createElement("button");
     cancel_button.appendChild(document.createTextNode("Cancel"));

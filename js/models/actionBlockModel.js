@@ -1,6 +1,6 @@
 class ActionBlockModel {
     #textManager;
-    #dateManager
+    #dateManager;
 
     constructor(dbManager, textManager, dataStorageService, mapDataStructure, fileManager, dateManager) {
         this.#textManager = textManager;
@@ -507,7 +507,14 @@ class ActionBlockModel {
 
     add(actionBlock_to_add, is_show_alert_on_error = true) {
         actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
+       
+        actionBlock_to_add.tags = this.#getNormalizedTags([...actionBlock_to_add.tags, ...this.#getAdditionalTags(actionBlock_to_add.tags)]);
+
+
         actionBlock_to_add.title = actionBlock_to_add.title.trim();
+        // Change title to URI friendly.
+        actionBlock_to_add.title = actionBlock_to_add.title.replace(/[^a-zA-Z0-9-_ ]/g, '');
+
 
         if (this.#actionBlocks_map.has(actionBlock_to_add.title.toUpperCase())) {
             if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
@@ -746,9 +753,6 @@ class ActionBlockModel {
             alert('ERROR! Action-Block hasn\'t been deleted');
             return false;
         }
-
-        console.log("!!! imageURL");
-        console.log(image_URL);
         
         const action_block =
         {
@@ -954,7 +958,6 @@ class ActionBlockModel {
             tags = tags.toString();
         }
 
-        console.log(tags);
         let normalizedTags;
     
         // Change all new lines to symbol ',".
@@ -975,6 +978,32 @@ class ActionBlockModel {
         normalizedTags = Array.from(tags_set);
     
         return normalizedTags;
+    }
+
+    #getAdditionalTags(tags) {
+         if (Array.isArray(tags) === false) {
+            tags = this.#textManager.getArrayByText(tags);
+        }
+
+        const additionalTags = [];
+
+        for (const tag of tags) {
+            const tagWithoutSpecialCharacters = this.#textManager.getTextWithoutSpecialCharactes(tag);
+
+            if (tag != tagWithoutSpecialCharacters) {
+                additionalTags.push(tagWithoutSpecialCharacters);
+            }
+
+            if (tag === tag.toUpperCase() == false && tag === tag.toLowerCase() === false) {
+                const tagWithSeparatedWords = this.#textManager.getSeparatedWordsByCamelCaseString(tag);
+
+                additionalTags.push(tagWithSeparatedWords);
+            }
+        }
+
+        console.log(additionalTags);
+
+        return additionalTags;
     }
 
     // Get priority of object from DB. How many times words from user phrase are in the tags of objet DB.

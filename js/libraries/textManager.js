@@ -80,4 +80,12 @@ class TextManager {
   getFirstLine = function (str) {
     return str.split("\n")[0];
   };
+
+  getSeparatedWordsByCamelCaseString = function (str) {
+    return str.replace(/([a-z])([A-Z])/g, '$1 $2');
+  };
+
+  getTextWithoutSpecialCharactes(str, symbolInsted = " ") {
+    return str.replace(/[^A-Z0-9]/ig, symbolInsted);
+  }
 }
