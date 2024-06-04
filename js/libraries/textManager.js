@@ -87,5 +87,7 @@ class TextManager {
 
   getTextWithoutSpecialCharactes(str, symbolInsted = " ") {
     return str.replace(/[^A-Z0-9]/ig, symbolInsted);
+    // str.replace(/[^a-zа-яё0-9\s]/gi, symbolInsted);
+    // str.replace(/[^a-zA-Z0-9-_ ]/g, symbolInsted);
   }
 }

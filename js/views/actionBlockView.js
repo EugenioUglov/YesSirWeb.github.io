@@ -408,7 +408,7 @@ class ActionBlockView {
       );
       let content = input_field_info_container.val();
 
-      if (!title) {
+      if ( ! title) {
         if (content === "") {
           alert("Impossible to create Action-Block. Title field is empty");
           return false;
@@ -430,14 +430,12 @@ class ActionBlockView {
         settings_actionBlock_container.find(".input_field_tags")[0];
       let tags_from_field = input_field_tags.value;
 
-      let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, " ");
-
       let tags_plus_title = "";
 
       if (tags_from_field) tags_plus_title += tags_from_field + ", ";
 
       // Add new tag getting text from title.
-      tags_plus_title += title + ", " + title_without_symbols;
+      tags_plus_title += title;
       // .End tags.
 
       // Get action.
@@ -510,14 +508,12 @@ class ActionBlockView {
         settings_actionBlock_container.find(".input_field_tags")[0];
       let tags_from_field = input_field_tags.value;
 
-      let title_without_symbols = title.replace(/[^a-zа-яё0-9\s]/gi, " ");
-
       let tags_plus_title = "";
 
       if (tags_from_field) tags_plus_title += tags_from_field + ", ";
 
       // Add new tag getting text from title.
-      tags_plus_title += title + ", " + title_without_symbols;
+      tags_plus_title += title;
       // .End tags.
 
       // Get action.
@@ -669,6 +665,10 @@ class ActionBlockView {
         alert("ERROR! Content is wrong.");
         return false;
       }
+
+      $('#content_executed_from_actionBlock .content').attr('contenteditable', 'false');
+    
+      $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'false');
       
       handler({title: title, content: content});
     });

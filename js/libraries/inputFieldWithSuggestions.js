@@ -1,5 +1,5 @@
 class InputFieldWithSuggestions {
-    #clickHandlerByOptionValue = {};
+    #executeHandlerByOptionValue = {};
     
 
     create() {
@@ -7,25 +7,26 @@ class InputFieldWithSuggestions {
 
         $(".inputFieldWithSuggestions").on('keyup', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
-                if (this.#clickHandlerByOptionValue[$(".inputFieldWithSuggestions").val()] === undefined) {
+                console.log(this.#executeHandlerByOptionValue);
+                if (this.#executeHandlerByOptionValue[$(".inputFieldWithSuggestions").val()] === undefined) {
                     return false;
                 }
 
-                this.#clickHandlerByOptionValue[$(".inputFieldWithSuggestions").val()]();
+                this.#executeHandlerByOptionValue[$(".inputFieldWithSuggestions").val()]();
             }
         });
     }
 
-    addOption({title, clickHandler}) {
+    addOption({title, executeHandler}) {
         if (title === undefined) {
             throw new Error("Parameter title is not defined.");
         }
 
-        if (clickHandler === undefined) {
-            throw new Error("Parameter clickHandler is not defined.");
+        if (executeHandler === undefined) {
+            throw new Error("Parameter executeHandler is not defined.");
         }
 
-        this.#clickHandlerByOptionValue[title] = clickHandler;
+        this.#executeHandlerByOptionValue[title] = executeHandler;
 
         const list = document.getElementById('searherOptions');
 
@@ -34,8 +35,17 @@ class InputFieldWithSuggestions {
         list.appendChild(option);
     }
 
+    setOptions({optionObjects: optionObjects}) {
+        this.removeAllOptions();
+        console.log(optionObjects);
+
+        optionObjects.forEach(option => {
+            this.addOption({title: option.title, executeHandler: option.executeHandler});
+        });
+    }
+
     removeAllOptions() {
-        this.#clickHandlerByOptionValue = {};
+        this.#executeHandlerByOptionValue = {};
 
         const list = document.getElementById('searherOptions');
         list.innerHTML = '';

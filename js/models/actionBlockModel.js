@@ -506,28 +506,46 @@ class ActionBlockModel {
 
 
     add(actionBlock_to_add, is_show_alert_on_error = true) {
-        actionBlock_to_add.tags = this.#getNormalizedTags(actionBlock_to_add.tags);
-       
-        actionBlock_to_add.tags = this.#getNormalizedTags([...actionBlock_to_add.tags, ...this.#getAdditionalTags(actionBlock_to_add.tags)]);
+        const that = this;
+        const tagsNormalizer = new TagsNormalizer();
 
+        actionBlock_to_add.title = getNormalizedTitle(actionBlock_to_add.title);
 
-        actionBlock_to_add.title = actionBlock_to_add.title.trim();
-        // Change title to URI friendly.
-        actionBlock_to_add.title = actionBlock_to_add.title.replace(/[^a-zA-Z0-9-_ ]/g, '');
+        if (isTitleValid(actionBlock_to_add.title) === false) return false;
 
-
-        if (this.#actionBlocks_map.has(actionBlock_to_add.title.toUpperCase())) {
-            if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
-            else {
-                // console.log('Action-Block with current title already exists. Title: ' + actionBlock_to_add.title);
-            }
-
-            return false;
-        }
+        actionBlock_to_add.tags = tagsNormalizer.getHandledTags(actionBlock_to_add.tags);
 
         this.#actionBlocks_map.set(actionBlock_to_add.title.toUpperCase(), actionBlock_to_add);
         
         this.#onUpdateVarialbeWithActionBlocks();
+
+        
+        function getNormalizedTitle(initialTitle) {
+            let normalizedTitle = ''
+
+            const trimmedTitle = initialTitle.trim();
+            // Change title to URI friendly.
+            normalizedTitle = trimmedTitle.replace(/[^a-zA-Z0-9-_ ]/g, '');
+
+            return normalizedTitle;
+        }
+
+        function isTitleValid(title) {
+            if ( ! title) {
+                alert('Error! Not valid title');
+    
+                return false;
+            }
+    
+            if (that.#actionBlocks_map.has(title.toUpperCase())) {
+                if (is_show_alert_on_error) alert('Action-Block with current title already exists. Title: ' + title);
+                else {
+                    // console.log('Action-Block with current title already exists. Title: ' + title);
+                }
+    
+                return false;
+            }
+        }
     
         return true;
     }
@@ -953,58 +971,65 @@ class ActionBlockModel {
     //     }
     // }
 
-    #getNormalizedTags(tags) {
-        if (Array.isArray(tags)) {
-            tags = tags.toString();
-        }
+    // #getNormalizedTags(tags) {
+    //     if (Array.isArray(tags)) {
+    //         tags = tags.toString();
+    //     }
 
-        let normalizedTags;
+    //     let normalizedTags;
     
-        // Change all new lines to symbol ',".
-        const tags_without_new_line = tags.replaceAll('\n', ',');
-        //tags_lower_case = tags_without_new_line.toLowerCase();
+    //     // Change all new lines to symbol ',".
+    //     const tags_without_new_line = tags.replaceAll('\n', ',');
+    //     //tags_lower_case = tags_without_new_line.toLowerCase();
     
-        let tags_array = this.#textManager.getArrayByText(tags_without_new_line);
+    //     let tags_array = this.#textManager.getArrayByText(tags_without_new_line);
         
-        // Delete empty symbols from sides in text.
-        for (const i_tag in tags_array) {
-            tags_array[i_tag] = tags_array[i_tag].trim();
-        }
+    //     // Delete empty symbols from sides in text.
+    //     for (const i_tag in tags_array) {
+    //         tags_array[i_tag] = tags_array[i_tag].trim();
+    //     }
     
-        // Delete same tags.
-        const tags_set = new Set(tags_array);
+    //     // Delete same tags.
+    //     const tags_set = new Set(tags_array);
     
-        // Convertation from Set to Array.
-        normalizedTags = Array.from(tags_set);
+    //     // Convertation from Set to Array.
+    //     normalizedTags = Array.from(tags_set);
     
-        return normalizedTags;
-    }
+    //     return normalizedTags;
+    // }
 
-    #getAdditionalTags(tags) {
-         if (Array.isArray(tags) === false) {
-            tags = this.#textManager.getArrayByText(tags);
-        }
+    // #getAdditionalTags(tags) {
+    //     console.log('tags', tags);
+    //      if (Array.isArray(tags) === false) {
+    //         tags = this.#textManager.getArrayByText(tags);
+    //     }
 
-        const additionalTags = [];
+    //     const additionalTags = [];
 
-        for (const tag of tags) {
-            const tagWithoutSpecialCharacters = this.#textManager.getTextWithoutSpecialCharactes(tag);
+    //     for (const tag of tags) {
+    //         let additionalTag = '';
 
-            if (tag != tagWithoutSpecialCharacters) {
-                additionalTags.push(tagWithoutSpecialCharacters);
-            }
+    //         const tagWithoutSpecialCharacters = this.#textManager.getTextWithoutSpecialCharactes(tag);
 
-            if (tag === tag.toUpperCase() == false && tag === tag.toLowerCase() === false) {
-                const tagWithSeparatedWords = this.#textManager.getSeparatedWordsByCamelCaseString(tag);
+    //         if (tag != tagWithoutSpecialCharacters) {
+    //             additionalTag = tagWithoutSpecialCharacters;
+    //         }
 
-                additionalTags.push(tagWithSeparatedWords);
-            }
-        }
+    //         if (tagWithoutSpecialCharacters === tagWithoutSpecialCharacters.toUpperCase() == false && tagWithoutSpecialCharacters === tagWithoutSpecialCharacters.toLowerCase() === false) {
+    //             const tagWithSeparatedWords = this.#textManager.getSeparatedWordsByCamelCaseString(tagWithoutSpecialCharacters);
 
-        console.log(additionalTags);
+    //             additionalTag = tagWithSeparatedWords;
+    //         }
 
-        return additionalTags;
-    }
+    //         if (additionalTag) {
+    //             additionalTags.push(additionalTag);
+    //         }
+    //     }
+
+    //     console.log('additionalTags', additionalTags);
+
+    //     return additionalTags;
+    // }
 
     // Get priority of object from DB. How many times words from user phrase are in the tags of objet DB.
     // Priority = 0 means that user words not exist in tags of object.

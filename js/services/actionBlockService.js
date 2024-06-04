@@ -98,9 +98,9 @@ class ActionBlockService {
     $(cancel_button).on("click", () => {
       is_canceled = true;
       hideLoadingElmenets();
-      that.createActionBlock(title, tags, action, content, image_URL);
+      that.createActionBlock(title, tags, action, content, image_URL, onEnd);
 
-      if (onEnd != undefined) onEnd();
+      // if (onEnd != undefined) onEnd();
     });
 
     document.body.appendChild(cancel_button);
@@ -226,7 +226,9 @@ class ActionBlockService {
 
     const is_created = this.model.add(actionBlock);
 
+
     if (is_created === false) {
+      console.log('onEnd', onEnd);
       if (onEnd != undefined) onEnd(false);
       return false;
     }
@@ -690,56 +692,11 @@ class ActionBlockService {
 
     function onNoteOpened() {
       const inputFieldWithSuggestions = new InputFieldWithSuggestions();
-
-      inputFieldWithSuggestions.removeAllOptions()
+      const actionBlockNoteCommands = new ActionBlockNoteCommands(inputFieldWithSuggestions);
 
       inputFieldWithSuggestions.create();
 
-      inputFieldWithSuggestions.addOption({
-        title: 'Open page to Edit Action-Block', 
-        clickHandler: () => {
-          // Clear executed content.
-          $("#content_executed_from_actionBlock").hide();
-
-          const title = $("#content_executed_from_actionBlock")
-            .find(".title")
-            .text();
-          
-          that.openActionBlockSettings(title);
-          
-          onCommandEntered();
-        }
-      });
-    
-      inputFieldWithSuggestions.addOption({
-        title: 'Turn on quick edit', 
-        clickHandler: () => {
-          $('#btn_quick_update_actionBlock').show();
-
-          $('#content_executed_from_actionBlock .content').attr('contenteditable', 'true');
-
-          $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'true');
-          
-          onCommandEntered();
-        }
-      });
-
-      inputFieldWithSuggestions.addOption({
-        title: 'Turn off quick edit', 
-        clickHandler: () => {
-          $('#btn_quick_update_actionBlock').hide();
-
-          $('#content_executed_from_actionBlock .content').attr('contenteditable', 'false');
-
-          $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'false');
-          
-          onCommandEntered();
-        }
-      });
-
-      function onCommandEntered() {
-        $('.inputFieldWithSuggestions').val('');
-      }
+      inputFieldWithSuggestions.setOptions({optionObjects: actionBlockNoteCommands.getCurrentCommandObjects()});
     }
   }
 
