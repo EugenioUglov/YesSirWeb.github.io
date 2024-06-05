@@ -1,12 +1,20 @@
 class ActionBlockNoteCommands {
+    #viewElement = {
+        inputFieldWithSuggestions: $('.inputFieldWithSuggestions'),
+        contentExecutedFromActionBlock: $("#content_executed_from_actionBlock"),
+        btnQuickUpdateActionBlock: $('#btn_quick_update_actionBlock'),
+        title: $('#content_executed_from_actionBlock .note_title'),
+        content: $('#content_executed_from_actionBlock .content'),
+    };
+
     #commandObject = {
         openPageToEditActionBlock: {
             title: 'Open page to Edit Action-Block', 
             executeHandler: () => {
                 // Clear executed content.
-                $("#content_executed_from_actionBlock").hide();
+                this.#viewElement.contentExecutedFromActionBlock.hide();
         
-                const title = $("#content_executed_from_actionBlock")
+                const title = this.#viewElement.contentExecutedFromActionBlock
                     .find(".title")
                     .text();
                 
@@ -18,11 +26,10 @@ class ActionBlockNoteCommands {
         turnOnQuickEdit: {
             title: 'Turn on quick edit', 
             executeHandler: () => {
-                $('#btn_quick_update_actionBlock').show();
+                this.#viewElement.btnQuickUpdateActionBlock.show();
         
-                $('#content_executed_from_actionBlock .content').attr('contenteditable', 'true');
-        
-                $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'true');
+                this.#viewElement.title.attr('contenteditable', 'true');
+                this.#viewElement.content.attr('contenteditable', 'true');
 
                 // Refresh current command list.
                 delete this.#currentCommandObject.turnOnQuickEdit;
@@ -37,15 +44,12 @@ class ActionBlockNoteCommands {
         turnOffQuickEdit: {
             title: 'Turn off quick edit', 
             executeHandler: () => {
-                $('#btn_quick_update_actionBlock').hide();
+                this.#viewElement.btnQuickUpdateActionBlock.hide();
         
-                $('#content_executed_from_actionBlock .content').attr('contenteditable', 'false');
-        
-                $('#content_executed_from_actionBlock .note_title').attr('contenteditable', 'false');
-                
-                // Refresh current command list.
-                this.#onCommandEntered();
+                this.#viewElement.title.attr('contenteditable', 'false');
+                this.#viewElement.content.attr('contenteditable', 'false');
 
+                // Refresh current command list.
                 delete this.#currentCommandObject.turnOffQuickEdit;
                 this.#currentCommandObject.turnOnQuickEdit = this.#commandObject.turnOnQuickEdit;
 
@@ -57,7 +61,6 @@ class ActionBlockNoteCommands {
         }
     };
     
-
     #currentCommandObject = {
         openPageToEditActionBlock: this.#commandObject.openPageToEditActionBlock, 
         turnOnQuickEdit: this.#commandObject.turnOnQuickEdit
@@ -81,6 +84,6 @@ class ActionBlockNoteCommands {
     }
 
     #onCommandEntered() {
-        $('.inputFieldWithSuggestions').val('');
+        this.#viewElement.inputFieldWithSuggestions.val('');
     }
 }
