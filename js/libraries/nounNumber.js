@@ -8,12 +8,9 @@ class NounNumber {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("done");
-
         if (onDone != undefined) onDone(data.response);
       })
       .catch((error) => {
-        console.log("error");
         if (onCatch != undefined) onCatch(error);
       });
   }
@@ -48,10 +45,5 @@ class NounNumber {
         if (onCatch != undefined) onCatch(error);
       }
     );
-    //  words_to_singularize.forEach((word_to_singularize) => {
-    //    this.getSingularizedWord(word_to_singularize, (singularized_word) => {
-    //      singularized_words.push(singularized_word);
-    //    });
-    //  });
   }
 }

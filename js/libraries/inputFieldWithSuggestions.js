@@ -1,18 +1,22 @@
 class InputFieldWithSuggestions {
     #executeHandlerByOptionValue = {};
+    #viewElement = {
+        inputFieldWithSuggestionsClass: $('.inputFieldWithSuggestions'),
+        searherOptionsId: 'searherOptions'
+    };
     
 
     create() {
-        $('.inputFieldWithSuggestions').show();
+        this.#viewElement.inputFieldWithSuggestionsClass.show();
 
-        $(".inputFieldWithSuggestions").on('keyup', (e) => {
+        this.#viewElement.inputFieldWithSuggestionsClass.on('keyup', (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 console.log(this.#executeHandlerByOptionValue);
-                if (this.#executeHandlerByOptionValue[$(".inputFieldWithSuggestions").val()] === undefined) {
+                if (this.#executeHandlerByOptionValue[this.#viewElement.inputFieldWithSuggestionsClass.val()] === undefined) {
                     return false;
                 }
 
-                this.#executeHandlerByOptionValue[$(".inputFieldWithSuggestions").val()]();
+                this.#executeHandlerByOptionValue[this.#viewElement.inputFieldWithSuggestionsClass.val()]();
             }
         });
     }
@@ -28,7 +32,7 @@ class InputFieldWithSuggestions {
 
         this.#executeHandlerByOptionValue[title] = executeHandler;
 
-        const list = document.getElementById('searherOptions');
+        const list = document.getElementById(this.#viewElement.searherOptionsId);
 
         let option = document.createElement('option');
         option.value = title;
@@ -47,7 +51,7 @@ class InputFieldWithSuggestions {
     removeAllOptions() {
         this.#executeHandlerByOptionValue = {};
 
-        const list = document.getElementById('searherOptions');
+        const list = document.getElementById(this.#viewElement.searherOptionsId);
         list.innerHTML = '';
     }
 }
